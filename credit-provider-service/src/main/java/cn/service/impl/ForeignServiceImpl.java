@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import cn.entity.CvsFilePath;
 import cn.entity.base.BaseMobileDetail;
@@ -47,9 +46,6 @@ public class ForeignServiceImpl implements ForeignService {
 	@Override
 	public BackResult<CvsFilePathDomain> runTheTest(String fileUrl, String userId) {
 
-		Assert.notNull(fileUrl, "The param fileUrl not be null!");
-		Assert.notNull(userId, "The param userId not be null!");
-		
 		logger.info("用户编号：[" + userId + "]文件地址：[" + fileUrl + "]开始执行空号检索事件 事件开始时间："
 				+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "post:"+port);
 		
