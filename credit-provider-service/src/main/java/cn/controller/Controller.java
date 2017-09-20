@@ -126,6 +126,7 @@ public class Controller {
 		ct.setProvince("江苏省");
 		ct.setReportTime(DateUtils.parseDate("2017-01-05 12:27:23","yyyy-MM-dd hh:mm:ss"));
 		ct.setSignature("盟轩");
+		ct.setCreateTime(new Date());
 		mongoTemplate.save(ct);
 		
         return ct;
