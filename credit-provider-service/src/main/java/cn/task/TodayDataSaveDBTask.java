@@ -50,8 +50,8 @@ public class TodayDataSaveDBTask {
 
 	private final static Logger logger = LoggerFactory.getLogger(TodayDataSaveDBTask.class);
 
-	//每天23点27分50秒时执行
-    @Scheduled(cron = "26 19 14 14 09 ?")
+	//该任务执行一次  时间 秒 分 时 天 月 年
+    @Scheduled(cron = "0 0 14 20 09 ?")
 	public void ClDateSaveDbTask() {
 		logger.info("=====开始执行创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
 
@@ -63,7 +63,7 @@ public class TodayDataSaveDBTask {
 			TransportClient client = new PreBuiltTransportClient(settings)
 					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(clusterNodes), clusterPort));
 
-			SearchResponse scrollResp = client.prepareSearch("201706", "201707").addSort("_doc", SortOrder.ASC)
+			SearchResponse scrollResp = client.prepareSearch("201701", "201707").addSort("_doc", SortOrder.ASC)
 					.setScroll(new TimeValue(60000)).setSize(100).get();
 
 			do {
