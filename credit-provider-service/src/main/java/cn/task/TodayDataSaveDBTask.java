@@ -51,7 +51,7 @@ public class TodayDataSaveDBTask {
 	private final static Logger logger = LoggerFactory.getLogger(TodayDataSaveDBTask.class);
 
 	//该任务执行一次  时间 秒 分 时 天 月 年
-    @Scheduled(cron = "0 0 14 20 09 ?")
+    @Scheduled(cron = "0 8 22 19 09 ?")
 	public void ClDateSaveDbTask() {
 		logger.info("=====开始执行创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
 

@@ -34,8 +34,8 @@ import cn.service.cm.CM136Service;
 import cn.task.TodayDataSaveDBTask;
 import cn.utils.DateUtils;
 import cn.utils.UUIDTool;
-import main.java.cn.domain.BackResult;
-import main.java.cn.domain.CvsFilePathDomain;
+import main.java.cn.common.BackResult;
+import main.java.cn.domain.RunTestDomian;
 
 /**
  * Created by WunHwanTseng on 2016/11/12.
@@ -147,9 +147,9 @@ public class Controller {
     }
     
     @GetMapping("/runTheTest")
-    public BackResult<CvsFilePathDomain> runTheTest() {
+    public BackResult<RunTestDomian> runTheTest() {
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
-    	BackResult<CvsFilePathDomain> result = foreignService.runTheTest("D:/test/mk0001.txt", "1255");
+    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/mk0001.txt", "1255");
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
     	return result;
     }

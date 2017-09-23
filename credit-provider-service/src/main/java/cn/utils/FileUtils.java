@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -93,19 +94,18 @@ public class FileUtils {
 	 * @param files
 	 * @param strZipName
 	 */
-	public static void createZip(File[] files, String strZipName) {
+	public static void createZip(List<File> list, String strZipName) {
 		try {
 			byte[] buffer = new byte[1024];
 
 			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(strZipName));
 
 			// 需要同时下载的两个文件result.txt ，source.txt
+			
+			for (File file : list) {
+				FileInputStream fis = new FileInputStream(file);
 
-			for (int i = 0; i < files.length; i++) {
-
-				FileInputStream fis = new FileInputStream(files[i]);
-
-				out.putNextEntry(new ZipEntry(files[i].getName()));
+				out.putNextEntry(new ZipEntry(file.getName()));
 
 				int len;
 
@@ -120,9 +120,8 @@ public class FileUtils {
 				out.closeEntry();
 
 				fis.close();
-
 			}
-
+			
 			out.close();
 
 			System.out.println("生成Demo.zip成功");
