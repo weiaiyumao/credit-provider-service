@@ -14,10 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -26,16 +22,7 @@ import cn.task.handler.ClDateSaveDBHandler;
 import cn.task.helper.MobileDetailHelper;
 import cn.utils.DateUtils;
 
-/**
- * 每日定时任务入库
- * 
- * @author ChuangLan
- *
- */
-@Component
-@Configuration
-@EnableScheduling
-public class TodayDataSaveDBTask {
+public class RunnableThreadTask implements Runnable {
 
 	@Value("${spring.data.elasticsearch.cluster-name}")
 	private String clusterName;
@@ -44,26 +31,60 @@ public class TodayDataSaveDBTask {
 	private String clusterNodes;
 	@Value("${spring.data.elasticsearch.cluster-port}")
 	private int clusterPort;
-
-	@Autowired
+	
 	private ClDateSaveDBHandler clDateSaveDBHandler;
 
-	private final static Logger logger = LoggerFactory.getLogger(TodayDataSaveDBTask.class);
+	private final static Logger logger = LoggerFactory.getLogger(RunnableThreadTask.class);
+	
+	
+	private String startTime;
+	
+	private String endTime;
+	
+	public String getStartTime() {
+		return startTime;
+	}
 
-	// 该任务执行一次 时间 秒 分 时 天 月 年
-	@Scheduled(cron = "0 39 15 28 09 ?")
-	public void ClDateSaveDbTask() {
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+	
+	
+
+	public ClDateSaveDBHandler getClDateSaveDBHandler() {
+		return clDateSaveDBHandler;
+	}
+
+	public void setClDateSaveDBHandler(ClDateSaveDBHandler clDateSaveDBHandler) {
+		this.clDateSaveDBHandler = clDateSaveDBHandler;
+	}
+
+	@Override
+	public void run() {
+		
+		//	spring.data.elasticsearch.cluster-name=cl-es-cluster
+//		spring.data.elasticsearch.cluster-nodes=172.16.20.20
+//		spring.data.elasticsearch.cluster-port=9300
+		
 		logger.info("=====开始执行创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
 
 		try {
-			Settings settings = Settings.builder().put("cluster.name", clusterName).put("client.transport.sniff", true)
+			Settings settings = Settings.builder().put("cluster.name", "cl-es-cluster").put("client.transport.sniff", true)
 					.put("client.transport.ping_timeout", "25s").build();
 
 			@SuppressWarnings("resource")
 			TransportClient client = new PreBuiltTransportClient(settings).addTransportAddress(
-					new InetSocketTransportAddress(InetAddress.getByName(clusterNodes), clusterPort));
+					new InetSocketTransportAddress(InetAddress.getByName("172.16.20.20"), 9300));
 
-			SearchResponse scrollResp = client.prepareSearch("201701", "201701").addSort("_doc", SortOrder.ASC)
+			SearchResponse scrollResp = client.prepareSearch(startTime, endTime).addSort("_doc", SortOrder.ASC)
 					.setScroll(new TimeValue(60000)).setSize(100).get();
 
 			do {
@@ -92,36 +113,20 @@ public class TodayDataSaveDBTask {
 				scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(60000))
 						.execute().actionGet();
 			} while (scrollResp.getHits().getHits().length != 0);
+			
+			logger.info("=====开始执行创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====");
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("=====执行创蓝数据入库出现异常：" + e.getMessage());
-		}
-
-		logger.info("=====开始执行创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====");
-	}
-
-	/**
-	 * 开启7个线程同时执行定时任务
-	 */
-	@Scheduled(cron = "0 31 16 28 09 ?")
-	public void taskSaveDB() {
-
-		for (int i = 1; i <= 7; i++) {
-			RunnableThreadTask rtt = new RunnableThreadTask("20170" + i, "20170" + i,clDateSaveDBHandler);
-			new Thread(rtt, "线程" + i + "开始执行定时任务入库").start();
+			logger.error("定时任务异常");
 		}
 
 	}
 	
-//	public static void main(String[] args) {
-//		
-//		for (int i = 1; i <= 7; i++) {
-//			RunnableThreadTask rtt = new RunnableThreadTask("20170" + i, "20170" + i);
-//			new Thread(rtt, "线程" + i + "开始执行定时任务入库").start();
-//		}
-//		
-//		
-//	}
+	public RunnableThreadTask(String startTime,String endTime,ClDateSaveDBHandler clDateSaveDBHandler){
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.clDateSaveDBHandler = clDateSaveDBHandler;
+	}
+
 
 }

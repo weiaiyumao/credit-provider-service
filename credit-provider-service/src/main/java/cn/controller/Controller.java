@@ -72,7 +72,7 @@ public class Controller {
 			TransportClient client = new PreBuiltTransportClient(settings)
 					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("172.16.20.20"), 9300));
 			
-			SearchResponse scrollResp = client.prepareSearch("201706","201707")
+			SearchResponse scrollResp = client.prepareSearch("201701","201701")
 					.addSort("_doc", SortOrder.ASC).setScroll(new TimeValue(60000))
 
 					.setSize(100).get(); // max of 100 hits will be returned for
@@ -120,7 +120,7 @@ public class Controller {
 		ct.setCity("苏州市");
 		ct.setContent("【盟轩】上海3月农化展没订房的展商，展商专享价预订中，展馆附近几公里含早餐班车咨询02131200858企业QQ800067617退订回TD");
 		ct.setDelivrd("UNKNOWN");
-		ct.setMobile("13862672233");
+		ct.setMobile("13362672233");
 		ct.setPlatform(1);
 		ct.setProductId("productId");
 		ct.setProvince("江苏省");
@@ -149,7 +149,7 @@ public class Controller {
     @GetMapping("/runTheTest")
     public BackResult<RunTestDomian> runTheTest() {
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
-    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/mk0001.txt", "1255");
+    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/mk0001.txt", "1255","1111111","13817367247");
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
     	return result;
     }
@@ -162,5 +162,55 @@ public class Controller {
     public String hi(String name){
     	return "hi "+name+",i am from port:" +port;
     }
+    
+    public static void main(String[] args) {
+    	
+    	  //  183.194.70.206:59200  172.16.20.20:9300
+    	try {
+			Settings settings = Settings.builder().put("cluster.name", "cl-es-cluster").put("client.transport.sniff", true)
+					.put("client.transport.ping_timeout", "25s").build();
+
+			@SuppressWarnings("resource")
+			TransportClient client = new PreBuiltTransportClient(settings)
+					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("183.194.70.206"), 59300));
+			
+			SearchResponse scrollResp = client.prepareSearch("201701","201707")
+					.addSort("_doc", SortOrder.ASC).setScroll(new TimeValue(60000))
+
+					.setSize(100).get(); // max of 100 hits will be returned for
+											// each scroll
+			int i = 0;
+			Map<String, String> map = new HashMap<String, String>();
+			do {
+				for (SearchHit hit : scrollResp.getHits().getHits()) {
+					String json = hit.getSourceAsString();
+
+					System.out.println("i=" + i + ":" + hit.getId() + "," + hit.getSourceAsString());
+					 JSONObject backjson = (JSONObject) JSONObject.parse(json);
+					
+					 String account = backjson.getString("account");
+					 map.put(account, account);
+
+				}
+
+				scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(60000)).execute()
+						.actionGet();
+			} while (scrollResp.getHits().getHits().length != 0); // Zero hits mark
+																	// the end of
+																	// the scroll
+																	// and the while
+																	// loop.
+			for (int k = 0; k < 100000; k++) {
+				String kk = map.get(String.valueOf(k));
+				if (kk == null) {
+					System.out.println(k);
+				}
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
     
 }

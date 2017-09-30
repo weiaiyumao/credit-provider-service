@@ -3,9 +3,11 @@ package cn.entity.cu;
 import java.io.Serializable;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import cn.entity.base.Unicom;
 
+@Document(collection="CU185")
 public class CU185 extends Unicom implements Serializable{
 
 	/**

@@ -19,9 +19,23 @@ public class CvsFilePath implements Serializable{
 	
 	private String thereFilePath;
 	
+	private String thereFileSize;
+	
+	private String thereCount;
+	
 	private String sixFilePath;
 	
-	private String unknownFilePath;
+	private String sixFileSize;
+	
+	private String sixCount;
+	
+	private String unknownFilePath; 
+	
+	private String unknownFileSize;
+	
+	private String unknownSize;
+	
+	private String zipName;
 	
 	private String zipPath;
 	
@@ -30,6 +44,8 @@ public class CvsFilePath implements Serializable{
 	private String userId;
 	
 	private Date createTime;
+	
+	private String isDeleted = "0";
 
 	public String getId() {
 		return id;
@@ -93,6 +109,70 @@ public class CvsFilePath implements Serializable{
 
 	public void setZipSize(String zipSize) {
 		this.zipSize = zipSize;
+	}
+
+	public String getThereFileSize() {
+		return thereFileSize;
+	}
+
+	public void setThereFileSize(String thereFileSize) {
+		this.thereFileSize = thereFileSize;
+	}
+
+	public String getSixFileSize() {
+		return sixFileSize;
+	}
+
+	public void setSixFileSize(String sixFileSize) {
+		this.sixFileSize = sixFileSize;
+	}
+
+	public String getUnknownFileSize() {
+		return unknownFileSize;
+	}
+
+	public void setUnknownFileSize(String unknownFileSize) {
+		this.unknownFileSize = unknownFileSize;
+	}
+
+	public String getZipName() {
+		return zipName;
+	}
+
+	public void setZipName(String zipName) {
+		this.zipName = zipName;
+	}
+
+	public String getThereCount() {
+		return thereCount;
+	}
+
+	public void setThereCount(String thereCount) {
+		this.thereCount = thereCount;
+	}
+
+	public String getSixCount() {
+		return sixCount;
+	}
+
+	public void setSixCount(String sixCount) {
+		this.sixCount = sixCount;
+	}
+
+	public String getUnknownSize() {
+		return unknownSize;
+	}
+
+	public void setUnknownSize(String unknownSize) {
+		this.unknownSize = unknownSize;
+	}
+
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 	
 	

@@ -95,6 +95,7 @@ public class RedisLock {
 				}
 			});
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("get redis error, key : {}", key);
 		}
 		return obj != null ? obj.toString() : null;
@@ -113,6 +114,7 @@ public class RedisLock {
 				}
 			});
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("setNX redis error, key : {}", key);
 		}
 		return obj != null ? (Boolean) obj : false;
@@ -131,6 +133,7 @@ public class RedisLock {
 				}
 			});
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("setNX redis error, key : {}", key);
 		}
 		return obj != null ? (String) obj : null;
@@ -192,10 +195,10 @@ public class RedisLock {
 	 */
 	public synchronized void unlock() {
 //		locked = false;
-// 		if (locked) {
+ 		if (locked) {
 			redisTemplate.delete(lockKey);
 			locked = false;
-//		}
+		}
 	}
 	
 }

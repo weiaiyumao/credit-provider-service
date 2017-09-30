@@ -2,6 +2,8 @@ package cn.entity.base;
 
 import java.util.Date;
 
+import org.springframework.data.mongodb.core.index.Indexed;
+
 import cn.utils.Constant;
 
 /**
@@ -12,6 +14,7 @@ import cn.utils.Constant;
  */
 public class BaseMobileDetail {
 
+	@Indexed(name = "{'mobile_': 1}")
 	private String mobile; // 手机号码
 
 	private String account; // 来源公司账户
@@ -24,6 +27,7 @@ public class BaseMobileDetail {
 
 	private String signature; // 企业签名
 
+	@Indexed(name = "{'reportTime_': 1}")
 	private Date reportTime; // 返回时间
 
 	private Integer platform; // 平台

@@ -17,7 +17,7 @@ public class RedisClient {
         try {
         	jedis = jedisPool.getResource();  
             jedis.set(key, value);
-            jedis.expire(key, 30 * 60);
+            jedis.expire(key, 30 * 60 * 1000);
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
