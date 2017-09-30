@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 import cn.entity.CvsFilePath;
 import cn.entity.WaterConsumption;
 import cn.entity.base.BaseMobileDetail;
-import cn.redis.RedisClient;
 //import cn.redis.RedisClient;
 import cn.redis.RedisLock;
 import cn.service.CvsFilePathService;
@@ -69,13 +68,13 @@ public class ForeignServiceImpl implements ForeignService {
 	private HashMap<String, Object> map = new HashMap<String, Object>();
 
 	@Autowired
-	private RedisClient redisClient;
-
-	@Autowired
 	private CvsFilePathService cvsFilePathService;
 	
 	@Value("${consumeAccountUrl}")
 	private String consumeAccountUrl;
+	
+	@Value("${findAccountUrl}")
+	private String findAccountUrl;
 
 	public BackResult<RunTestDomian> runTheTest11111(String fileUrl, String userId, String timestamp,String mobile) {
 
@@ -367,9 +366,54 @@ public class ForeignServiceImpl implements ForeignService {
 			// 处理加锁业务
 			if (lock.lock()) {
 				
+				LineNumberReader rf = null;
+				int lines = 0;
+				File test = new File(fileUrl);
+				File file1 = new File(fileUrl);
+				if (file1.isFile() && file1.exists()) {
+					long fileLength = test.length();
+					rf = new LineNumberReader(new FileReader(test));
+					
+					if (rf != null) {
+						rf.skip(fileLength);
+						lines = rf.getLineNumber();
+						rf.close();
+					}
+				}
+				
+				// 验证账户余额
+				JSONObject jsonAccount = new JSONObject();
+				jsonAccount.put("mobile", mobile);
+				logger.info("用户发送请求查询账户余额条数,请求参数:" + jsonAccount);
+				String responseStr1 = HttpUtil.createHttpPost(findAccountUrl, jsonAccount);
+				logger.info("用户发送请求查询账户余额条数,请求结果:" + responseStr1);
+				JSONObject responseJson = JSONObject.fromObject(responseStr1);
+
+				if (!responseJson.get("resultCode").equals("000000")) {
+					runTestDomian.setStatus("3"); // 1执行中 2执行结束 3执行异常4账户余额不足
+					lock.unlock(); // 注销锁
+					// 清空
+					result.setResultObj(runTestDomian);
+					result.setResultMsg("查询账户余额失败");
+					return result; 
+				}
+				
+				JSONObject accountJson = JSONObject.fromObject(responseJson.get("resultObj"));
+				
+				if (Integer.valueOf(accountJson.get("account").toString()) < lines) {
+					runTestDomian.setStatus("4"); // 1执行中 2执行结束 3执行异常4账户余额不足
+					lock.unlock(); // 注销锁
+					// 清空
+					result.setResultObj(runTestDomian);
+					result.setResultMsg("账户余额不足");
+					return result; 
+				}
+				
 				logger.info("key["+"testFile_" + timestamp + "_" + userId+"]");
 				
-					map.remove("testCount_" + userId); // 清空条数
+					map.remove("testCount_" + userId); // 清空需要记账的总条数
+					
+					map.remove("count_" + userId); // 清空实际检测的总条数
 
 					int testCount = 0; // 需要记账的总条数
 					int count = 0; // 实际检测的总条数
@@ -386,7 +430,7 @@ public class ForeignServiceImpl implements ForeignService {
 					List<Object> unKonwRowList = null;
 
 					// 3个月前的时间
-					Date thereStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -90);
+//					Date thereStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -90);
 					// 6个月前的时间
 					Date sixStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -180);
 
@@ -458,6 +502,7 @@ public class ForeignServiceImpl implements ForeignService {
 						result.setResultMsg("客户ID：[" + userId + "]执行号码检测发现文件地址不存在");
 						// 清空
 						map.remove("testCount_" + userId);
+						map.remove("count_" + userId); // 清空实际检测的总条数
 						lock.unlock(); // 注销锁
 						return result;
 					}
@@ -572,12 +617,12 @@ public class ForeignServiceImpl implements ForeignService {
 				}
 				
 				if (map.size() > 0) {
-					runTestDomian.setRunCount(Integer.valueOf(map.get("testCount_" + userId).toString()));
+					runTestDomian.setRunCount(Integer.valueOf(map.get("count_" + userId).toString()));
 				} else {
 					runTestDomian.setRunCount(0);
 				}
 				
-				logger.info("lines: " + lines + "testCount:" + map.get("testCount_" + userId).toString());
+				logger.info("lines: " + lines + "count_:" + map.get("count_" + userId).toString());
 				
 				if (lines == Integer.valueOf(map.get("count_" + userId).toString())) {
 					result.setResultMsg("任务执行结束");
@@ -602,6 +647,7 @@ public class ForeignServiceImpl implements ForeignService {
 			lock.unlock(); // 注销锁
 			// 清空
 			map.remove("testCount_" + userId);
+			map.remove("count_" + userId); // 清空实际检测的总条数
 			result.setResultCode(ResultCode.RESULT_FAILED);
 			result.setResultMsg("客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
 			return result;
