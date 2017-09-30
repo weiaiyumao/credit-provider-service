@@ -371,11 +371,13 @@ public class ForeignServiceImpl implements ForeignService {
 				
 					map.remove("testCount_" + userId); // 清空条数
 
-					int testCount = 0;
+					int testCount = 0; // 需要记账的总条数
+					int count = 0; // 实际检测的总条数
 					map.put("testCount_" + userId, testCount);
 					logger.info("用户编号：[" + userId + "]文件地址：[" + fileUrl + "]开始执行空号检索事件 事件开始时间："
 							+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "post:" + port);
 
+					
 					List<List<Object>> thereDataList = new ArrayList<List<Object>>();
 					List<Object> thereRowList = null;
 					List<List<Object>> sixDataList = new ArrayList<List<Object>>();
@@ -397,6 +399,8 @@ public class ForeignServiceImpl implements ForeignService {
 
 						while ((lineTxt = br.readLine()) != null) {
 
+							count = count + 1;
+							map.put("count_" + userId, count);
 							if (CommonUtils.isNotString(lineTxt)) {
 								continue;
 							}
@@ -411,10 +415,30 @@ public class ForeignServiceImpl implements ForeignService {
 									thereRowList.add(detail.getMobile());
 									thereRowList.add("实号");
 									thereDataList.add(thereRowList);
-								} else {
+								} else if (detail.getDelivrd().equals("101")) {
+									sixRowList = new ArrayList<Object>();
+									sixRowList.add(detail.getMobile());
+									sixRowList.add("用户未在HLR开户，(空号)");
+									sixDataList.add(sixRowList);
+								} else if (detail.getDelivrd().equals("-1") || detail.getDelivrd().equals("SGIP:2：12") || detail.getDelivrd().equals("ERRNUM") || detail.getDelivrd().equals("RP:1") || detail.getDelivrd().equals("MN:0001") || detail.getDelivrd().equals("SPMSERR:136") || detail.getDelivrd().equals("MK:0000") || detail.getDelivrd().equals("MK:0001") || detail.getDelivrd().equals("SGIP:1") || detail.getDelivrd().equals("SGIP:33") || detail.getDelivrd().equals("SGIP:67") || detail.getDelivrd().equals("LT:0001")) {
 									sixRowList = new ArrayList<Object>();
 									sixRowList.add(detail.getMobile());
 									sixRowList.add("空号");
+									sixDataList.add(sixRowList);
+								} else if (detail.getDelivrd().equals("3")){
+									sixRowList = new ArrayList<Object>();
+									sixRowList.add(detail.getMobile());
+									sixRowList.add("网关返回的错误，一般由号码本身原因引起，例如超过24小时的关机，空号等。");
+									sixDataList.add(sixRowList);
+								} else if (detail.getDelivrd().equals("Deliver") || detail.getDelivrd().equals("CB:0001") || detail.getDelivrd().equals("CB:0053") || detail.getDelivrd().equals("DB:0101") || detail.getDelivrd().equals("12") || detail.getDelivrd().equals("12") || detail.getDelivrd().equals("601")){
+									sixRowList = new ArrayList<Object>();
+									sixRowList.add(detail.getMobile());
+									sixRowList.add("号码无效或者空号");
+									sixDataList.add(sixRowList);
+								} else {
+									sixRowList = new ArrayList<Object>();
+									sixRowList.add(detail.getMobile());
+									sixRowList.add("无法证实的空号，可能因为运营商黑名单或停机，关机导致！提示：实用价值过低！");
 									sixDataList.add(sixRowList);
 								}
 							} else {
@@ -555,7 +579,7 @@ public class ForeignServiceImpl implements ForeignService {
 				
 				logger.info("lines: " + lines + "testCount:" + map.get("testCount_" + userId).toString());
 				
-				if (lines == Integer.valueOf(map.get("testCount_" + userId).toString())) {
+				if (lines == Integer.valueOf(map.get("count_" + userId).toString())) {
 					result.setResultMsg("任务执行结束");
 					runTestDomian.setStatus("2"); // 1执行中 2执行结束 3执行异常
 					
