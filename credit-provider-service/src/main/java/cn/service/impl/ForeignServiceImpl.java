@@ -432,7 +432,7 @@ public class ForeignServiceImpl implements ForeignService {
 					// 3个月前的时间
 //					Date thereStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -90);
 					// 6个月前的时间
-					Date sixStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -180);
+					Date sixStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -270);
 
 					File file = new File(fileUrl);
 					if (file.isFile() && file.exists()) {
