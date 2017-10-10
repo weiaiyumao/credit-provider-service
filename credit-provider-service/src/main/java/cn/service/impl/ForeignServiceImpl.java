@@ -458,37 +458,44 @@ public class ForeignServiceImpl implements ForeignService {
 									thereRowList = new ArrayList<Object>();
 									thereRowList.add(detail.getMobile());
 									thereRowList.add("实号");
+									thereRowList.add(detail.getDelivrd());
 									thereDataList.add(thereRowList);
 								} else if (detail.getDelivrd().equals("101")) {
 									sixRowList = new ArrayList<Object>();
 									sixRowList.add(detail.getMobile());
 									sixRowList.add("用户未在HLR开户，(空号)");
+									sixRowList.add(detail.getDelivrd());
 									sixDataList.add(sixRowList);
 								} else if (detail.getDelivrd().equals("-1") || detail.getDelivrd().equals("SGIP:2：12") || detail.getDelivrd().equals("ERRNUM") || detail.getDelivrd().equals("RP:1") || detail.getDelivrd().equals("MN:0001") || detail.getDelivrd().equals("SPMSERR:136") || detail.getDelivrd().equals("MK:0000") || detail.getDelivrd().equals("MK:0001") || detail.getDelivrd().equals("SGIP:1") || detail.getDelivrd().equals("SGIP:33") || detail.getDelivrd().equals("SGIP:67") || detail.getDelivrd().equals("LT:0001")) {
 									sixRowList = new ArrayList<Object>();
 									sixRowList.add(detail.getMobile());
 									sixRowList.add("空号");
+									sixRowList.add(detail.getDelivrd());
 									sixDataList.add(sixRowList);
 								} else if (detail.getDelivrd().equals("3")){
 									sixRowList = new ArrayList<Object>();
 									sixRowList.add(detail.getMobile());
 									sixRowList.add("网关返回的错误，一般由号码本身原因引起，例如超过24小时的关机，空号等。");
+									sixRowList.add(detail.getDelivrd());
 									sixDataList.add(sixRowList);
 								} else if (detail.getDelivrd().equals("Deliver") || detail.getDelivrd().equals("CB:0001") || detail.getDelivrd().equals("CB:0053") || detail.getDelivrd().equals("DB:0101") || detail.getDelivrd().equals("12") || detail.getDelivrd().equals("12") || detail.getDelivrd().equals("601")){
 									sixRowList = new ArrayList<Object>();
 									sixRowList.add(detail.getMobile());
 									sixRowList.add("号码无效或者空号");
+									sixRowList.add(detail.getDelivrd());
 									sixDataList.add(sixRowList);
 								} else {
 									sixRowList = new ArrayList<Object>();
 									sixRowList.add(detail.getMobile());
 									sixRowList.add("无法证实的空号，可能因为运营商黑名单或停机，关机导致！提示：实用价值过低！");
+									sixRowList.add(detail.getDelivrd());
 									sixDataList.add(sixRowList);
 								}
 							} else {
 								unKonwRowList = new ArrayList<Object>();
 								unKonwRowList.add(lineTxt);
 								unKonwRowList.add("未知");
+								unKonwRowList.add("");
 								unKonwDataList.add(unKonwRowList);
 							}
 
@@ -513,7 +520,7 @@ public class ForeignServiceImpl implements ForeignService {
 
 					// 生成报表
 					String filePath = loadfilePath + userId + "/" + DateUtils.getDate() + "/";
-					Object[] head = { "手机号码", "状态", };
+					Object[] head = { "手机号码", "状态", "代码状态"};
 					if (!CommonUtils.isNotEmpty(thereDataList)) {
 						logger.info("MarchRealNumber总条数：" + thereDataList.size());
 						FileUtils.createCvsFile("MarchRealNumber.csv", filePath, thereDataList, head);
