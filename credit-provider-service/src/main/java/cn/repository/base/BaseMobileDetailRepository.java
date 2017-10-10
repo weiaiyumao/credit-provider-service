@@ -28,6 +28,6 @@ public interface BaseMobileDetailRepository<T, ID extends Serializable>{
 	 * @param endTime
 	 * @return
 	 */
-	@Query("{ 'mobile' : ?0 , 'reportTime' : { $gte : ?1 , $lte : ?2 }}.sort({'reportTime' : -1})")
+	@Query("{ 'mobile' : ?0 , 'reportTime' : { $gte : ?1 , $lte : ?2 }}.sort({'reportTime' : -1}).limit(1)")
 	List<T> findByMobileAndReportTime(String mobile,Date startTime,Date endTime);
 }
