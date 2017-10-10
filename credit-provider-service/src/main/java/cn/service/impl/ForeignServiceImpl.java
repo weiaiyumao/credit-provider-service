@@ -624,12 +624,14 @@ public class ForeignServiceImpl implements ForeignService {
 				
 				logger.info("lines: " + lines + "count_:" + map.get("count_" + userId).toString());
 				
-				if (lines == Integer.valueOf(map.get("count_" + userId).toString())) {
+				if (lines <= Integer.valueOf(map.get("count_" + userId).toString())) {
 					result.setResultMsg("任务执行结束");
 					runTestDomian.setStatus("2"); // 1执行中 2执行结束 3执行异常
 					
 					// 发送短信
 					ChuangLanSmsUtil.getInstance().sendSmsByMobileForTest(mobile);
+					
+					lock.unlock(); // 注销锁
 					
 				} else {
 					result.setResultMsg("任务执行中");
