@@ -4,7 +4,6 @@ import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.search.SearchResponse;
@@ -27,9 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.entity.base.BaseMobileDetail;
-import cn.entity.cm.CM136;
 import cn.entity.ct.CT133;
 import cn.service.ForeignService;
+import cn.service.SpaceDetectionService;
 import cn.service.cm.CM136Service;
 import cn.task.TodayDataSaveDBTask;
 import cn.utils.DateUtils;
@@ -46,8 +45,8 @@ public class Controller {
     @Autowired
     private MongoTemplate mongoTemplate;
     
-//    @Autowired
-//    private SpaceDetectionService spaceDetectionService;
+    @Autowired
+    private SpaceDetectionService spaceDetectionService;
     
     @Autowired
     private TodayDataSaveDBTask todayDataSaveDBTask;
@@ -134,11 +133,18 @@ public class Controller {
     
     @GetMapping("/findname")
     public BaseMobileDetail findname() {
+    	BaseMobileDetail detail  = null;
+    try {
+    	Date sixStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -270);
     	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
-//        BaseMobileDetail detail = spaceDetectionService.findByMobile("13663343685");
-    	List<CM136> detail = cM136Service.findByMobile("13663343685");
+        detail = spaceDetectionService.findByMobileAndReportTime("17365312296",
+				sixStartTime, DateUtils.getCurrentDateTime());
+//    	List<CM136> detail = cM136Service.findByMobile("13663343685");
     	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
-        return detail.get(0);
+	} catch (Exception e) {
+		// TODO: handle exception
+	}
+        return detail;
     }
     
     @GetMapping("/task")
