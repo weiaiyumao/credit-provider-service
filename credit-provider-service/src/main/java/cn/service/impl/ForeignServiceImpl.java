@@ -355,7 +355,7 @@ public class ForeignServiceImpl implements ForeignService {
 		RunTestDomian runTestDomian = new RunTestDomian();
 		BackResult<RunTestDomian> result = new BackResult<RunTestDomian>();
 
-		RedisLock lock = new RedisLock(redisTemplate, "testFile_" + timestamp + "_" + userId, 0, 30 * 60 * 1000);
+		RedisLock lock = new RedisLock(redisTemplate, "testFile_" + timestamp + "_" + userId, 0, 2 * 60 * 60 * 1000);
 
 		BufferedReader br = null;
 
@@ -446,6 +446,11 @@ public class ForeignServiceImpl implements ForeignService {
 						if (CommonUtils.isNotString(lineTxt)) {
 							continue;
 						}
+						
+						//验证是否为正常的１１位有效数字
+						if (!CommonUtils.isNumeric(lineTxt)) {
+							continue;
+						}
 
 						// 检测 3个月内
 						BaseMobileDetail detail = spaceDetectionService.findByMobileAndReportTime(lineTxt, sixStartTime,
@@ -507,18 +512,34 @@ public class ForeignServiceImpl implements ForeignService {
 //								sixRowList.add(detail.getDelivrd());
 								sixDataList.add(sixRowList);
 							} else {
-								unKonwRowList = new ArrayList<Object>();
-								unKonwRowList.add(lineTxt);
-//								unKonwRowList.add("未知");
-//								unKonwRowList.add(detail.getDelivrd());
-								unKonwDataList.add(unKonwRowList);
+//								unKonwRowList = new ArrayList<Object>();
+//								unKonwRowList.add(lineTxt);
+////								unKonwRowList.add("未知");
+////								unKonwRowList.add(detail.getDelivrd());
+//								unKonwDataList.add(unKonwRowList);
+								
+								thereRowList = new ArrayList<Object>();
+								thereRowList.add(lineTxt);
+//								thereRowList.add("");
+//								thereRowList.add("");
+								thereDataList.add(thereRowList);
+								
 							}
 						} else {
-							unKonwRowList = new ArrayList<Object>();
-							unKonwRowList.add(lineTxt);
-//							unKonwRowList.add("未知");
-//							unKonwRowList.add("");
-							unKonwDataList.add(unKonwRowList);
+							
+							thereRowList = new ArrayList<Object>();
+							thereRowList.add(lineTxt);
+//							thereRowList.add("");
+//							thereRowList.add("");
+							thereDataList.add(thereRowList);
+							
+							
+							
+//							unKonwRowList = new ArrayList<Object>();
+//							unKonwRowList.add(lineTxt);
+////							unKonwRowList.add("未知");
+////							unKonwRowList.add("");
+//							unKonwDataList.add(unKonwRowList);
 						}
 
 						testCount = testCount + 1;
@@ -557,12 +578,12 @@ public class ForeignServiceImpl implements ForeignService {
 					cvsFilePath.setSixCount(String.valueOf(sixDataList.size()));
 				}
 
-				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
-					logger.info("未知总条数：" + unKonwDataList.size());
-					Object[] wzhead = { "手机号码" };
-					FileUtils.createCvsFile("未知.csv", filePath, unKonwDataList, wzhead);
-					cvsFilePath.setUnknownSize(String.valueOf(unKonwDataList.size()));
-				}
+//				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
+//					logger.info("未知总条数：" + unKonwDataList.size());
+//					Object[] wzhead = { "手机号码" };
+//					FileUtils.createCvsFile("未知.csv", filePath, unKonwDataList, wzhead);
+//					cvsFilePath.setUnknownSize(String.valueOf(unKonwDataList.size()));
+//				}
 
 				List<File> list = new ArrayList<File>();
 
@@ -578,11 +599,11 @@ public class ForeignServiceImpl implements ForeignService {
 					cvsFilePath.setSixFileSize(FileUtils.getFileSize(filePath + "空号.csv"));
 				}
 
-				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
-					list.add(new File(filePath + "未知.csv"));
-					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/未知.csv");
-					cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "未知.csv"));
-				}
+//				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
+//					list.add(new File(filePath + "未知.csv"));
+//					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/未知.csv");
+//					cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "未知.csv"));
+//				}
 
 				String zipName = "测试结果包.zip";
 				// 报表文件打包
@@ -662,9 +683,10 @@ public class ForeignServiceImpl implements ForeignService {
 				if (lines <= Integer.valueOf(map.get("count_" + userId).toString())) {
 					result.setResultMsg("任务执行结束");
 					runTestDomian.setStatus("2"); // 1执行中 2执行结束 3执行异常
-
 					lock.unlock(); // 注销锁
 
+					logger.info("手机号码：" + mobile + "结束运行检测任务");
+					
 				} else {
 					result.setResultMsg("任务执行中");
 					runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
@@ -679,6 +701,10 @@ public class ForeignServiceImpl implements ForeignService {
 			logger.error("客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
 			lock.unlock(); // 注销锁
 			// 清空
+			
+			// 异常发送短信
+			ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestEx(mobile);
+			
 			map.remove("testCount_" + userId);
 			map.remove("count_" + userId); // 清空实际检测的总条数
 			result.setResultCode(ResultCode.RESULT_FAILED);
@@ -693,6 +719,9 @@ public class ForeignServiceImpl implements ForeignService {
 
 			} catch (IOException e) {
 				e.printStackTrace();
+				
+				// 异常发送短信
+				ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestEx(mobile);
 				result.setResultCode(ResultCode.RESULT_FAILED);
 				result.setResultMsg("客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
 				return result;
