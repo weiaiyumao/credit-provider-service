@@ -3,13 +3,14 @@ package cn.service;
 import java.util.Date;
 
 import cn.entity.base.BaseMobileDetail;
+import main.java.cn.service.MobileTestBusService;
 
 /**
  * 
  * @author ChuangLan
  *
  */
-public interface SpaceDetectionService {
+public interface SpaceDetectionService extends MobileTestBusService{
 
 	/**
 	 * 根据手机号检测该号码是否为空号 (默认去第一条)

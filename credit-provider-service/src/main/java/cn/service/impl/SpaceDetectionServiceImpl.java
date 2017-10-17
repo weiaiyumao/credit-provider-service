@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.entity.SpaceMobile;
 import cn.entity.base.BaseMobileDetail;
 import cn.entity.cm.CM134;
 import cn.entity.cm.CM135;
@@ -46,6 +47,7 @@ import cn.entity.cu.CU185;
 import cn.entity.cu.CU186;
 import cn.entity.unknown.UnknownMobileDetail;
 import cn.service.SpaceDetectionService;
+import cn.service.SpaceMobileService;
 import cn.service.cm.CM134Service;
 import cn.service.cm.CM135Service;
 import cn.service.cm.CM136Service;
@@ -85,6 +87,8 @@ import cn.service.cu.CU185Service;
 import cn.service.cu.CU186Service;
 import cn.service.unknown.UnknownMobileDetailService;
 import cn.utils.CommonUtils;
+import main.java.cn.common.BackResult;
+import main.java.cn.domain.SpacePhoneDomain;
 
 @Service
 public class SpaceDetectionServiceImpl implements SpaceDetectionService {
@@ -202,6 +206,9 @@ public class SpaceDetectionServiceImpl implements SpaceDetectionService {
 
 	@Autowired
 	private CU186Service cU186Service;
+	
+	@Autowired
+	private SpaceMobileService spaceMobileService;
 	
 	@Override
 	public BaseMobileDetail findByMobile(String mobile) {
@@ -854,5 +861,31 @@ public class SpaceDetectionServiceImpl implements SpaceDetectionService {
 
 		return detail;
 	}
+
+	@Override
+	public BackResult<List<SpacePhoneDomain>> findSpacePhoneByMobile(String mobiles) {
+		
+		BackResult<List<SpacePhoneDomain>> result = new BackResult<List<SpacePhoneDomain>>();
+		
+		String[] str = mobiles.split(",");
+		
+		for (String mobile : str) {
+			// 1、检测空号库 如果存在 直接返回结果
+			SpaceMobile spaceMobile = spaceMobileService.findByMobile(mobile);
+			
+			if (null != spaceMobile) {
+				
+			}
+			// 2、本库号码查询
+			
+			// 3、本库号码段查询
+			
+			// 4、发送短信验证空号
+		}
+		
+		return result;
+	}
+
+
 
 }
