@@ -1,9 +1,15 @@
 package cn.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.search.SearchResponse;
@@ -25,12 +31,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.entity.MobileNumberSection;
 import cn.entity.base.BaseMobileDetail;
 import cn.entity.ct.CT133;
 import cn.service.ForeignService;
 import cn.service.SpaceDetectionService;
 import cn.service.cm.CM136Service;
 import cn.task.TodayDataSaveDBTask;
+import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
 import cn.utils.UUIDTool;
 import main.java.cn.common.BackResult;
@@ -155,7 +163,7 @@ public class Controller {
     @GetMapping("/runTheTest")
     public BackResult<RunTestDomian> runTheTest() {
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
-    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/mk0001.txt", "1255","1111111","13817367247");
+    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/545b54d9e5eb44b6b95f736d9e6351ad_13166105893.TXT", "1767",String.valueOf(System.currentTimeMillis()),"13817367247");
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
     	return result;
     }
@@ -169,7 +177,7 @@ public class Controller {
     	return "hi "+name+",i am from port:" +port;
     }
     
-    public static void main(String[] args) {
+    public static void main1111(String[] args) {
     	
     	  //  183.194.70.206:59200  172.16.20.20:9300
     	try {
@@ -214,6 +222,51 @@ public class Controller {
 			}
 			
 			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+    
+    public static void main(String[] args) {
+		BufferedReader br = null;
+		try {
+			File file = new File("D:/test/手机号段-20171001-368630-全新版.csv");
+			if (file.isFile() && file.exists()) {
+
+				InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "gbk");
+				br = new BufferedReader(isr);
+				String lineTxt = null;
+
+				while ((lineTxt = br.readLine()) != null) {
+
+					if (CommonUtils.isNotString(lineTxt)) {
+						continue;
+					}
+					String[] str = lineTxt.split(",");
+					
+					List<MobileNumberSection> list = new ArrayList<MobileNumberSection>();
+					
+					MobileNumberSection section = new MobileNumberSection();
+					section.setId(UUIDTool.getInstance().getUUID());
+					section.setPrefix(str[0]);
+					section.setNumberSection(str[1]);
+					section.setProvince(str[2]);
+					section.setCity(str[3]);
+					section.setIsp(str[4]);
+					section.setPostCode(str[5]);
+					section.setCityCode(str[6]);
+					section.setAreaCode(str[7]);
+					section.setMobilePhoneType(str[8]);
+					
+					list.add(section);
+					
+					if (list.size() == 10000) {
+						
+					}
+					
+//					mongoTemplate
+				}
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

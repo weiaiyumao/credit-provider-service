@@ -25,12 +25,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import cn.entity.CvsFilePath;
+import cn.entity.MobileNumberSection;
 import cn.entity.WaterConsumption;
 import cn.entity.base.BaseMobileDetail;
 //import cn.redis.RedisClient;
 import cn.redis.RedisLock;
 import cn.service.CvsFilePathService;
 import cn.service.ForeignService;
+import cn.service.MobileNumberSectionService;
 import cn.service.SpaceDetectionService;
 import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
@@ -69,6 +71,9 @@ public class ForeignServiceImpl implements ForeignService {
 
 	@Autowired
 	private CvsFilePathService cvsFilePathService;
+	
+	@Autowired
+	private MobileNumberSectionService mobileNumberSectionService;
 
 	@Value("${consumeAccountUrl}")
 	private String consumeAccountUrl;
@@ -423,8 +428,8 @@ public class ForeignServiceImpl implements ForeignService {
 				List<Object> thereRowList = null;
 				List<List<Object>> sixDataList = new ArrayList<List<Object>>();
 				List<Object> sixRowList = null;
-				List<List<Object>> unKonwDataList = new ArrayList<List<Object>>();
-				List<Object> unKonwRowList = null;
+//				List<List<Object>> unKonwDataList = new ArrayList<List<Object>>();
+//				List<Object> unKonwRowList = null;
 
 				// 3个月前的时间
 				// Date thereStartTime =
@@ -527,13 +532,19 @@ public class ForeignServiceImpl implements ForeignService {
 							}
 						} else {
 							
-							thereRowList = new ArrayList<Object>();
-							thereRowList.add(lineTxt);
-//							thereRowList.add("");
-//							thereRowList.add("");
-							thereDataList.add(thereRowList);
+							// 二次清洗根据号段
+							MobileNumberSection section = mobileNumberSectionService.findByNumberSection(lineTxt.substring(0, 7));
 							
-							
+							if (null == section) {
+								thereRowList = new ArrayList<Object>();
+								thereRowList.add(lineTxt);
+								thereDataList.add(thereRowList);
+							} else {
+								sixRowList = new ArrayList<Object>();
+								sixRowList.add(lineTxt);
+								sixRowList.add("不存在的号段");
+								sixDataList.add(sixRowList);
+							}
 							
 //							unKonwRowList = new ArrayList<Object>();
 //							unKonwRowList.add(lineTxt);
@@ -789,14 +800,15 @@ public class ForeignServiceImpl implements ForeignService {
 
 	public static void main(String[] args) {
 		// http://127.0.0.1:8767/userAccount/consumeAccount?creUserId=1598&count=100
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("creUserId", 1598);
-		jsonObject.put("count", 100);
-		String responseStr = HttpUtil.createHttpPost("http://127.0.0.1:8767/userAccount/consumeAccount", jsonObject);
-		JSONObject json = JSONObject.fromObject(responseStr);
-
-		if (json.get("resultCode").equals("000000") && json.get("resultObj").equals(Boolean.TRUE)) {
-		}
+//		JSONObject jsonObject = new JSONObject();
+//		jsonObject.put("creUserId", 1598);
+//		jsonObject.put("count", 100);
+//		String responseStr = HttpUtil.createHttpPost("http://127.0.0.1:8767/userAccount/consumeAccount", jsonObject);
+//		JSONObject json = JSONObject.fromObject(responseStr);
+//
+//		if (json.get("resultCode").equals("000000") && json.get("resultObj").equals(Boolean.TRUE)) {
+//		}
+		System.out.println("13817367247".substring(0, 7));
 		// System.out.println(responseStr);
 	}
 
