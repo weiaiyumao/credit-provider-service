@@ -35,6 +35,7 @@ import cn.entity.MobileNumberSection;
 import cn.entity.base.BaseMobileDetail;
 import cn.entity.ct.CT133;
 import cn.service.ForeignService;
+import cn.service.MobileNumberSectionService;
 import cn.service.SpaceDetectionService;
 import cn.service.cm.CM136Service;
 import cn.task.TodayDataSaveDBTask;
@@ -64,6 +65,9 @@ public class Controller {
     
     @Autowired
     private CM136Service cM136Service;
+    
+	@Autowired
+	private MobileNumberSectionService mobileNumberSectionService;
     
     
     private final static Logger logger = LoggerFactory.getLogger(Controller.class);
@@ -163,7 +167,7 @@ public class Controller {
     @GetMapping("/runTheTest")
     public BackResult<RunTestDomian> runTheTest() {
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
-    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/545b54d9e5eb44b6b95f736d9e6351ad_13166105893.TXT", "1767",String.valueOf(System.currentTimeMillis()),"13817367247");
+    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/6f072674b763400b89f00b412445fabb_18717717701.txt", "17671",String.valueOf(System.currentTimeMillis()),"13817367247");
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
     	return result;
     }
@@ -174,7 +178,11 @@ public class Controller {
     
     @RequestMapping("/hi")
     public String hi(String name){
-    	return "hi "+name+",i am from port:" +port;
+    	
+    	
+    	MobileNumberSection section = mobileNumberSectionService.findByNumberSection(name.substring(0, 7));
+    	
+    	return "hi "+section.getNumberSection()+",i am from port:" +port;
     }
     
     public static void main1111(String[] args) {
