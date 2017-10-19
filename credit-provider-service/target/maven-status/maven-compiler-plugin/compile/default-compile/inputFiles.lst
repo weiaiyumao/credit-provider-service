@@ -92,6 +92,7 @@ D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\c
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\utils\FileUtils.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\impl\CM147ServiceImpl.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\entity\ct\CT133.java
+D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\MobileNumberSectionService.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\impl\SpaceDetectionServiceImpl.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\entity\cu\CU185.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\impl\CM178ServiceImpl.java
@@ -106,6 +107,7 @@ D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\c
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\entity\cm\CM182.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\entity\cu\CU186.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cu\impl\CU132ServiceImpl.java
+D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\impl\MobileNumberSectionServiceImpl.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\entity\ct\CT1700.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\SpaceDetectionService.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\repository\WaterConsumptionReository.java
@@ -126,6 +128,7 @@ D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\c
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\repository\ct\CT180Repository.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\repository\ct\CT177Repository.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\repository\cm\CM178Repository.java
+D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\repository\MobileNumberSectionReository.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\entity\cu\CU1709.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\CM147Service.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\CM158Service.java
@@ -143,6 +146,7 @@ D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\c
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\entity\cm\CM137.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\controller\CreditController.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cu\impl\CU131ServiceImpl.java
+D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\entity\MobileNumberSection.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\repository\ct\CT133Repository.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\base\BaseMobileDetailService.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\impl\CM135ServiceImpl.java

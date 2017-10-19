@@ -11,6 +11,7 @@ cn\entity\cu\CU130.class
 cn\repository\cu\CU130Repository.class
 cn\service\cm\CM147Service.class
 cn\service\cm\CM135Service.class
+cn\entity\MobileNumberSection.class
 cn\entity\WaterConsumption.class
 cn\entity\ct\CT180.class
 cn\repository\ct\CT180Repository.class
@@ -47,6 +48,7 @@ cn\service\cm\CM134Service.class
 cn\service\cm\impl\CM136ServiceImpl.class
 cn\repository\cm\CM139Repository.class
 cn\utils\FileUtils.class
+cn\service\impl\MobileNumberSectionServiceImpl.class
 cn\entity\cu\CU131.class
 cn\service\cm\CM158Service.class
 cn\repository\cm\CM136Repository.class
@@ -87,6 +89,7 @@ cn\entity\ct\CT153.class
 cn\service\cm\impl\CM187ServiceImpl.class
 cn\entity\cm\CM138.class
 cn\controller\CreditController.class
+cn\service\MobileNumberSectionService.class
 cn\entity\base\Mobile.class
 cn\entity\cm\CM188.class
 cn\service\cm\CM188Service.class
@@ -110,6 +113,7 @@ cn\service\cu\impl\CU176ServiceImpl.class
 cn\redis\RedisLock.class
 cn\task\handler\DataSaveDBHandler.class
 cn\service\cm\impl\CM158ServiceImpl.class
+cn\repository\MobileNumberSectionReository.class
 cn\service\base\BaseMobileDetailService.class
 cn\repository\cm\CM134Repository.class
 cn\repository\cm\CM137Repository.class

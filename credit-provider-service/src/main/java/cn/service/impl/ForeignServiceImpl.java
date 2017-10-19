@@ -500,7 +500,7 @@ public class ForeignServiceImpl implements ForeignService {
 									|| detail.getDelivrd().equals("MK:0012")) {
 								sixRowList = new ArrayList<Object>();
 								sixRowList.add(detail.getMobile());
-								sixRowList.add("空号");
+//								sixRowList.add("空号");
 //								sixRowList.add(detail.getDelivrd());
 								sixDataList.add(sixRowList);
 							} else if (detail.getDelivrd().equals("HD:31") || detail.getDelivrd().equals("IC:0001")
@@ -513,21 +513,21 @@ public class ForeignServiceImpl implements ForeignService {
 									|| detail.getDelivrd().equals("MI:0004") || detail.getDelivrd().equals("MI:0005")) {
 								sixRowList = new ArrayList<Object>();
 								sixRowList.add(detail.getMobile());
-								sixRowList.add("停机");
+//								sixRowList.add("停机");
 //								sixRowList.add(detail.getDelivrd());
 								sixDataList.add(sixRowList);
 							} else {
-//								unKonwRowList = new ArrayList<Object>();
-//								unKonwRowList.add(lineTxt);
-////								unKonwRowList.add("沉默号");
-////								unKonwRowList.add(detail.getDelivrd());
-//								unKonwDataList.add(unKonwRowList);
+								unKonwRowList = new ArrayList<Object>();
+								unKonwRowList.add(lineTxt);
+//								unKonwRowList.add("沉默号");
+//								unKonwRowList.add(detail.getDelivrd());
+								unKonwDataList.add(unKonwRowList);
 								
-								thereRowList = new ArrayList<Object>();
-								thereRowList.add(lineTxt);
-//								thereRowList.add("");
-//								thereRowList.add("");
-								thereDataList.add(thereRowList);
+//								thereRowList = new ArrayList<Object>();
+//								thereRowList.add(lineTxt);
+////								thereRowList.add("");
+////								thereRowList.add("");
+//								thereDataList.add(thereRowList);
 								
 							}
 						} else {
@@ -536,20 +536,25 @@ public class ForeignServiceImpl implements ForeignService {
 							MobileNumberSection section = mobileNumberSectionService.findByNumberSection(lineTxt.substring(0, 7));
 							
 							if (null != section) {
-								thereRowList = new ArrayList<Object>();
-								thereRowList.add(lineTxt);
-								thereDataList.add(thereRowList);
-							} else {
-//								sixRowList = new ArrayList<Object>();
-//								sixRowList.add(lineTxt);
-//								sixRowList.add("不存在的号段");
-//								sixDataList.add(sixRowList);
+//								thereRowList = new ArrayList<Object>();
+//								thereRowList.add(lineTxt);
+//								thereDataList.add(thereRowList);
 								
 								unKonwRowList = new ArrayList<Object>();
 								unKonwRowList.add(lineTxt);
-//								unKonwRowList.add("沉默号");
-//								unKonwRowList.add("");
 								unKonwDataList.add(unKonwRowList);
+							} else {
+								// 放空号
+								sixRowList = new ArrayList<Object>();
+								sixRowList.add(lineTxt);
+//								sixRowList.add("不存在的号段");
+								sixDataList.add(sixRowList);
+								
+//								unKonwRowList = new ArrayList<Object>();
+//								unKonwRowList.add(lineTxt);
+////								unKonwRowList.add("沉默号");
+////								unKonwRowList.add("");
+//								unKonwDataList.add(unKonwRowList);
 							}
 							
 
