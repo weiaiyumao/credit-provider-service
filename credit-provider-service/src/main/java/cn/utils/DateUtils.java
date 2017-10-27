@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * 时间处理类【存储系统所有的日期时间处理函数】
@@ -16,6 +17,22 @@ import java.util.GregorianCalendar;
  * @name DateUtils
  */
 public class DateUtils {
+	
+	private static final String FORMAT_YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+	
+	public static Date converYYYYMMddHHmmssStrToDate(String date){
+        Date d = null;
+        try {
+            if(date == null || "".equals(date.trim()))
+                return null;
+            SimpleDateFormat format = new SimpleDateFormat(FORMAT_YYYY_MM_DD_HH_MM_SS,Locale.ENGLISH);
+            d = format.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return d;
+    }
+	
 	/**
 	 * 按照指定的格式，将日期类型对象转换成字符串，例如：yyyy-MM-dd,yyyy/MM/dd,yyyy/MM/dd hh:mm:ss
 	 * 

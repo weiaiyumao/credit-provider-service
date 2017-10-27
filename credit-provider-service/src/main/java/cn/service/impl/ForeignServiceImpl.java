@@ -553,7 +553,7 @@ public class ForeignServiceImpl implements ForeignService {
 								Map<String,Object> sixRowList = new HashMap<>();
 								sixRowList.put("mobile",lineTxt);
 								sixRowList.put("delivd",1);//空号状态
-								sixRowList.put("reportTime",detail.getReportTime().getTime());
+								sixRowList.put("reportTime",DateUtils.converYYYYMMddHHmmssStrToDate("1900-01-01 00:00:00").getTime());
 //								sixRowList.add("不存在的号段");
 								sixDataList.add(sixRowList);
 								
