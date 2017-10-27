@@ -9,9 +9,12 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -367,8 +370,11 @@ public class ForeignServiceImpl implements ForeignService {
 		try {
 
 			// 处理加锁业务
-			if (lock.lock()) {
+//			if (lock.lock()) {
 
+			fileUrl = "C:\\Users\\ChuangLan\\Desktop\\12000.txt";
+			
+			
 				LineNumberReader rf = null;
 				int lines = 0;
 				File test = new File(fileUrl);
@@ -426,8 +432,7 @@ public class ForeignServiceImpl implements ForeignService {
 
 				List<List<Object>> thereDataList = new ArrayList<List<Object>>();
 				List<Object> thereRowList = null;
-				List<List<Object>> sixDataList = new ArrayList<List<Object>>();
-				List<Object> sixRowList = null;
+				List<Map<String,Object>> sixDataList = new ArrayList<Map<String,Object>>();				
 				List<List<Object>> unKonwDataList = new ArrayList<List<Object>>();
 				List<Object> unKonwRowList = null;
 
@@ -498,10 +503,10 @@ public class ForeignServiceImpl implements ForeignService {
 									|| detail.getDelivrd().equals("DB:0101") || detail.getDelivrd().equals("12")
 									|| detail.getDelivrd().equals("12") || detail.getDelivrd().equals("601")
 									|| detail.getDelivrd().equals("MK:0012")) {
-								sixRowList = new ArrayList<Object>();
-								sixRowList.add(detail.getMobile());
-//								sixRowList.add("空号");
-//								sixRowList.add(detail.getDelivrd());
+								Map<String,Object> sixRowList = new HashMap<>();
+								sixRowList.put("mobile",detail.getMobile());
+								sixRowList.put("delivd",1);//空号状态
+								sixRowList.put("reportTime",detail.getReportTime().getTime());
 								sixDataList.add(sixRowList);
 							} else if (detail.getDelivrd().equals("HD:31") || detail.getDelivrd().equals("IC:0001")
 									|| detail.getDelivrd().equals("MI:0011") || detail.getDelivrd().equals("MI:0013")
@@ -511,10 +516,10 @@ public class ForeignServiceImpl implements ForeignService {
 									|| detail.getDelivrd().equals("MI:0054") || detail.getDelivrd().equals("MN:0059")
 									|| detail.getDelivrd().equals("MI:0059") || detail.getDelivrd().equals("MI:0055")
 									|| detail.getDelivrd().equals("MI:0004") || detail.getDelivrd().equals("MI:0005")) {
-								sixRowList = new ArrayList<Object>();
-								sixRowList.add(detail.getMobile());
-//								sixRowList.add("停机");
-//								sixRowList.add(detail.getDelivrd());
+								Map<String,Object> sixRowList = new HashMap<>();
+								sixRowList.put("mobile",detail.getMobile());
+								sixRowList.put("delivd",2);//停机状态
+								sixRowList.put("reportTime",detail.getReportTime().getTime());
 								sixDataList.add(sixRowList);
 							} else {
 								unKonwRowList = new ArrayList<Object>();
@@ -545,8 +550,10 @@ public class ForeignServiceImpl implements ForeignService {
 								unKonwDataList.add(unKonwRowList);
 							} else {
 								// 放空号
-								sixRowList = new ArrayList<Object>();
-								sixRowList.add(lineTxt);
+								Map<String,Object> sixRowList = new HashMap<>();
+								sixRowList.put("mobile",lineTxt);
+								sixRowList.put("delivd",1);//空号状态
+								sixRowList.put("reportTime",detail.getReportTime().getTime());
 //								sixRowList.add("不存在的号段");
 								sixDataList.add(sixRowList);
 								
@@ -592,7 +599,15 @@ public class ForeignServiceImpl implements ForeignService {
 				if (!CommonUtils.isNotEmpty(sixDataList)) {
 					logger.info("空号总条数：" + sixDataList.size());
 					Object[] head = { "手机号码", "状态" };
-					FileUtils.createCvsFile("空号.csv", filePath, sixDataList, head);
+					 Collections.sort(sixDataList,new Comparator<Map<String,Object>>(){
+							@Override
+							public int compare(Map<String, Object> arg0, Map<String, Object> arg1) {
+								Long reportTime0 = Long.parseLong(arg0.get("delivd").toString() + arg0.get("reportTime").toString());
+								Long reportTime1 = Long.parseLong(arg1.get("delivd").toString() + arg1.get("reportTime").toString());
+								return reportTime0.compareTo(reportTime1);
+							}
+				        });
+					FileUtils.createCvsFileByMap("空号.csv", filePath, sixDataList, head);
 					cvsFilePath.setSixCount(String.valueOf(sixDataList.size()));
 				}
 
@@ -673,46 +688,46 @@ public class ForeignServiceImpl implements ForeignService {
 				logger.info("用户编号：[" + userId + "]文件地址：[" + fileUrl + "]结束空号检索事件 事件结束时间："
 						+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
-			} else {
-
-				LineNumberReader rf = null;
-				int lines = 0;
-				File test = new File(fileUrl);
-				File file = new File(fileUrl);
-				if (file.isFile() && file.exists()) {
-					long fileLength = test.length();
-					rf = new LineNumberReader(new FileReader(test));
-
-					if (rf != null) {
-						rf.skip(fileLength);
-						lines = rf.getLineNumber();
-						rf.close();
-					}
-				}
-
-				if (map.size() > 0) {
-					runTestDomian.setRunCount(Integer.valueOf(map.get("count_" + userId).toString()));
-				} else {
-					runTestDomian.setRunCount(0);
-				}
-
-				logger.info("lines: " + lines + "count_:" + map.get("count_" + userId).toString());
-
-				if (lines <= Integer.valueOf(map.get("count_" + userId).toString())) {
-					result.setResultMsg("任务执行结束");
-					runTestDomian.setStatus("2"); // 1执行中 2执行结束 3执行异常
-					lock.unlock(); // 注销锁
-
-					logger.info("手机号码：" + mobile + "结束运行检测任务");
-					
-				} else {
-					result.setResultMsg("任务执行中");
-					runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
-				}
-
-				result.setResultObj(runTestDomian);
-				return result;
-			}
+//			} else {
+//
+//				LineNumberReader rf = null;
+//				int lines = 0;
+//				File test = new File(fileUrl);
+//				File file = new File(fileUrl);
+//				if (file.isFile() && file.exists()) {
+//					long fileLength = test.length();
+//					rf = new LineNumberReader(new FileReader(test));
+//
+//					if (rf != null) {
+//						rf.skip(fileLength);
+//						lines = rf.getLineNumber();
+//						rf.close();
+//					}
+//				}
+//
+//				if (map.size() > 0) {
+//					runTestDomian.setRunCount(Integer.valueOf(map.get("count_" + userId).toString()));
+//				} else {
+//					runTestDomian.setRunCount(0);
+//				}
+//
+//				logger.info("lines: " + lines + "count_:" + map.get("count_" + userId).toString());
+//
+//				if (lines <= Integer.valueOf(map.get("count_" + userId).toString())) {
+//					result.setResultMsg("任务执行结束");
+//					runTestDomian.setStatus("2"); // 1执行中 2执行结束 3执行异常
+//					lock.unlock(); // 注销锁
+//
+//					logger.info("手机号码：" + mobile + "结束运行检测任务");
+//					
+//				} else {
+//					result.setResultMsg("任务执行中");
+//					runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
+//				}
+//
+//				result.setResultObj(runTestDomian);
+//				return result;
+//			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
