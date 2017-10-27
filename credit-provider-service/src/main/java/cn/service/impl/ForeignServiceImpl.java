@@ -584,7 +584,7 @@ public class ForeignServiceImpl implements ForeignService {
 				cvsFilePath.setUserId(userId);
 
 				// 生成报表
-				String filePath = loadfilePath + userId + "/" + DateUtils.getDate() + "/";
+				String filePath = loadfilePath + userId + "/" + DateUtils.getDate() + "/" + System.currentTimeMillis() + "/";
 //				Object[] head = { "手机号码", "状态", "代码状态" };
 				if (!CommonUtils.isNotEmpty(thereDataList)) {
 					logger.info("实号总条数：" + thereDataList.size());
