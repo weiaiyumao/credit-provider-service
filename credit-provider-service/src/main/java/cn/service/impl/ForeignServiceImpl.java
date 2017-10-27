@@ -370,10 +370,7 @@ public class ForeignServiceImpl implements ForeignService {
 		try {
 
 			// 处理加锁业务
-//			if (lock.lock()) {
-
-			fileUrl = "C:\\Users\\ChuangLan\\Desktop\\12000.txt";
-			
+			if (lock.lock()) {			
 			
 				LineNumberReader rf = null;
 				int lines = 0;
@@ -688,46 +685,46 @@ public class ForeignServiceImpl implements ForeignService {
 				logger.info("用户编号：[" + userId + "]文件地址：[" + fileUrl + "]结束空号检索事件 事件结束时间："
 						+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
-//			} else {
-//
-//				LineNumberReader rf = null;
-//				int lines = 0;
-//				File test = new File(fileUrl);
-//				File file = new File(fileUrl);
-//				if (file.isFile() && file.exists()) {
-//					long fileLength = test.length();
-//					rf = new LineNumberReader(new FileReader(test));
-//
-//					if (rf != null) {
-//						rf.skip(fileLength);
-//						lines = rf.getLineNumber();
-//						rf.close();
-//					}
-//				}
-//
-//				if (map.size() > 0) {
-//					runTestDomian.setRunCount(Integer.valueOf(map.get("count_" + userId).toString()));
-//				} else {
-//					runTestDomian.setRunCount(0);
-//				}
-//
-//				logger.info("lines: " + lines + "count_:" + map.get("count_" + userId).toString());
-//
-//				if (lines <= Integer.valueOf(map.get("count_" + userId).toString())) {
-//					result.setResultMsg("任务执行结束");
-//					runTestDomian.setStatus("2"); // 1执行中 2执行结束 3执行异常
-//					lock.unlock(); // 注销锁
-//
-//					logger.info("手机号码：" + mobile + "结束运行检测任务");
-//					
-//				} else {
-//					result.setResultMsg("任务执行中");
-//					runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
-//				}
-//
-//				result.setResultObj(runTestDomian);
-//				return result;
-//			}
+			} else {
+
+				LineNumberReader rf = null;
+				int lines = 0;
+				File test = new File(fileUrl);
+				File file = new File(fileUrl);
+				if (file.isFile() && file.exists()) {
+					long fileLength = test.length();
+					rf = new LineNumberReader(new FileReader(test));
+
+					if (rf != null) {
+						rf.skip(fileLength);
+						lines = rf.getLineNumber();
+						rf.close();
+					}
+				}
+
+				if (map.size() > 0) {
+					runTestDomian.setRunCount(Integer.valueOf(map.get("count_" + userId).toString()));
+				} else {
+					runTestDomian.setRunCount(0);
+				}
+
+				logger.info("lines: " + lines + "count_:" + map.get("count_" + userId).toString());
+
+				if (lines <= Integer.valueOf(map.get("count_" + userId).toString())) {
+					result.setResultMsg("任务执行结束");
+					runTestDomian.setStatus("2"); // 1执行中 2执行结束 3执行异常
+					lock.unlock(); // 注销锁
+
+					logger.info("手机号码：" + mobile + "结束运行检测任务");
+					
+				} else {
+					result.setResultMsg("任务执行中");
+					runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
+				}
+
+				result.setResultObj(runTestDomian);
+				return result;
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
