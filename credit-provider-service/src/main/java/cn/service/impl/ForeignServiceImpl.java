@@ -584,7 +584,8 @@ public class ForeignServiceImpl implements ForeignService {
 				cvsFilePath.setUserId(userId);
 
 				// 生成报表
-				String filePath = loadfilePath + userId + "/" + DateUtils.getDate() + "/" + System.currentTimeMillis() + "/";
+				String timeTemp = String.valueOf(System.currentTimeMillis());
+				String filePath = loadfilePath + userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/";
 //				Object[] head = { "手机号码", "状态", "代码状态" };
 				if (!CommonUtils.isNotEmpty(thereDataList)) {
 					logger.info("实号总条数：" + thereDataList.size());
@@ -619,19 +620,19 @@ public class ForeignServiceImpl implements ForeignService {
 
 				if (!CommonUtils.isNotEmpty(thereDataList)) {
 					list.add(new File(filePath + "实号.csv"));
-					cvsFilePath.setThereFilePath(userId + "/" + DateUtils.getDate() + "/实号.csv");
+					cvsFilePath.setThereFilePath(userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/实号.csv");
 					cvsFilePath.setThereFileSize(FileUtils.getFileSize(filePath + "实号.csv"));
 				}
 
 				if (!CommonUtils.isNotEmpty(sixDataList)) {
 					list.add(new File(filePath + "空号.csv"));
-					cvsFilePath.setSixFilePath(userId + "/" + DateUtils.getDate() + "/空号.csv");
+					cvsFilePath.setSixFilePath(userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/空号.csv");
 					cvsFilePath.setSixFileSize(FileUtils.getFileSize(filePath + "空号.csv"));
 				}
 
 				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
 					list.add(new File(filePath + "沉默号.csv"));
-					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/沉默号.csv");
+					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/沉默号.csv");
 					cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "沉默号.csv"));
 				}
 
@@ -641,7 +642,7 @@ public class ForeignServiceImpl implements ForeignService {
 					zipName = "测试结果包.zip";
 					FileUtils.createZip(list, filePath + zipName);
 					cvsFilePath.setZipName(zipName);
-					cvsFilePath.setZipPath((userId + "/" + DateUtils.getDate() + "/测试结果包.zip"));
+					cvsFilePath.setZipPath((userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/测试结果包.zip"));
 					cvsFilePath.setZipSize(FileUtils.getFileSize(filePath + zipName));
 				}
 
