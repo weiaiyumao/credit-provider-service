@@ -595,8 +595,8 @@ public class ForeignServiceImpl implements ForeignService {
 
 				if (!CommonUtils.isNotEmpty(sixDataList)) {
 					logger.info("空号总条数：" + sixDataList.size());
-					Object[] head = { "手机号码", "状态" };
-					 Collections.sort(sixDataList,new Comparator<Map<String,Object>>(){
+					Object[] head = {"手机号码"};
+					Collections.sort(sixDataList,new Comparator<Map<String,Object>>(){
 							@Override
 							public int compare(Map<String, Object> arg0, Map<String, Object> arg1) {
 								Long reportTime0 = Long.parseLong(arg0.get("delivd").toString() + arg0.get("reportTime").toString());
