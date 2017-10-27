@@ -19,6 +19,7 @@ import cn.utils.DateUtils;
 import main.java.cn.common.BackResult;
 import main.java.cn.common.ResultCode;
 import main.java.cn.domain.MobileInfoDomain;
+import main.java.cn.sms.util.ChuangLanSmsUtil;
 
 @Service
 public class ApiMobileTestServiceImpl implements ApiMobileTestService{
@@ -89,7 +90,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService{
 				}
 				
 				//  发送短信
-				
+				ChuangLanSmsUtil.getInstance().sendSmsByMobileForTest(mobile);
 				
 			}
 		} catch (Exception e) {
