@@ -784,7 +784,8 @@ public class DateUtils {
 //		System.out.println(DateUtils.parseDate("2017-01-05 12:27:23", "yyyy-MM-dd hh:mm:ss"));
 		
 		
-		        System.out.println( DateUtils.DateAddhours("2017-07-07 16:42:30", -8));
+		        System.out.println( DateUtils.converYYYYMMddHHmmssStrToDate("2017-07-07 16:42:30").getTime());
+		        
 	}
 
 }
