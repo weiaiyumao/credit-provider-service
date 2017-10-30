@@ -77,7 +77,6 @@ cn\entity\cm\CM139.class
 cn\repository\cm\CM152Repository.class
 cn\service\cu\CU186Service.class
 cn\service\cu\CU131Service.class
-cn\service\impl\ForeignServiceImpl$1.class
 cn\service\cu\CU132Service.class
 cn\repository\cu\CU155Repository.class
 cn\entity\cu\CU145.class
