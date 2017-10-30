@@ -9,9 +9,12 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -367,8 +370,8 @@ public class ForeignServiceImpl implements ForeignService {
 		try {
 
 			// 处理加锁业务
-			if (lock.lock()) {
-
+			if (lock.lock()) {			
+			
 				LineNumberReader rf = null;
 				int lines = 0;
 				File test = new File(fileUrl);
@@ -426,8 +429,7 @@ public class ForeignServiceImpl implements ForeignService {
 
 				List<List<Object>> thereDataList = new ArrayList<List<Object>>();
 				List<Object> thereRowList = null;
-				List<List<Object>> sixDataList = new ArrayList<List<Object>>();
-				List<Object> sixRowList = null;
+				List<Map<String,Object>> sixDataList = new ArrayList<Map<String,Object>>();				
 				List<List<Object>> unKonwDataList = new ArrayList<List<Object>>();
 				List<Object> unKonwRowList = null;
 
@@ -498,10 +500,10 @@ public class ForeignServiceImpl implements ForeignService {
 									|| detail.getDelivrd().equals("DB:0101") || detail.getDelivrd().equals("12")
 									|| detail.getDelivrd().equals("12") || detail.getDelivrd().equals("601")
 									|| detail.getDelivrd().equals("MK:0012")) {
-								sixRowList = new ArrayList<Object>();
-								sixRowList.add(detail.getMobile());
-//								sixRowList.add("空号");
-//								sixRowList.add(detail.getDelivrd());
+								Map<String,Object> sixRowList = new HashMap<>();
+								sixRowList.put("mobile",detail.getMobile());
+								sixRowList.put("delivd",1);//空号状态
+								sixRowList.put("reportTime",detail.getReportTime().getTime());
 								sixDataList.add(sixRowList);
 							} else if (detail.getDelivrd().equals("HD:31") || detail.getDelivrd().equals("IC:0001")
 									|| detail.getDelivrd().equals("MI:0011") || detail.getDelivrd().equals("MI:0013")
@@ -511,10 +513,10 @@ public class ForeignServiceImpl implements ForeignService {
 									|| detail.getDelivrd().equals("MI:0054") || detail.getDelivrd().equals("MN:0059")
 									|| detail.getDelivrd().equals("MI:0059") || detail.getDelivrd().equals("MI:0055")
 									|| detail.getDelivrd().equals("MI:0004") || detail.getDelivrd().equals("MI:0005")) {
-								sixRowList = new ArrayList<Object>();
-								sixRowList.add(detail.getMobile());
-//								sixRowList.add("停机");
-//								sixRowList.add(detail.getDelivrd());
+								Map<String,Object> sixRowList = new HashMap<>();
+								sixRowList.put("mobile",detail.getMobile());
+								sixRowList.put("delivd",2);//停机状态
+								sixRowList.put("reportTime",detail.getReportTime().getTime());
 								sixDataList.add(sixRowList);
 							} else {
 								unKonwRowList = new ArrayList<Object>();
@@ -545,8 +547,10 @@ public class ForeignServiceImpl implements ForeignService {
 								unKonwDataList.add(unKonwRowList);
 							} else {
 								// 放空号
-								sixRowList = new ArrayList<Object>();
-								sixRowList.add(lineTxt);
+								Map<String,Object> sixRowList = new HashMap<>();
+								sixRowList.put("mobile",lineTxt);
+								sixRowList.put("delivd",1);//空号状态
+								sixRowList.put("reportTime",DateUtils.converYYYYMMddHHmmssStrToDate("1900-01-01 00:00:00").getTime());
 //								sixRowList.add("不存在的号段");
 								sixDataList.add(sixRowList);
 								
@@ -580,7 +584,8 @@ public class ForeignServiceImpl implements ForeignService {
 				cvsFilePath.setUserId(userId);
 
 				// 生成报表
-				String filePath = loadfilePath + userId + "/" + DateUtils.getDate() + "/";
+				String timeTemp = String.valueOf(System.currentTimeMillis());
+				String filePath = loadfilePath + userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/";
 //				Object[] head = { "手机号码", "状态", "代码状态" };
 				if (!CommonUtils.isNotEmpty(thereDataList)) {
 					logger.info("实号总条数：" + thereDataList.size());
@@ -591,8 +596,16 @@ public class ForeignServiceImpl implements ForeignService {
 
 				if (!CommonUtils.isNotEmpty(sixDataList)) {
 					logger.info("空号总条数：" + sixDataList.size());
-					Object[] head = { "手机号码", "状态" };
-					FileUtils.createCvsFile("空号.csv", filePath, sixDataList, head);
+					Object[] head = {"手机号码"};
+//					Collections.sort(sixDataList,new Comparator<Map<String,Object>>(){
+//							@Override
+//							public int compare(Map<String, Object> arg0, Map<String, Object> arg1) {
+//								Long reportTime0 = Long.parseLong(arg0.get("delivd").toString() + arg0.get("reportTime").toString());
+//								Long reportTime1 = Long.parseLong(arg1.get("delivd").toString() + arg1.get("reportTime").toString());
+//								return reportTime0.compareTo(reportTime1);
+//							}
+//				        });
+					FileUtils.createCvsFileByMap("空号.csv", filePath, sixDataList, head);
 					cvsFilePath.setSixCount(String.valueOf(sixDataList.size()));
 				}
 
@@ -607,19 +620,19 @@ public class ForeignServiceImpl implements ForeignService {
 
 				if (!CommonUtils.isNotEmpty(thereDataList)) {
 					list.add(new File(filePath + "实号.csv"));
-					cvsFilePath.setThereFilePath(userId + "/" + DateUtils.getDate() + "/实号.csv");
+					cvsFilePath.setThereFilePath(userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/实号.csv");
 					cvsFilePath.setThereFileSize(FileUtils.getFileSize(filePath + "实号.csv"));
 				}
 
 				if (!CommonUtils.isNotEmpty(sixDataList)) {
 					list.add(new File(filePath + "空号.csv"));
-					cvsFilePath.setSixFilePath(userId + "/" + DateUtils.getDate() + "/空号.csv");
+					cvsFilePath.setSixFilePath(userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/空号.csv");
 					cvsFilePath.setSixFileSize(FileUtils.getFileSize(filePath + "空号.csv"));
 				}
 
 				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
 					list.add(new File(filePath + "沉默号.csv"));
-					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/沉默号.csv");
+					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/沉默号.csv");
 					cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "沉默号.csv"));
 				}
 
@@ -629,7 +642,7 @@ public class ForeignServiceImpl implements ForeignService {
 					zipName = "测试结果包.zip";
 					FileUtils.createZip(list, filePath + zipName);
 					cvsFilePath.setZipName(zipName);
-					cvsFilePath.setZipPath((userId + "/" + DateUtils.getDate() + "/测试结果包.zip"));
+					cvsFilePath.setZipPath((userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/测试结果包.zip"));
 					cvsFilePath.setZipSize(FileUtils.getFileSize(filePath + zipName));
 				}
 
