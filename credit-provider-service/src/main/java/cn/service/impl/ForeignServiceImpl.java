@@ -597,14 +597,19 @@ public class ForeignServiceImpl implements ForeignService {
 				if (!CommonUtils.isNotEmpty(sixDataList)) {
 					logger.info("空号总条数：" + sixDataList.size());
 					Object[] head = {"手机号码"};
-//					Collections.sort(sixDataList,new Comparator<Map<String,Object>>(){
-//							@Override
-//							public int compare(Map<String, Object> arg0, Map<String, Object> arg1) {
-//								Long reportTime0 = Long.parseLong(arg0.get("delivd").toString() + arg0.get("reportTime").toString());
-//								Long reportTime1 = Long.parseLong(arg1.get("delivd").toString() + arg1.get("reportTime").toString());
-//								return reportTime0.compareTo(reportTime1);
-//							}
-//				        });
+					Collections.sort(sixDataList,new Comparator<Map<String,Object>>(){
+							@Override
+							public int compare(Map<String, Object> arg0, Map<String, Object> arg1) {
+								try{
+									Long reportTime0 = Long.parseLong(arg0.get("delivd").toString() + arg0.get("reportTime").toString());
+									Long reportTime1 = Long.parseLong(arg1.get("delivd").toString() + arg1.get("reportTime").toString());
+									return reportTime0.compareTo(reportTime1);
+								}catch (NumberFormatException e) {
+									logger.info("空号排序异常，reportTime格式转换异常" + e);
+									return 0;
+								}
+							}
+				        });
 					FileUtils.createCvsFileByMap("空号.csv", filePath, sixDataList, head);
 					cvsFilePath.setSixCount(String.valueOf(sixDataList.size()));
 				}
