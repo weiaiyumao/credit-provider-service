@@ -3,6 +3,7 @@ cn\service\cu\CU176Service.class
 cn\service\impl\ForeignServiceImpl.class
 cn\repository\cm\CM157Repository.class
 cn\repository\cm\CM188Repository.class
+cn\service\impl\SpaceMobileServiceImpl.class
 cn\repository\cm\CM182Repository.class
 cn\service\ct\impl\CT153ServiceImpl.class
 cn\service\ForeignService.class
@@ -21,7 +22,9 @@ cn\service\ct\CT153Service.class
 cn\service\cu\CU130Service.class
 cn\utils\Constant.class
 cn\repository\ct\CT133Repository.class
+cn\service\ApiMobileTestService.class
 cn\repository\base\BaseMobileDetailRepository.class
+cn\controller\SmsCallbackController.class
 cn\entity\cm\CM152.class
 cn\utils\CommonUtils.class
 cn\entity\cu\CU176.class
@@ -46,6 +49,8 @@ cn\entity\ct\CT133.class
 cn\service\ct\CT180Service.class
 cn\service\cm\CM134Service.class
 cn\service\cm\impl\CM136ServiceImpl.class
+cn\entity\MobileTestLog.class
+cn\controller\ApiMobileTestController.class
 cn\repository\cm\CM139Repository.class
 cn\utils\FileUtils.class
 cn\service\impl\MobileNumberSectionServiceImpl.class
@@ -116,6 +121,7 @@ cn\service\cm\impl\CM158ServiceImpl.class
 cn\repository\MobileNumberSectionReository.class
 cn\service\base\BaseMobileDetailService.class
 cn\repository\cm\CM134Repository.class
+cn\entity\SpaceMobile.class
 cn\repository\cm\CM137Repository.class
 cn\entity\cm\CM135.class
 cn\service\cm\CM139Service.class
@@ -137,6 +143,7 @@ cn\service\cm\impl\CM178ServiceImpl.class
 cn\service\cm\impl\CM1705ServiceImpl.class
 cn\repository\cm\CM187Repository.class
 cn\entity\cu\CU132.class
+cn\service\SpaceMobileService.class
 cn\service\cu\impl\CU1709ServiceImpl.class
 cn\repository\cm\CM184Repository.class
 cn\service\CvsFilePathService.class
@@ -150,14 +157,17 @@ cn\service\cm\CM1705Service.class
 cn\service\cm\impl\CM147ServiceImpl.class
 cn\entity\ct\CT1700.class
 cn\repository\cu\CU156Repository.class
+cn\repository\MobileTestLogReository.class
 cn\service\cm\CM152Service.class
 cn\service\impl\SpaceDetectionServiceImpl.class
 cn\service\cm\impl\CM183ServiceImpl.class
+cn\service\impl\ApiMobileTestServiceImpl.class
 cn\repository\cm\CM147Repository.class
 cn\service\ct\impl\CT180ServiceImpl.class
 cn\entity\cm\CM183.class
 cn\service\cm\impl\CM159ServiceImpl.class
 cn\service\cu\CU1709Service.class
+cn\repository\SpaceMobileReository.class
 cn\redis\RedisLock$3.class
 cn\service\cu\CU185Service.class
 cn\repository\cm\CM135Repository.class

@@ -29,4 +29,11 @@ public interface SpaceDetectionService extends MobileTestBusService{
 	 * @return
 	 */
 	BaseMobileDetail findByMobileAndReportTime(String mobile, Date startTime, Date endTime);
+	
+	/**
+	 * 新增或者删除记录
+	 * @param mobile
+	 * @return
+	 */
+	void smSCallBack(String mobile,String status,String notifyTime);
 }

@@ -12,13 +12,4 @@ package cn.entity.base;
  */
 public class Mobile extends BaseMobileDetail{
 
-	private String mobilePhoneType = "03"; // 手机号码平台类型
-
-	public String getMobilePhoneType() {
-		return mobilePhoneType;
-	}
-
-	public void setMobilePhoneType(String mobilePhoneType) {
-		this.mobilePhoneType = mobilePhoneType;
-	}
 }

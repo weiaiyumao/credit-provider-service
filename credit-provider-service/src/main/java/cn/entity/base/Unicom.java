@@ -13,14 +13,4 @@ package cn.entity.base;
  */
 public class Unicom extends BaseMobileDetail{
 	
-	private String mobilePhoneType = "02"; // 手机号码平台类型
-
-	public String getMobilePhoneType() {
-		return mobilePhoneType;
-	}
-
-	public void setMobilePhoneType(String mobilePhoneType) {
-		this.mobilePhoneType = mobilePhoneType;
-	}
-	
 }

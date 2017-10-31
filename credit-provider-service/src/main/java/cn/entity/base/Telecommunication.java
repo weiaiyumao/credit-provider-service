@@ -10,15 +10,4 @@ package cn.entity.base;
  */
 public class Telecommunication extends BaseMobileDetail{
 	
-	private String mobilePhoneType = "01"; // 手机号码平台类型
-
-	public String getMobilePhoneType() {
-		return mobilePhoneType;
-	}
-
-	public void setMobilePhoneType(String mobilePhoneType) {
-		this.mobilePhoneType = mobilePhoneType;
-	}
-	
-	
 }

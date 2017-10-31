@@ -3,7 +3,10 @@ package cn.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import cn.entity.SpaceMobile;
@@ -86,7 +89,9 @@ import cn.service.cu.CU176Service;
 import cn.service.cu.CU185Service;
 import cn.service.cu.CU186Service;
 import cn.service.unknown.UnknownMobileDetailService;
+import cn.task.helper.MobileDetailHelper;
 import cn.utils.CommonUtils;
+import cn.utils.DateUtils;
 import main.java.cn.common.BackResult;
 import main.java.cn.domain.SpacePhoneDomain;
 
@@ -209,6 +214,11 @@ public class SpaceDetectionServiceImpl implements SpaceDetectionService {
 	
 	@Autowired
 	private SpaceMobileService spaceMobileService;
+	
+	@Autowired
+    private MongoTemplate mongoTemplate;
+	
+	private final static Logger logger = LoggerFactory.getLogger(SpaceDetectionService.class);
 	
 	@Override
 	public BaseMobileDetail findByMobile(String mobile) {
@@ -884,6 +894,32 @@ public class SpaceDetectionServiceImpl implements SpaceDetectionService {
 		}
 		
 		return result;
+	}
+
+	@Override
+	public void smSCallBack(String mobile,String status,String notifyTime) {
+		
+		try {
+			
+			BaseMobileDetail detail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile);
+			detail.setMobile(mobile);
+			detail.setDelivrd(status);
+			detail.setReportTime(DateUtils.StringToDate(DateUtils.getCurrentTimeMillis().substring(0,2)+notifyTime));
+			
+			// 检测 3个月内
+			BaseMobileDetail baseMobileDetail = this.findByMobileAndReportTime(detail.getMobile(), DateUtils.addDay(DateUtils.getCurrentDateTime(), -270),
+					DateUtils.getCurrentDateTime());
+			
+			// 更新数据库数据
+			if (null != baseMobileDetail) {
+				mongoTemplate.remove(baseMobileDetail);
+				
+			}
+			mongoTemplate.save(detail);
+			
+		} catch (Exception e) {
+			logger.error("更新数据出现系统异常：" + e.getMessage());
+		}
 	}
 
 

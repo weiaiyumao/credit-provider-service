@@ -147,11 +147,12 @@ public class Controller {
     public BaseMobileDetail findname() {
     	BaseMobileDetail detail  = null;
     try {
-    	Date sixStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -270);
     	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
-        detail = spaceDetectionService.findByMobileAndReportTime("17365312296",
-				sixStartTime, DateUtils.getCurrentDateTime());
+    	Date startTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -90);
+    	detail = spaceDetectionService.findByMobileAndReportTime("18611764785", startTime,
+				DateUtils.getCurrentDateTime());
 //    	List<CM136> detail = cM136Service.findByMobile("13663343685");
+    	System.out.println(detail.getMobile());
     	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
 	} catch (Exception e) {
 		// TODO: handle exception

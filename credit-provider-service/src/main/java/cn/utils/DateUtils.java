@@ -774,6 +774,17 @@ public class DateUtils {
         return format.format(date); 
 	}
 	
+	/**
+	 * 将格式yyyyMMddHHmmss 转换为Date类型
+	 * @param time
+	 * @return
+	 * @throws ParseException
+	 */
+	public static Date StringToDate(String time) throws ParseException{
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        // SimpleDateFormat的parse(String time)方法将String转换为Date
+        return simpleDateFormat.parse(time);
+	}
 
 	public static void main(String[] args) {
 

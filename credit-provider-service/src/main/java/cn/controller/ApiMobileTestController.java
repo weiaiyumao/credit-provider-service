@@ -19,7 +19,7 @@ public class ApiMobileTestController {
 	private ApiMobileTestService apiMobileTestService;
 	
 	@RequestMapping(value = "/findByMobileNumbers", method = RequestMethod.POST)
-	public BackResult<List<MobileInfoDomain>> findByMobileNumbers(String mobileNumbers){
-		return apiMobileTestService.findByMobileNumbers(mobileNumbers);
+	public BackResult<List<MobileInfoDomain>> findByMobileNumbers(String mobileNumbers,String userId){
+		return apiMobileTestService.findByMobileNumbers(mobileNumbers,userId);
 	}
 }
