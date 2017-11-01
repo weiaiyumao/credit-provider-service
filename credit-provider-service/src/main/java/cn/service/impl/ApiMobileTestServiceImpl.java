@@ -208,7 +208,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 							mobileTestLog.setId(
 									DateUtils.getCurrentTimeMillis().substring(0, 4) + System.currentTimeMillis());
 							mobileTestLog.setArea(mobileInfoDomain.getArea());
-							mobileTestLog.setChargesStatus(mobileTestLog.getChargesStatus());
+							mobileTestLog.setChargesStatus(mobileInfoDomain.getChargesStatus());
 							mobileTestLog.setCreateTime(new Date());
 							mobileTestLog.setLastTime(mobileInfoDomain.getLastTime());
 							mobileTestLog.setMobile(mobileInfoDomain.getMobile());
