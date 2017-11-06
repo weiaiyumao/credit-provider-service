@@ -184,6 +184,7 @@ cn\repository\cu\CU145Repository.class
 cn\entity\cu\CU185.class
 cn\redis\RedisLock$2.class
 cn\entity\cm\CM178.class
+cn\service\impl\ApiMobileTestServiceImpl$2.class
 cn\entity\unknown\UnknownMobileDetail.class
 cn\repository\cm\CM159Repository.class
 cn\repository\cm\CM150Repository.class
