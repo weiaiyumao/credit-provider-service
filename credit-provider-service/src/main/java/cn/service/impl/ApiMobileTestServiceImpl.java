@@ -224,22 +224,21 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 	 * @return
 	 */
 	public Boolean isSpaceMobile(String delivrd) {
-		if (delivrd.equals("DELIVRD") || delivrd.equals("MC:0055") || delivrd.equals("CJ:0007")
-				|| delivrd.equals("CJ:0008") || delivrd.equals("DB:0141") || delivrd.equals("DISTURB")
-				|| delivrd.equals("HD:0001") || delivrd.equals("IC:0151") || delivrd.equals("ID:0004")
-				|| delivrd.equals("MBBLACK") || delivrd.equals("MC:0055") || delivrd.equals("MK:0008")
-				|| delivrd.equals("MK:0010") || delivrd.equals("MK:0022") || delivrd.equals("MK:0024")
-				|| delivrd.equals("MK:0029") || delivrd.equals("MN:0017") || delivrd.equals("MN:0044")
-				|| delivrd.equals("MN:0051") || delivrd.equals("MN:0054") || delivrd.equals("REJECT")
-				|| delivrd.equals("SME19") || delivrd.equals("TIMEOUT") || delivrd.equals("UNDELIV")
-				|| delivrd.equals("GG:0024") || delivrd.equals("DB:0309") || delivrd.equals("SME92")
-				|| delivrd.equals("DB:0114") || delivrd.equals("MN:0174") || delivrd.equals("YX:7000")
-				|| delivrd.equals("MK:0004") || delivrd.equals("NOROUTE") || delivrd.equals("CJ:0005")
-				|| delivrd.equals("IC:0055") || delivrd.equals("REJECTE") || delivrd.equals("MN:0053")
-				|| delivrd.equals("MB:1026")) {
-			return Boolean.TRUE;
+		if (delivrd.equals("101") || delivrd.equals("-1") || delivrd.equals("SGIP:2：12") || delivrd.equals("ERRNUM")
+				|| delivrd.equals("RP:1") || delivrd.equals("MN:0001") || delivrd.equals("SPMSERR:136")
+				|| delivrd.equals("MK:0000") || delivrd.equals("MK:0001") || delivrd.equals("SGIP:1")
+				|| delivrd.equals("SGIP:33") || delivrd.equals("SGIP:67") || delivrd.equals("LT:0001")
+				|| delivrd.equals("3") || delivrd.equals("Deliver") || delivrd.equals("CB:0001")
+				|| delivrd.equals("CB:0053") || delivrd.equals("DB:0101") || delivrd.equals("12")
+				|| delivrd.equals("12") || delivrd.equals("601") || delivrd.equals("MK:0012") || delivrd.equals("HD:31")
+				|| delivrd.equals("IC:0001") || delivrd.equals("MI:0011") || delivrd.equals("MI:0013")
+				|| delivrd.equals("MI:0029") || delivrd.equals("MK:0005")
+				|| delivrd.equals("UNKNOWN") || delivrd.equals("MI:0024") || delivrd.equals("MI:0054")
+				|| delivrd.equals("MN:0059") || delivrd.equals("MI:0059") || delivrd.equals("MI:0055")
+				|| delivrd.equals("MI:0004") || delivrd.equals("MI:0005")) {
+			return Boolean.FALSE;
 		}
-		return Boolean.FALSE;
+		return Boolean.TRUE;
 	}
 
 	/**
