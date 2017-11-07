@@ -261,7 +261,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 
 						for (MobileInfoDomain mobileInfoDomain : list) {
 							MobileTestLog mobileTestLog = new MobileTestLog();
-							mobileTestLog.setId(
+							mobileTestLog.setOrderNo(
 									DateUtils.getCurrentTimeMillis().substring(0, 4) + System.currentTimeMillis());
 							mobileTestLog.setArea(mobileInfoDomain.getArea());
 							mobileTestLog.setChargesStatus(mobileInfoDomain.getChargesStatus());
@@ -346,4 +346,90 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 		return result;
 	}
 
+	@Override
+	public BackResult<Boolean> findByMobile(String mobile,String userId) {
+		
+		RedisLock lock = new RedisLock(redisTemplate, "sh_dg_" + mobile + "_" + userId, 0, 3 * 1000);
+
+		try {
+
+			// 处理加锁业务
+			if (lock.lock()) {
+
+				BackResult<Boolean> result = new BackResult<Boolean>();
+
+				List<MobileInfoDomain> list = new ArrayList<MobileInfoDomain>();
+
+				Date startTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -90);
+				Date endTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), 1);
+				// 创建对象设置初始手机号码
+				MobileInfoDomain domain = new MobileInfoDomain();
+				domain.setMobile(mobile);
+
+				// 验证是否为正常的１１位有效数字
+				if (!CommonUtils.isNumeric(mobile)) {
+					domain.setLastTime(DateUtils.getCurrentDateTime());
+					domain.setChargesStatus("0"); // 不收费
+					domain.setStatus("0"); // 空号
+					list.add(domain);
+					return result;
+				}
+
+				// 1 查询号段
+				MobileNumberSection section = mobileNumberSectionService
+						.findByNumberSection(mobile.substring(0, 7));
+
+				if (null == section) {
+					domain.setLastTime(DateUtils.getCurrentDateTime());
+					domain.setChargesStatus("1");
+					domain.setStatus("0"); // 空号
+					list.add(domain);
+					return result;
+				}
+
+				// 2 查询库 最近3个月
+				BaseMobileDetail detail = spaceDetectionService.findByMobileAndReportTime(mobile, startTime,
+						endTime);
+
+				if (null != detail) {
+
+					domain.setArea(section.getProvince() + "-" + section.getCity());
+					domain.setNumberType(section.getMobilePhoneType());
+					domain.setLastTime(detail.getReportTime());
+					domain.setChargesStatus("1");
+
+					if (this.isSpaceMobile(detail.getDelivrd())) {
+						domain.setStatus("1"); // 实号
+					} else {
+						domain.setStatus("0"); // 空号
+					}
+
+					list.add(domain);
+					
+					return result;
+				}
+
+				// 发送短信
+				ChuangLanSmsUtil.getInstance().sendYxByMobile(mobile);
+
+				lock.unlock(); // 注销锁
+				result.setResultObj(null);
+				return result;
+			} else {
+				return new BackResult<Boolean>(ResultCode.RESULT_API_NOTCONCURRENT, "正在计算中");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			lock.unlock(); // 注销锁
+			logger.error("账号二次清洗出现系统异常：" + e.getMessage());
+		}
+
+		return new BackResult<Boolean>(ResultCode.RESULT_FAILED, "系统异常");
+	}
+
+	
+	public static void main(String[] args) {
+		System.out.println(Runtime.getRuntime().availableProcessors());
+	}
 }
