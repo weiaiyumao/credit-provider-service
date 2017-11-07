@@ -28,12 +28,15 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.entity.MobileNumberSection;
 import cn.entity.base.BaseMobileDetail;
+import cn.service.ForeignService;
 import cn.service.MobileNumberSectionService;
 import cn.task.handler.ClDateSaveDBHandler;
 import cn.task.helper.MobileDetailHelper;
 import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
 import cn.utils.UUIDTool;
+import main.java.cn.common.BackResult;
+import main.java.cn.domain.RunTestDomian;
 
 /**
  * 每日定时任务入库
@@ -59,6 +62,9 @@ public class TodayDataSaveDBTask {
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	
+	@Autowired
+    private ForeignService foreignService;
 	
 	@Autowired
 	private MobileNumberSectionService mobileNumberSectionService;
@@ -133,14 +139,15 @@ public class TodayDataSaveDBTask {
 
 	}
 	
-//	public static void main(String[] args) {
-//		
-//		for (int i = 1; i <= 7; i++) {
-//			RunnableThreadTask rtt = new RunnableThreadTask("20170" + i, "20170" + i);
-//			new Thread(rtt, "线程" + i + "开始执行定时任务入库").start();
-//		}
-//		
-//		
+//	/**
+//	 * 开启7个线程同时执行定时任务
+//	 */
+//	@Scheduled(cron = "0 04 14 30 10 ?")
+//	public void test123() {
+//
+//    	BackResult<RunTestDomian> result = foreignService.runTheTest("C:\\Users\\ChuangLan\\Desktop\\电销号码.txt", "17671",String.valueOf(System.currentTimeMillis()),"13817367247");
+//
+//
 //	}
 	
 	@Scheduled(cron = "0 58 13 17 10 ?")

@@ -1,5 +1,8 @@
 package cn.service;
 
+import cn.entity.CvsFilePath;
+import main.java.cn.common.BackResult;
+import main.java.cn.domain.RunTestDomian;
 import main.java.cn.service.ForeignBusService;
 
 /**
@@ -9,12 +12,12 @@ import main.java.cn.service.ForeignBusService;
  */
 public interface ForeignService extends ForeignBusService{
 	
-//	/**
-//	 * 返回文件地址检测结果
-//	 * @param fileUrl
-//	 * @return
-//	 */
-//	CvsFilePath runTheTest(String fileUrl,String userId);
+	/**
+	 * 返回文件地址检测结果
+	 * @param fileUrl
+	 * @return
+	 */
+	BackResult<RunTestDomian> runTheTest(String fileUrl, String userId, String timestamp, String mobile);
 	
 	
 }
