@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.Destination;
+
+import org.apache.activemq.command.ActiveMQQueue;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.activemq.ProducerService;
 import cn.entity.MobileNumberSection;
 import cn.entity.base.BaseMobileDetail;
 import cn.entity.ct.CT133;
@@ -53,6 +57,9 @@ public class Controller {
 	
     @Autowired
     private MongoTemplate mongoTemplate;
+    
+    @Autowired
+    private ProducerService producerService;
     
     @Autowired
     private SpaceDetectionService spaceDetectionService;
@@ -180,10 +187,13 @@ public class Controller {
     @RequestMapping("/hi")
     public String hi(String name){
     	
+    	Destination destination = new ActiveMQQueue("mytest.queue");  
+        
+        for(int i=0; i<100; i++){  
+            producerService.sendMessage(destination, "myname is chhliu!!!");  
+        }  
     	
-    	MobileNumberSection section = mobileNumberSectionService.findByNumberSection(name.substring(0, 7));
-    	
-    	return "hi "+section.getNumberSection()+",i am from port:" +port;
+    	return "hi" +port;
     }
     
     public static void main1111(String[] args) {

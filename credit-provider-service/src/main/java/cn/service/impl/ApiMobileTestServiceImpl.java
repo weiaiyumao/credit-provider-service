@@ -365,15 +365,6 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 				MobileInfoDomain domain = new MobileInfoDomain();
 				domain.setMobile(mobile);
 
-				// 验证是否为正常的１１位有效数字
-				if (!CommonUtils.isNumeric(mobile)) {
-					domain.setLastTime(DateUtils.getCurrentDateTime());
-					domain.setChargesStatus("0"); // 不收费
-					domain.setStatus("0"); // 空号
-					list.add(domain);
-					return result;
-				}
-
 				// 1 查询号段
 				MobileNumberSection section = mobileNumberSectionService
 						.findByNumberSection(mobile.substring(0, 7));
@@ -409,8 +400,10 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 				}
 
 				// 发送短信
-				ChuangLanSmsUtil.getInstance().sendYxByMobile(mobile);
-
+				if (!ChuangLanSmsUtil.getInstance().sendYxByMobile(mobile)) {
+					logger.info("----手机号码：" + mobile + "营销短信发送失败");
+				}
+				
 				lock.unlock(); // 注销锁
 				result.setResultObj(null);
 				return result;

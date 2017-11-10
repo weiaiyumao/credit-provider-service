@@ -85,6 +85,16 @@
 		    <version>1.4.7.RELEASE</version>
 		</dependency>
 		
+		<!-- ActiveMQ -->
+		<dependency>  
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-starter-activemq</artifactId>  
+        </dependency>  
+		<dependency>  
+            <groupId>org.apache.activemq</groupId>  
+            <artifactId>activemq-pool</artifactId>  
+        </dependency>  
+		
 		<!-- 引用 子项目credit-interface-->
 		<dependency>
 			<groupId>credit-interface</groupId>

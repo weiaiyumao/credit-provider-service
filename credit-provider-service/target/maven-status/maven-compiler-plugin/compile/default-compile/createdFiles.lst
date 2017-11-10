@@ -56,6 +56,7 @@ cn\utils\FileUtils.class
 cn\service\impl\MobileNumberSectionServiceImpl.class
 cn\entity\cu\CU131.class
 cn\service\cm\CM158Service.class
+cn\activemq\Consumer.class
 cn\repository\cm\CM136Repository.class
 cn\entity\cm\CM157.class
 cn\repository\cm\CM1705Repository.class
@@ -78,11 +79,13 @@ cn\repository\cm\CM178Repository.class
 cn\service\cm\CM187Service.class
 cn\service\cu\impl\CU185ServiceImpl.class
 cn\repository\cm\CM158Repository.class
+cn\thread\Task.class
 cn\service\ct\impl\CT177ServiceImpl.class
 cn\entity\cm\CM139.class
 cn\repository\cm\CM152Repository.class
 cn\service\cu\CU186Service.class
 cn\service\cu\CU131Service.class
+cn\activemq\ProducerService.class
 cn\service\impl\ForeignServiceImpl$1.class
 cn\service\cu\CU132Service.class
 cn\repository\cu\CU155Repository.class
@@ -162,6 +165,7 @@ cn\entity\ct\CT1700.class
 cn\repository\cu\CU156Repository.class
 cn\repository\MobileTestLogReository.class
 cn\service\cm\CM152Service.class
+cn\thread\SynchronizationTasks.class
 cn\service\impl\SpaceDetectionServiceImpl.class
 cn\service\cm\impl\CM183ServiceImpl.class
 cn\service\impl\ApiMobileTestServiceImpl.class
@@ -189,6 +193,7 @@ cn\entity\unknown\UnknownMobileDetail.class
 cn\repository\cm\CM159Repository.class
 cn\repository\cm\CM150Repository.class
 cn\service\cm\impl\CM188ServiceImpl.class
+cn\thread\TasksRunnable.class
 cn\redis\RedisClient.class
 cn\service\cu\impl\CU132ServiceImpl.class
 cn\service\cm\impl\CM150ServiceImpl.class
@@ -208,3 +213,4 @@ cn\repository\ct\CT1700Repository.class
 cn\service\cm\CM159Service.class
 cn\utils\UUIDTool.class
 cn\service\cm\impl\CM134ServiceImpl.class
+cn\thread\ThreadExecutorService.class
