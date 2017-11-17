@@ -95,6 +95,7 @@ cn\repository\cu\CU176Repository.class
 cn\entity\ct\CT153.class
 cn\service\cm\impl\CM187ServiceImpl.class
 cn\entity\cm\CM138.class
+cn\service\impl\ForeignServiceImpl$2.class
 cn\controller\CreditController.class
 cn\service\MobileNumberSectionService.class
 cn\entity\base\Mobile.class
@@ -107,6 +108,7 @@ cn\service\cm\impl\CM184ServiceImpl.class
 cn\entity\ct\CT177.class
 cn\service\ct\CT189Service.class
 cn\service\cm\CM157Service.class
+cn\service\impl\ForeignServiceImpl$2$1.class
 cn\CreditProviderServiceApp.class
 cn\entity\cm\CM137.class
 cn\repository\cu\CU1709Repository.class
@@ -148,6 +150,7 @@ cn\repository\cm\CM187Repository.class
 cn\entity\cu\CU132.class
 cn\service\SpaceMobileService.class
 cn\service\cu\impl\CU1709ServiceImpl.class
+cn\redis\DistributedLock.class
 cn\repository\cm\CM184Repository.class
 cn\service\CvsFilePathService.class
 cn\service\cu\impl\CU145ServiceImpl.class
