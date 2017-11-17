@@ -48,6 +48,7 @@ import cn.utils.DateUtils;
 import cn.utils.UUIDTool;
 import main.java.cn.common.BackResult;
 import main.java.cn.domain.RunTestDomian;
+import main.java.cn.domain.UserAccountDomain;
 
 /**
  * Created by WunHwanTseng on 2016/11/12.
@@ -189,8 +190,12 @@ public class Controller {
     	
     	Destination destination = new ActiveMQQueue("mytest.queue");  
         
-        for(int i=0; i<100; i++){  
-            producerService.sendMessage(destination, "myname is chhliu!!!");  
+        for(int i=0; i<30; i++){  
+        	UserAccountDomain domain = new UserAccountDomain();
+        	domain.setAccount(1000);
+        	domain.setCreUserId(i);
+        	domain.setApiAccount(100);
+            producerService.sendMessage(destination, domain);  
         }  
     	
     	return "hi" +port;
