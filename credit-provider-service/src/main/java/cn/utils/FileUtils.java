@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -72,7 +74,7 @@ public class FileUtils {
 		}
 
 	}
-	
+
 	/**
 	 * 生成报表
 	 * 
@@ -80,7 +82,8 @@ public class FileUtils {
 	 * @param filePath
 	 * @param dataList
 	 */
-	public static void createCvsFileByMap(String fileName, String filePath, List<Map<String,Object>> dataList, Object[] head) {
+	public static void createCvsFileByMap(String fileName, String filePath, List<Map<String, Object>> dataList,
+			Object[] head) {
 
 		BufferedWriter csvWtriter = null;
 		File csvFile = null;
@@ -109,7 +112,7 @@ public class FileUtils {
 			// 写入文件头部
 			writeRow(headList, csvWtriter);
 			// 写入文件内容
-			for (Map<String,Object> row : dataList) {
+			for (Map<String, Object> row : dataList) {
 				writeRowByMap(row.get("mobile").toString(), csvWtriter);
 			}
 
@@ -141,7 +144,7 @@ public class FileUtils {
 		}
 		csvWriter.newLine();
 	}
-	
+
 	/**
 	 * 写入文件
 	 * 
@@ -217,7 +220,7 @@ public class FileUtils {
 	}
 
 	public static String getFileSize(String path) {
-		File file  = new File(path);
+		File file = new File(path);
 		String size = "";
 		if (file.exists() && file.isFile()) {
 			long fileS = file.length();
@@ -226,13 +229,44 @@ public class FileUtils {
 				size = "1KB";
 			} else {
 				size = df.format((double) fileS / 1024) + "KB";
-			} 
+			}
 		} else if (file.exists() && file.isDirectory()) {
 			size = "";
 		} else {
 			size = "0KB";
 		}
 		return size;
+	}
+
+	/**
+	 * 获取上传文件开始行到结束行的内容
+	 * 
+	 * @return
+	 */
+	public static String getFileMenu(String fielUrl, int startLine, int endLine) {
+		String mobiles = "";
+		try {
+			File file = new File(fielUrl);// 文件路径
+			FileReader fileReader = new FileReader(file);
+			LineNumberReader reader = new LineNumberReader(fileReader);
+			String txt = "";
+
+			int lines = 0;
+			while (txt != null) {
+				lines++;
+				txt = reader.readLine();
+				if (lines > startLine && lines <= endLine) {
+					mobiles = mobiles + txt + ",";
+				}
+			}
+			reader.close();
+			fileReader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取文件内容异常：" + e.getMessage());
+		}
+
+		return mobiles;
 	}
 
 	public static void main(String[] args) {

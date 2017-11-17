@@ -32,6 +32,8 @@ public class WaterConsumption implements Serializable{
 	private Date createTime; // 创建时间
 	
 	private Date updateTime; // 修改时间
+	
+	private String source; // 来源
 
 	public String getId() {
 		return id;
@@ -103,6 +105,20 @@ public class WaterConsumption implements Serializable{
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
+	}
+
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	

@@ -14,6 +14,7 @@ import cn.service.ForeignService;
 import main.java.cn.common.BackResult;
 import main.java.cn.domain.CvsFilePathDomain;
 import main.java.cn.domain.RunTestDomian;
+import main.java.cn.domain.page.PageDomain;
 
 @RestController
 @RequestMapping("/credit")
@@ -28,6 +29,11 @@ public class CreditController {
 		return foreignService.runTheTest(fileUrl, userId,timestamp,mobile);
 	}
 	
+	@RequestMapping(value = "/theTest", method = RequestMethod.POST)
+	public BackResult<RunTestDomian> theTest(String fileUrl,String userId, String source,String mobile,String startLine,String type) {
+		return foreignService.theTest(fileUrl, userId, mobile, source, startLine,type);
+	}
+	
 	@RequestMapping(value = "/findByUserId", method = RequestMethod.GET)
 	public BackResult<List<CvsFilePathDomain>> findByUserId(HttpServletRequest request, HttpServletResponse response,String userId) {
 		
@@ -40,4 +46,9 @@ public class CreditController {
 		return foreignService.deleteCvsByIds(ids, userId);
 	}
 
+	@RequestMapping(value = "/getCVSPageByUserId", method = RequestMethod.POST)
+	public BackResult<PageDomain<CvsFilePathDomain>> getPageByUserId(int pageNo, int pageSize, String userId){
+		return foreignService.getPageByUserId(pageNo, pageSize, userId);
+	}
+	
 }
