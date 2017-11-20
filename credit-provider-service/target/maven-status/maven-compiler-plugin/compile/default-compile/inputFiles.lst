@@ -96,6 +96,7 @@ D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\c
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\impl\CM159ServiceImpl.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\redis\RedisLock.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\impl\CM187ServiceImpl.java
+D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\redis\DistributedLock.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\impl\CM150ServiceImpl.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\service\cm\impl\CM184ServiceImpl.java
 D:\ChuangLan\git\credit-provider-service\credit-provider-service\src\main\java\cn\task\helper\MobileDetailHelper.java
