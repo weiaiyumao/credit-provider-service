@@ -1235,6 +1235,7 @@ public class ForeignServiceImpl implements ForeignService {
 					result.setResultMsg("任务执行中");
 					runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
 					runTestDomian.setRunCount(0); // 设置运行的总条数
+					result.setResultObj(runTestDomian);
 					return result;
 					
 				}
