@@ -1,0 +1,25 @@
+package cn.entity.cm;
+
+import java.io.Serializable;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import cn.entity.base.Mobile;
+
+@Document(collection="KCM188")
+public class KCM188 extends Mobile implements Serializable{
+
+	private static final long serialVersionUID = -4612394062127194869L;
+	@Id
+	private String id;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+}

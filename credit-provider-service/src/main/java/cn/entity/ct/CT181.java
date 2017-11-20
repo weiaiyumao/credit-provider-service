@@ -21,8 +21,4 @@ public class CT181 extends Telecommunication implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public CT181(String id){
-		this.id = id;
-	}
 }

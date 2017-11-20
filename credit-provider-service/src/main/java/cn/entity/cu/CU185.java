@@ -24,8 +24,4 @@ public class CU185 extends Unicom implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public CU185(String id){
-		this.id = id;
-	}
 }

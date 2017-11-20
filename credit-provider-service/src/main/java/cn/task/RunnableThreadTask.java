@@ -97,16 +97,9 @@ public class RunnableThreadTask implements Runnable {
 					String mobile = backjson.getString("mobile");
 
 					BaseMobileDetail detail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile);
-					detail.setAccount(backjson.getString("account"));
-					detail.setCity(backjson.getString("city"));
-					detail.setContent(backjson.getString("content"));
 					detail.setDelivrd(backjson.getString("delivrd"));
 					detail.setMobile(backjson.getString("mobile"));
-					detail.setProductId(backjson.getString("productId"));
-					detail.setProvince(backjson.getString("province"));
 					detail.setReportTime(DateUtils.parseDate(backjson.getString("reportTime"), "yyyy-MM-dd hh:mm:ss"));
-					detail.setSignature(backjson.getString("signature"));
-					detail.setCreateTime(DateUtils.getCurrentDateTime());
 					clDateSaveDBHandler.execution(detail);
 				}
 
