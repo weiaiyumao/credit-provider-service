@@ -1,14 +1,6 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8686/eureka/
+
 server:
   port: 8764
 spring:
   application:
     name: credit-provider-service
-#mongodb
-spring:
-  data:
-    mongodb:
-      uri:  mongodb://127.0.0.1:27017/testqq    

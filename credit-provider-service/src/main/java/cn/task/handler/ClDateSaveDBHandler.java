@@ -27,12 +27,12 @@ public class ClDateSaveDBHandler extends DataSaveDBHandler {
 	public void execution(BaseMobileDetail mobileDetail) {
 
 		if (null == mobileDetail) {
-			return;
+			
+
+			
 		}
 
 		try {
-
-			mobileDetail.setPlatform(Constant.PLATFORM_CL);
 
 			mongoTemplate.save(mobileDetail);
 

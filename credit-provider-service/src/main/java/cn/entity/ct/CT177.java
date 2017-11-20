@@ -21,8 +21,4 @@ public class CT177 extends Telecommunication implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public CT177(String id){
-		this.id = id;
-	}
 }

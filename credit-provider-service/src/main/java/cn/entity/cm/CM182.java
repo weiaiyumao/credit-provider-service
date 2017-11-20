@@ -21,8 +21,4 @@ public class CM182 extends Mobile implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	public CM182(String id){
-		this.id = id;
-	}
 }

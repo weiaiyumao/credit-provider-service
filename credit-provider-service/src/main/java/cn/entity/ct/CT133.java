@@ -21,8 +21,4 @@ public class CT133 extends Telecommunication implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public CT133(String id){
-		this.id = id;
-	}
 }

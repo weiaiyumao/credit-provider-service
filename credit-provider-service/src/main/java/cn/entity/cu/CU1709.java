@@ -22,7 +22,4 @@ public class CU1709 extends Unicom implements Serializable{
 		this.id = id;
 	}
 
-	public CU1709(String id){
-		this.id = id;
-	}
 }
