@@ -195,7 +195,7 @@ public class Controller {
         	domain.setAccount(1000);
         	domain.setCreUserId(i);
         	domain.setApiAccount(100);
-            producerService.sendMessage(destination, domain);  
+            producerService.sendMessage(destination, domain); 
         }  
     	
     	return "hi" +port;
