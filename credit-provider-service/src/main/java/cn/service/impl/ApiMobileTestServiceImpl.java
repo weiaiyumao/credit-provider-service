@@ -115,7 +115,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						}else if("kong".equals(this.isSpaceMobile(detail.getDelivrd()))){
 							domain.setStatus("0"); // 空号
 						}else{
-							domain.setStatus("2"); // 停机 
+							domain.setStatus("2"); // 停机  
 						}
 
 						list.add(domain);
