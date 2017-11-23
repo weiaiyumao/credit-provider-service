@@ -9,17 +9,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import cn.entity.base.BaseMobileDetail;
 import cn.entity.cu.CU131;
-import cn.repository.base.BaseMobileDetailRepository;
+import cn.repository.cu.CU131Repository;
 import cn.service.cu.CU131Service;
 
 @Service
 public class CU131ServiceImpl implements CU131Service {
 
 	@Autowired
-	private BaseMobileDetailRepository<CU131, String> repository;
+	private CU131Repository repository;
+	
+	@Autowired
+	private MongoTemplate mongoTemplate;
 	
 	@Override
 	public List<CU131> findByMobileAndReportTime(String mobile, Date startTime, Date endTime) {
@@ -32,6 +38,20 @@ public class CU131ServiceImpl implements CU131Service {
 	@Override
 	public List<CU131> findByMobile(String mobile) {
 		return repository.findByMobile(mobile);
+	}
+
+	@Transactional
+	@Override
+	public void deleteByMobile(BaseMobileDetail mobileDetail,String mobile) {
+		List<CU131> resultList = this.findByMobile(mobile);
+		if(resultList == null || resultList.size()<=0){
+			mongoTemplate.insert(mobileDetail);
+		}else{										
+			if(resultList.get(0).getReportTime().getTime()<mobileDetail.getReportTime().getTime()){
+				repository.delete(resultList.get(0).getId());
+				mongoTemplate.insert(mobileDetail);
+			}										
+		}		
 	}
 
 }

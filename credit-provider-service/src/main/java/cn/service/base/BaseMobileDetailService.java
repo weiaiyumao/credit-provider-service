@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import cn.entity.base.BaseMobileDetail;
+
 /**
  * 底层服务
  * @author ChuangLan
@@ -28,4 +30,11 @@ public interface BaseMobileDetailService<T, ID extends Serializable> {
 	 * @return
 	 */
 	List<T> findByMobile(String mobile);
+	
+	/**
+	 * 根据手机号码删除
+	 * @param mobile
+	 * @return
+	 */
+	void deleteByMobile(BaseMobileDetail mobileDetail,String mobile);
 }
