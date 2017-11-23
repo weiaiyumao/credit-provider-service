@@ -908,6 +908,16 @@ public class ForeignServiceImpl implements ForeignService {
 							rf.close();
 						}
 					}
+					
+					// 检测条数限制
+					if (lines < 3000) {
+						runTestDomian.setStatus("5"); // 1执行中 2执行结束 3执行异常4账户余额不足5检测的条数小于3000条
+						lock.releaseLock(lockName, identifier); // 注销锁
+						// 清空
+						result.setResultObj(runTestDomian);
+						result.setResultMsg("检测条数必须大于3000条");
+						return result;
+					}
 
 					// 验证账户余额
 					JSONObject jsonAccount = new JSONObject();
@@ -997,63 +1007,35 @@ public class ForeignServiceImpl implements ForeignService {
 												DateUtils.getCurrentDateTime());
 
 										if (null != detail) {
-											if (detail.getDelivrd().equals("DELIVRD") || detail.getDelivrd().equals("MC:0055")
-													|| detail.getDelivrd().equals("CJ:0007") || detail.getDelivrd().equals("CJ:0008")
-													|| detail.getDelivrd().equals("DB:0141") || detail.getDelivrd().equals("DISTURB")
-													|| detail.getDelivrd().equals("HD:0001") || detail.getDelivrd().equals("IC:0151")
-													|| detail.getDelivrd().equals("ID:0004") || detail.getDelivrd().equals("MBBLACK")
-													|| detail.getDelivrd().equals("MC:0055") || detail.getDelivrd().equals("MK:0008")
-													|| detail.getDelivrd().equals("MK:0010") || detail.getDelivrd().equals("MK:0022")
-													|| detail.getDelivrd().equals("MK:0024") || detail.getDelivrd().equals("MK:0029")
-													|| detail.getDelivrd().equals("MN:0017") || detail.getDelivrd().equals("MN:0044")
-													|| detail.getDelivrd().equals("MN:0051") || detail.getDelivrd().equals("MN:0054")
-													|| detail.getDelivrd().equals("REJECT") || detail.getDelivrd().equals("SME19")
-													|| detail.getDelivrd().equals("TIMEOUT") || detail.getDelivrd().equals("UNDELIV")
-													|| detail.getDelivrd().equals("GG:0024") || detail.getDelivrd().equals("DB:0309")
-													|| detail.getDelivrd().equals("SME92") || detail.getDelivrd().equals("DB:0114")
-													|| detail.getDelivrd().equals("MN:0174") || detail.getDelivrd().equals("YX:7000")
-													|| detail.getDelivrd().equals("MK:0004") || detail.getDelivrd().equals("NOROUTE")
-													|| detail.getDelivrd().equals("CJ:0005") || detail.getDelivrd().equals("IC:0055")
-													|| detail.getDelivrd().equals("REJECTE") || detail.getDelivrd().equals("MN:0053")
-													|| detail.getDelivrd().equals("MB:1026")) {
+											
+											// 存在数据
+											
+											if ("real".equals(isSpaceMobile(detail.getDelivrd()))) {
+												// 实号
 												thereRowList = new ArrayList<Object>();
 												thereRowList.add(detail.getMobile());
 												thereDataList.add(thereRowList);
-											} else if (detail.getDelivrd().equals("101") || detail.getDelivrd().equals("-1")
-													|| detail.getDelivrd().equals("SGIP:2：12") || detail.getDelivrd().equals("ERRNUM")
-													|| detail.getDelivrd().equals("RP:1") || detail.getDelivrd().equals("MN:0001")
-													|| detail.getDelivrd().equals("SPMSERR:136")
-													|| detail.getDelivrd().equals("MK:0000") || detail.getDelivrd().equals("MK:0001")
-													|| detail.getDelivrd().equals("SGIP:1") || detail.getDelivrd().equals("SGIP:33")
-													|| detail.getDelivrd().equals("SGIP:67") || detail.getDelivrd().equals("LT:0001")
-													|| detail.getDelivrd().equals("3") || detail.getDelivrd().equals("Deliver")
-													|| detail.getDelivrd().equals("CB:0001") || detail.getDelivrd().equals("CB:0053")
-													|| detail.getDelivrd().equals("DB:0101") || detail.getDelivrd().equals("12")
-													|| detail.getDelivrd().equals("12") || detail.getDelivrd().equals("601")
-													|| detail.getDelivrd().equals("MK:0012")) {
-												Map<String, Object> sixRowList = new HashMap<>();
-												sixRowList.put("mobile", detail.getMobile());
-												sixRowList.put("delivd", 1);// 空号状态
-												sixRowList.put("reportTime", detail.getReportTime().getTime());
-												sixDataList.add(sixRowList);
-											} else if (detail.getDelivrd().equals("HD:31") || detail.getDelivrd().equals("IC:0001")
-													|| detail.getDelivrd().equals("MI:0011") || detail.getDelivrd().equals("MI:0013")
-													|| detail.getDelivrd().equals("MI:0029") || detail.getDelivrd().equals("MK:0005")
-
-													|| detail.getDelivrd().equals("UNKNOWN") || detail.getDelivrd().equals("MI:0024")
-													|| detail.getDelivrd().equals("MI:0054") || detail.getDelivrd().equals("MN:0059")
-													|| detail.getDelivrd().equals("MI:0059") || detail.getDelivrd().equals("MI:0055")
-													|| detail.getDelivrd().equals("MI:0004") || detail.getDelivrd().equals("MI:0005")) {
+											}else if("pause".equals(isSpaceMobile(detail.getDelivrd()))){
+											    // 停机  
 												Map<String, Object> sixRowList = new HashMap<>();
 												sixRowList.put("mobile", detail.getMobile());
 												sixRowList.put("delivd", 2);// 停机状态
 												sixRowList.put("reportTime", detail.getReportTime().getTime());
 												sixDataList.add(sixRowList);
+											}else if("kong".equals(isSpaceMobile(detail.getDelivrd()))){
+												// 空号
+												Map<String, Object> sixRowList = new HashMap<>();
+												sixRowList.put("mobile", detail.getMobile());
+												sixRowList.put("delivd", 1);// 空号状态
+												sixRowList.put("reportTime", detail.getReportTime().getTime());
+												sixDataList.add(sixRowList);
 											} else {
+												// 未知
 												unKonwRowList = new ArrayList<Object>();
 												unKonwRowList.add(lineTxt);
 												unKonwDataList.add(unKonwRowList);
 											}
+											
 										} else {
 
 											// 二次清洗根据号段
@@ -1285,6 +1267,28 @@ public class ForeignServiceImpl implements ForeignService {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * 返回状态
+	 * @param delivrd
+	 * @return
+	 */
+	public String isSpaceMobile(String delivrd) {
+		String realdelivrd = "-1012,-99,004,010,011,015,017,020,022,029,054,055,151,174,188,602,612,613,614,615,618,619,620,625,627,634,636,650,706,711,713,714,726,760,762,812,814,815,827,870,899,901,999,BLACK,BLKFAIL,BwList,CB:0255,CJ:0005,CJ:0006,CJ:0007,CJ:0008,CL:105,CL:106,CL:116,CL:125,DB:0008,DB:0119,DB:0140,DB:0141,DB:0142,DB:0144,DB:0160,DB:0309,DB:0318,DB00141,DELIVRD,DISTURB,E:401,E:BLACK,E:ODDL,E:ODSL,E:RPTSS,EM:101,GG:0024,HD:0001,HD:19,HD:31,HD:32,IA:0051,IA:0054,IA:0059,IA:0073,IB:0008,IB:0194,IC:0001,IC:0015,IC:0055,ID:0004,ID:0070,JL:0025,JL:0026,JL:0031,JT:105,KEYWORD,LIMIT,LT:0005,MA:0022,MA:0051,MA:0054,MB:0008,MB:1026,MB:1042,MB:1077,MB:1279,MBBLACK,MC:0055,MC:0151,MH:17,MI:0008,MI:0009,MI:0015,MI:0017,MI:0020,MI:0022,MI:0024,MI:0041,MI:0043,MI:0044,MI:0045,MI:0048,MI:0051,MI:0053,MI:0054,MI:0057,MI:0059,MI:0064,MI:0080,MI:0081,MI:0098,MI:0099,MI:0999,MK:0002,MK:0003,MK:0006,MK:0008,MK:0009,MK:0010,MK:0015,MK:0017,MK:0019,MK:0020,MK:0022,MK:0023,MK:0024,MK:0041,MK:0043,MK:0044,MK:0045,MK:0053,MK:0055";
+		realdelivrd += "MK:0057,MK:0098,MK:0099,MN:0000,MN:0009,MN:0011,MN:0012,MN:0019,MN:0020,MN:0022,MN:0029,MN:0041,MN:0043,MN:0044,MN:0045,MN:0050,MN:0053,MN:0055,MN:0098,MN:0174,MT:101,NOPASS,NOROUTE,REFUSED,REJECT,REJECTD,REJECTE,RP:103,RP:106,RP:108,RP:11,RP:115,RP:117,RP:15,RP:17,RP:18,RP:19,RP:2,RP:20,RP:213,RP:22,RP:239,RP:254,RP:255,RP:27,RP:29,RP:36,RP:44,RP:45,RP:48,RP:50,RP:52,RP:55,RP:57,RP:59,RP:61,RP:67,RP:70,RP:77,RP:79,RP:8,RP:86,RP:90,RP:92,RP:98,SGIP:-1,SGIP:10,SGIP:106,SGIP:11,SGIP:117,SGIP:118,SGIP:121,SGIP:14,SGIP:15,SGIP:16,SGIP:17,SGIP:19,SGIP:2,SGIP:20,SGIP:22,SGIP:23,SGIP:-25,SGIP:27,SGIP:-3,SGIP:31,SGIP:43,SGIP:44,SGIP:45,SGIP:48,SGIP:57,SGIP:61,SGIP:64,SGIP:67,SGIP:79,SGIP:86,SGIP:89,SGIP:90,SGIP:92,SGIP:93,SGIP:98,SGIP:99,SME1,SME-1,SME19,SME20,SME210,SME-22,SME-26,SME28,SME3,SME6,SME-70,SME-74,SME8,SME92,SME-93,SYS:005,SYS:008,TIMEOUT,UNDELIV,UNKNOWN,VALVE:M,W-BLACK,YX:1006,YX:7000,YX:8019,YX:9006";
+		realdelivrd += "YY:0206,-181,023,036,043,044,706,712,718,721,730,763,779,879,CB:0013,CL:104,GATEBLA,IB:0011,ID:0199,JL:0028,LT:0022,MI:0021,MK:0068,RP:16,RP:65,RP:88,SGIP:-13,SGIP:63,SGIP:70,622,660,MI:0006,MK:0051,RP:121";
+		String pausedelivrd = "000,001,005,008,084,617,702,716,801,809,802,817,869,731,EXPIRED,IC:0151,LT:0010,LT:0011,LT:0024,LT:0059,LT:0093,LT:0-37,MC:0001,MI:0000,MI:0001,MI:0002,MI:0004,MI:0005,MI:0010,MI:0011,MI:0012,MI:0013,MI:0023,MI:0029,MI:0030,MI:0036,MI:0038,MI:0050,MI:0055,MI:0056,MI:0063,MI:0068,MI:0083,MI:0084,MI:0089,MK:0011,MK:0013,MK:0029,MK:0036,MN:0013,MN:0017,MN:0036,MN:0051,MN:0054,MN:0059,RP:10,RP:104,RP:105,RP:118,RP:124,RP:13,RP:14,RP:182,RP:219,RP:231,RP:24,RP:253,RP:31,RP:4,RP:5,RP:51,RP:53,RP:54,RP:64,RP:75,RP:9,RP:93,SGIP:13,SGIP:-17,SGIP:18,SGIP:-2,SGIP:24,SGIP:29,SGIP:-37,SGIP:4,SGIP:-43,SGIP:5,SGIP:50,SGIP:51,SGIP:52,SGIP:53,SGIP:55,SGIP:58,SGIP:59,SGIP:-74,SGIP:77,SGIP:8,041,059,642,680,813,IB:0072,ID:0013,JL:0028,MI:0078,MK:0050,MK:0115,MK:0150,RP:175,RP:32,SGIP:6,SGIP:63,051,081,112,605,RP:121,SGIP:84,608,705";
+		String nulldelivrd = "006,012,013,024,601,640,701,717,765,771,CB:0010,Err_Num,ID:0012,LT:0001,LT:0012,MI:0075,MI:0090,MK:0000,MK:0001,MK:0004,MK:0005,MK:0012,MK:0038,MK:0066,MK:0075,MK:0090,MN:0001,MN:0075,PHONERR,RP:1,RP:101,RP:102,RP:12,RP:23,RP:3,RP:56,RP:99,SGIP:1,SGIP:12,SGIP:3,SGIP:36,SGIP:54,SGIP:56,SGIP:75,SGIP:9,SME169,UTE,ERRNUM,IB:0169,LT:0009,LT:0086,LT:0-43,LT:0-74,MI:0210,RP:135,RP:63";
+		if (realdelivrd.contains(delivrd)) {
+			return "real";
+		}else if(pausedelivrd.contains(delivrd)){
+			return "pause";
+		}else if (nulldelivrd.contains(delivrd)){
+			return "kong";
+		} else {
+			return "unkown";
+		}	
 	}
 
 	public static void main(String[] args) throws IOException {  
