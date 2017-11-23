@@ -98,15 +98,14 @@ public class TodayDataSaveDBTask {
 	private final static Logger logger = LoggerFactory.getLogger(TodayDataSaveDBTask.class);
 
 	// 该任务执行一次 时间 秒 分 时 天 月 年
-	@Scheduled(cron = "0 15 14 20 11 ?")
+	@Scheduled(cron = "0 28 11 23 11 ?")
 	public void ClDateSaveDbTask() throws IOException {
-//		String timestr = "2015-01-31,2015-02-05,2015-02-10,2015-02-15,2015-02-20,2015-02-25";
+//		String timestr = "2017-11-06,2017-11-05,2017-11-04,2017-11-03,2017-11-02,2017-11-01";
 //		String[] timeList = timestr.split(",");
 //		for(String time : timeList){
-//			this.hbaseTest(time);
-//		}
-//		this.hbaseTest1();
-		this.insertMongodbInfo("2017-11-01");
+//			this.insertMongodbInfo(time);
+//		}		
+		this.insertMongodbInfo("2017-10-01");
 	}
 	
 	// 该任务执行一次 时间 秒 分 时 天 月 年
@@ -128,13 +127,12 @@ public class TodayDataSaveDBTask {
 						QueryBuilder qb = QueryBuilders.termsQuery("reportTime", strdate);
 
 						Long a = System.currentTimeMillis();
-						SearchResponse scrollResp = client.prepareSearch("201711").setQuery(qb)
+						SearchResponse scrollResp = client.prepareSearch("201710").setQuery(qb)
 								.setScroll(new TimeValue(60000)).setSize(1000).get();
 						long startTime = System.currentTimeMillis();
 						long endTime;
 			            int i = 1;
 			            int j=1;
-						List<BaseMobileDetail> resultList = new ArrayList<BaseMobileDetail>();
 						do {
 							for (SearchHit hit : scrollResp.getHits().getHits()) 
 							{
@@ -155,50 +153,22 @@ public class TodayDataSaveDBTask {
 									BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile,status);
 									mobileDetail.setMobile(mobile);
 									mobileDetail.setDelivrd(delivrd);
-									mobileDetail.setReportTime(REPOR_TIME);							
-									
-									BaseMobileDetail temple= spaceDetectionService.findByMobile(mobile);
-									if(temple == null){
-										resultList.add(mobileDetail);
-										mongoTemplate.insert(mobileDetail);
-										endTime = System.currentTimeMillis();
-										System.out.println("已运行"+(endTime - startTime)/1000+"秒，数据正在导入，已导入: " + i + " 行, " + "clientMsgId的值为: " + backjson.getString("clientMsgId"));
-									}else{
-										Query query = Query.query(Criteria.where("mobile").is(mobile));
-										mongoTemplate.remove(query, BaseMobileDetail.class);
-										if(temple.getReportTime().getTime()<mobileDetail.getReportTime().getTime()){
-											mongoTemplate.insert(mobileDetail);
-											endTime = System.currentTimeMillis();
-											System.out.println("已运行"+(endTime - startTime)/1000+"秒，数据正在导入，已导入: " + i + " 行, " + "clientMsgId的值为: " + backjson.getString("clientMsgId"));
-										}										
-									}				
-								
-//									if (i % 10000 == 0) {
-//										logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
-//										for  ( int  n  =   0 ; n  <  resultList.size()  -   1 ; n ++ )   { 
-//										    for  ( int  m  =  resultList.size()  -   1 ; m  >  n; m -- )   { 
-//										      if  (resultList.get(m).getMobile().equals(resultList.get(n).getMobile()) && resultList.get(m).getReportTime().getTime() <= resultList.get(n).getReportTime().getTime())   { 
-//										    	  resultList.remove(m); 
-//										      } 
-//										    } 
-//										}
-//										mongoTemplate.insertAll(resultList);
-//										logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====, 插入数据条数为：" + resultList.size());
-//										resultList.clear();
-//										j++;
-//									}
+									mobileDetail.setReportTime(REPOR_TIME);									
+									//去重号码数据处理
+									spaceDetectionService.deleteByID( mobileDetail,mobile, status);									
+									endTime = System.currentTimeMillis();
+									System.out.println("已运行"+(endTime - startTime)/1000+"秒，已处理: " + i + " 行, " + "clientMsgId的值为: " + backjson.getString("clientMsgId"));																							
 								}
 								i++;
 													
 							}
 							
-//							mongoTemplate.insertAll(resultList);
 							scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(60000))
 									.execute().actionGet();
 						} while (scrollResp.getHits().getHits().length != 0);
 					}
 				}, strdate+"线程开始执行定时任务入库").start();	
-				logger.info("------------------"+strdate+"数据导入mysql已完成------------------");
+				logger.info("------------------"+strdate+"数据导入已完成------------------");
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("=====执行创蓝数据入库出现异常：" + e.getMessage());
