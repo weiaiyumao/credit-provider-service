@@ -21,8 +21,5 @@ public class CM150 extends Mobile implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	public CM150(String id){
-		this.id = id;
-	}
+
 }

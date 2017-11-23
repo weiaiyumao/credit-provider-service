@@ -22,7 +22,4 @@ public class CM135 extends Mobile implements Serializable {
 		this.id = id;
 	}
 	
-	public CM135(String id){
-		this.id = id;
-	}
 }

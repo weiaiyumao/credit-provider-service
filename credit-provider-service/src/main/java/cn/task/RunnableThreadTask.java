@@ -12,7 +12,6 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.alibaba.fastjson.JSONObject;
@@ -97,16 +96,9 @@ public class RunnableThreadTask implements Runnable {
 					String mobile = backjson.getString("mobile");
 
 					BaseMobileDetail detail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile);
-					detail.setAccount(backjson.getString("account"));
-					detail.setCity(backjson.getString("city"));
-					detail.setContent(backjson.getString("content"));
 					detail.setDelivrd(backjson.getString("delivrd"));
 					detail.setMobile(backjson.getString("mobile"));
-					detail.setProductId(backjson.getString("productId"));
-					detail.setProvince(backjson.getString("province"));
 					detail.setReportTime(DateUtils.parseDate(backjson.getString("reportTime"), "yyyy-MM-dd hh:mm:ss"));
-					detail.setSignature(backjson.getString("signature"));
-					detail.setCreateTime(DateUtils.getCurrentDateTime());
 					clDateSaveDBHandler.execution(detail);
 				}
 

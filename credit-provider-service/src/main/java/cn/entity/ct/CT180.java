@@ -21,8 +21,4 @@ public class CT180 extends Telecommunication implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public CT180(String id){
-		this.id = id;
-	}
 }

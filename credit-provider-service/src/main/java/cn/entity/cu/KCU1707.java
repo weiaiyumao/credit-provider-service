@@ -1,0 +1,25 @@
+package cn.entity.cu;
+
+import java.io.Serializable;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import cn.entity.base.Unicom;
+
+@Document(collection="KCU1707")
+public class KCU1707 extends Unicom implements Serializable{
+
+	private static final long serialVersionUID = -1811078360438818105L;
+	@Id
+	private String id;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+}

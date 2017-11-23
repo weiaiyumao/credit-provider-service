@@ -3,6 +3,7 @@ package cn.controller;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
@@ -123,26 +124,6 @@ public class Controller {
 		
     }
     
-    @GetMapping("/savect133")
-    public CT133 savect133() {
-    	logger.info("1111111111111111");
-        CT133 ct = new CT133(UUIDTool.getInstance().getUUID());
-		ct.setAccount("M5205956");
-		ct.setCity("苏州市");
-		ct.setContent("【盟轩】上海3月农化展没订房的展商，展商专享价预订中，展馆附近几公里含早餐班车咨询02131200858企业QQ800067617退订回TD");
-		ct.setDelivrd("UNKNOWN");
-		ct.setMobile("13362672233");
-		ct.setPlatform(1);
-		ct.setProductId("productId");
-		ct.setProvince("江苏省");
-		ct.setReportTime(DateUtils.parseDate("2017-01-05 12:27:23","yyyy-MM-dd hh:mm:ss"));
-		ct.setSignature("盟轩");
-		ct.setCreateTime(new Date());
-		mongoTemplate.save(ct);
-		
-        return ct;
-    }
-    
     @GetMapping("/findname")
     public BaseMobileDetail findname() {
     	BaseMobileDetail detail  = null;
@@ -161,7 +142,7 @@ public class Controller {
     }
     
     @GetMapping("/task")
-    public void task() {
+    public void task() throws IOException {
     	todayDataSaveDBTask.ClDateSaveDbTask();
     }
     

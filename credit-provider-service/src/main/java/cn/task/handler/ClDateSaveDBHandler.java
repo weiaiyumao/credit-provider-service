@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import cn.entity.base.BaseMobileDetail;
-import cn.utils.Constant;
 
 /**
  * 创蓝 数据入库
@@ -27,12 +26,12 @@ public class ClDateSaveDBHandler extends DataSaveDBHandler {
 	public void execution(BaseMobileDetail mobileDetail) {
 
 		if (null == mobileDetail) {
-			return;
+			
+
+			
 		}
 
 		try {
-
-			mobileDetail.setPlatform(Constant.PLATFORM_CL);
 
 			mongoTemplate.save(mobileDetail);
 
