@@ -398,15 +398,17 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 				// 创建对象设置初始手机号码
 				MobileInfoDomain domain = new MobileInfoDomain();
 				domain.setMobile(mobile);
-
+				domain.setChargesStatus("1");
 				// 1 查询号段
 				MobileNumberSection section = mobileNumberSectionService
 						.findByNumberSection(mobile.substring(0, 7));
-
+				
 				if (null == section) {
 					domain.setLastTime(DateUtils.getCurrentDateTime());
-					domain.setChargesStatus("1");
 					domain.setStatus("0"); // 空号
+				} else {
+					domain.setArea(section.getProvince() + "-" + section.getCity());
+					domain.setNumberType(section.getMobilePhoneType());
 				}
 
 				// 2 查询库 最近6个月
@@ -414,12 +416,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						endTime);
 
 				if (null != detail) {
-
-					domain.setArea(section.getProvince() + "-" + section.getCity());
-					domain.setNumberType(section.getMobilePhoneType());
 					domain.setLastTime(detail.getReportTime());
-					domain.setChargesStatus("1");
-
 					if ("real".equals(this.isSpaceMobile(detail.getDelivrd()))) {
 						domain.setStatus("1"); // 实号
 					}else if("kong".equals(this.isSpaceMobile(detail.getDelivrd()))){

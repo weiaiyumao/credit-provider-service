@@ -173,6 +173,7 @@ cn\service\cm\impl\CM138ServiceImpl.class
 cn\service\unknown\UnknownMobileDetailService.class
 cn\service\cu\impl\CU131ServiceImpl.class
 cn\entity\cm\CM147.class
+cn\service\impl\ApiMobileTestServiceImpl$3.class
 cn\entity\cm\CM187.class
 cn\service\cm\CM178Service.class
 cn\task\RunnableThreadTask.class
