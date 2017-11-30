@@ -885,7 +885,7 @@ public class ForeignServiceImpl implements ForeignService {
 		RunTestDomian runTestDomian = new RunTestDomian();
 		BackResult<RunTestDomian> result = new BackResult<RunTestDomian>();
 		DistributedLock lock = new DistributedLock(jedisPool);
-		String lockName = "theTestkey1111_" + mobile;
+		String lockName = "theTestkey_" + mobile;
 		try {
 			// 执行检测
 			if (type.equals("1")) {
@@ -1237,7 +1237,7 @@ public class ForeignServiceImpl implements ForeignService {
 
 				if (map.size() > 0) {
 					runTestDomian.setRunCount(Integer.valueOf(map.get("count_" + userId).toString())); // 设置运行的总条数
-					runTestDomian.setMobiles(FileUtils.getFileMenu(fileUrl, Integer.parseInt(startLine), runTestDomian.getRunCount())); // 设置已经检测了的手机号码
+					runTestDomian.setMobiles(FileUtils.getFileMenu(fileUrl, Integer.parseInt(startLine), 100)); // 设置已经检测了的手机号码 修改为获取一百条
 					
 					logger.info("需要检测的总条数: 【" + lines + "】，已经检测完成的条数:" + map.get("count_" + userId).toString());
 
