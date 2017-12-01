@@ -849,7 +849,7 @@ public class ForeignServiceImpl implements ForeignService {
 			Page<CvsFilePath> page = cvsFilePathService.getPageByUserId(pageNo, pageSize, userId);
 
 			if (null != page) {
-
+				pageDomain.setTotalNumber(Integer.valueOf(String.valueOf(page.getTotalElements())));
 				pageDomain.setTotalPages(page.getTotalPages());
 				pageDomain.setNumPerPage(pageSize);
 				pageDomain.setCurrentPage(pageNo);
