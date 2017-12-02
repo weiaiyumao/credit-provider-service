@@ -849,7 +849,7 @@ public class ForeignServiceImpl implements ForeignService {
 			Page<CvsFilePath> page = cvsFilePathService.getPageByUserId(pageNo, pageSize, userId);
 
 			if (null != page) {
-
+				pageDomain.setTotalNumber(Integer.valueOf(String.valueOf(page.getTotalElements())));
 				pageDomain.setTotalPages(page.getTotalPages());
 				pageDomain.setNumPerPage(pageSize);
 				pageDomain.setCurrentPage(pageNo);
@@ -885,7 +885,7 @@ public class ForeignServiceImpl implements ForeignService {
 		RunTestDomian runTestDomian = new RunTestDomian();
 		BackResult<RunTestDomian> result = new BackResult<RunTestDomian>();
 		DistributedLock lock = new DistributedLock(jedisPool);
-		String lockName = "theTestkey1111_" + mobile;
+		String lockName = "theTestkey_" + mobile;
 		try {
 			// 执行检测
 			if (type.equals("1")) {
@@ -1176,7 +1176,7 @@ public class ForeignServiceImpl implements ForeignService {
 								}
 
 								// 发送短信
-								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTest(mobile);
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForZZTTest(mobile);
 
 								result.setResultMsg("成功");
 
@@ -1196,7 +1196,7 @@ public class ForeignServiceImpl implements ForeignService {
 								lock.releaseLock(lockName, identifier); // 注销锁
 								// 清空
 								// 异常发送短信
-								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestEx(mobile);
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestZZtEx(mobile);
 								map.remove("testCount_" + userId);
 								map.remove("count_" + userId); // 清空实际检测的总条数
 							} finally {
@@ -1237,7 +1237,7 @@ public class ForeignServiceImpl implements ForeignService {
 
 				if (map.size() > 0) {
 					runTestDomian.setRunCount(Integer.valueOf(map.get("count_" + userId).toString())); // 设置运行的总条数
-					runTestDomian.setMobiles(FileUtils.getFileMenu(fileUrl, Integer.parseInt(startLine), runTestDomian.getRunCount())); // 设置已经检测了的手机号码
+					runTestDomian.setMobiles(FileUtils.getFileMenu(fileUrl, Integer.parseInt(startLine), 100)); // 设置已经检测了的手机号码 修改为获取一百条
 					
 					logger.info("需要检测的总条数: 【" + lines + "】，已经检测完成的条数:" + map.get("count_" + userId).toString());
 
@@ -1260,7 +1260,7 @@ public class ForeignServiceImpl implements ForeignService {
 			e.printStackTrace();
 			logger.error("客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
 			// 异常发送短信
-			ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestEx(mobile);
+			ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestZZtEx(mobile);
 			result.setResultCode(ResultCode.RESULT_FAILED);
 			result.setResultMsg("客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
 			return result;
