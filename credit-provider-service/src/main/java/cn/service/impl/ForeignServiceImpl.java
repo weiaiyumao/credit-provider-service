@@ -1176,7 +1176,7 @@ public class ForeignServiceImpl implements ForeignService {
 								}
 
 								// 发送短信
-								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTest(mobile);
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForZZTTest(mobile);
 
 								result.setResultMsg("成功");
 
@@ -1196,7 +1196,7 @@ public class ForeignServiceImpl implements ForeignService {
 								lock.releaseLock(lockName, identifier); // 注销锁
 								// 清空
 								// 异常发送短信
-								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestEx(mobile);
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestZZtEx(mobile);
 								map.remove("testCount_" + userId);
 								map.remove("count_" + userId); // 清空实际检测的总条数
 							} finally {
@@ -1260,7 +1260,7 @@ public class ForeignServiceImpl implements ForeignService {
 			e.printStackTrace();
 			logger.error("客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
 			// 异常发送短信
-			ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestEx(mobile);
+			ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestZZtEx(mobile);
 			result.setResultCode(ResultCode.RESULT_FAILED);
 			result.setResultMsg("客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
 			return result;
