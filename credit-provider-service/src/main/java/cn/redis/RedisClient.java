@@ -25,6 +25,20 @@ public class RedisClient {
             jedis.close(); 
 		}
     }  
+    
+    public void set(String key, String value,int expire) {  
+        Jedis jedis = null;  
+        try {
+        	jedis = jedisPool.getResource();  
+            jedis.set(key, value);
+            jedis.expire(key, expire);
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			//返还到连接池  
+            jedis.close(); 
+		}
+    }  
       
     public String get(String key)  {  
   

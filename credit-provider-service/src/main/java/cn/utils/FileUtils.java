@@ -268,6 +268,29 @@ public class FileUtils {
 
 		return mobiles;
 	}
+	
+	public static int getFileLines(String fileUrl){
+		try {
+			LineNumberReader rf = null;
+			int lines = 0;
+			File test = new File(fileUrl);
+			File file1 = new File(fileUrl);
+			if (file1.isFile() && file1.exists()) {
+				long fileLength = test.length();
+				rf = new LineNumberReader(new FileReader(test));
+
+				if (rf != null) {
+					rf.skip(fileLength);
+					lines = rf.getLineNumber();
+					rf.close();
+				}
+			}
+			return lines;
+		} catch (Exception e) {
+			logger.error("获取文件行数异常：" + e.getMessage());
+		}
+		return 0;
+	}
 
 	public static void main(String[] args) {
 		// File[] files = {new File("C:/test/1255/20170913/3月实号包.csv"),new
@@ -275,7 +298,8 @@ public class FileUtils {
 		// File("C:/test/1255/20170913/未知号码包.csv")};
 		// FileUtils.createZip(files,"C:/test/1255/20170913/Demo.zip");
 
-		System.out.println(FileUtils.getFileSize("D:/test/mk0004.txt"));
+//		System.out.println(FileUtils.getFileSize("D:/test/mk0004.txt"));
+		System.out.println(FileUtils.getFileLines("C:/Users/ChuangLan/Documents/QQEIM Files/2881526637/FileRecv/号码检测.txt"));
 	}
 
 	// String therefileName = "thereCSV.csv";// 文件名称
