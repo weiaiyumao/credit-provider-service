@@ -893,7 +893,7 @@ public class ForeignServiceImpl implements ForeignService {
 							List<List<Object>> unKonwDataList = new ArrayList<List<Object>>();
 							List<Object> unKonwRowList = null;
 
-							Date sixStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -210);
+							Date sixStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -90);
 
 							File file = new File(fileUrl);
 							if (file.isFile() && file.exists()) {
