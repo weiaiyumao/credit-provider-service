@@ -14,7 +14,7 @@ import org.springframework.web.filter.CorsFilter;
  * Hello world!
  *
  */
-@EnableEurekaClient     // Eureka Client 标识
+@EnableEurekaClient     // Eureka Client 标识 111
 @SpringBootApplication  // Spring Boot 应用标识
 public class CreditProviderServiceApp extends SpringBootServletInitializer
 {
