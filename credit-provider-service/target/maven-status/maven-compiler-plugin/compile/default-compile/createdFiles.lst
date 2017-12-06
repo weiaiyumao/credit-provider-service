@@ -203,6 +203,7 @@ cn\service\CvsFilePathService.class
 cn\service\cu\impl\CU145ServiceImpl.class
 cn\service\ct\CT1700Service.class
 cn\repository\cu\CU132Repository.class
+cn\service\impl\ApiMobileTestServiceImpl$4.class
 cn\entity\cm\CM150.class
 cn\service\ct\CT133Service.class
 cn\entity\cm\CM1706.class
