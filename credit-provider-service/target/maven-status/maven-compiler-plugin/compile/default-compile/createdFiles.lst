@@ -95,6 +95,7 @@ cn\repository\cm\CM178Repository.class
 cn\service\cm\CM187Service.class
 cn\service\cu\impl\CU185ServiceImpl.class
 cn\repository\cm\CM158Repository.class
+cn\thread\Task.class
 cn\entity\cm\KCM182.class
 cn\entity\cu\CU1707.class
 cn\service\ct\impl\CT177ServiceImpl.class
@@ -202,6 +203,7 @@ cn\service\CvsFilePathService.class
 cn\service\cu\impl\CU145ServiceImpl.class
 cn\service\ct\CT1700Service.class
 cn\repository\cu\CU132Repository.class
+cn\service\impl\ApiMobileTestServiceImpl$4.class
 cn\entity\cm\CM150.class
 cn\service\ct\CT133Service.class
 cn\entity\cm\CM1706.class
@@ -218,6 +220,7 @@ cn\task\TodayDataSaveDBTask$2.class
 cn\entity\cu\KCU155.class
 cn\entity\cm\KCM147.class
 cn\service\cm\CM152Service.class
+cn\thread\SynchronizationTasks.class
 cn\service\impl\SpaceDetectionServiceImpl.class
 cn\service\cm\impl\CM183ServiceImpl.class
 cn\service\impl\ApiMobileTestServiceImpl.class
@@ -252,6 +255,7 @@ cn\entity\unknown\KUnknownMobileDetail.class
 cn\repository\cm\CM159Repository.class
 cn\repository\cm\CM150Repository.class
 cn\service\cm\impl\CM188ServiceImpl.class
+cn\thread\TasksRunnable.class
 cn\redis\RedisClient.class
 cn\service\cu\impl\CU132ServiceImpl.class
 cn\entity\cu\KCU132.class
@@ -272,4 +276,5 @@ cn\repository\ct\CT1700Repository.class
 cn\service\cm\CM159Service.class
 cn\utils\UUIDTool.class
 cn\service\cm\impl\CM134ServiceImpl.class
+cn\thread\ThreadExecutorService.class
 cn\entity\cm\KCM139.class

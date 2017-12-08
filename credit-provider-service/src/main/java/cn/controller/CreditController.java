@@ -42,7 +42,6 @@ public class CreditController {
 	
 	@RequestMapping(value = "/deleteCvsByIds", method = RequestMethod.GET)
 	public BackResult<Boolean> deleteCvsByIds(HttpServletRequest request, HttpServletResponse response,String ids,String userId){
-		
 		return foreignService.deleteCvsByIds(ids, userId);
 	}
 
