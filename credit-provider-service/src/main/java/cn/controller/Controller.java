@@ -18,6 +18,8 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
@@ -217,7 +219,7 @@ public class Controller {
 		}
 	}
     
-    public static void main(String[] args) {
+    public static void main22222222222(String[] args) {
 		BufferedReader br = null;
 		try {
 			File file = new File("D:/test/手机号段-20171001-368630-全新版.csv");
@@ -260,6 +262,54 @@ public class Controller {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+	}
+    
+    public static void main(String[] args) {
+    	try {
+			
+			Settings settings = Settings.builder().put("cluster.name", "cl-es-cluster")
+					.put("client.transport.sniff", true).put("client.transport.ping_timeout", "25s").build();
+
+			@SuppressWarnings("resource")
+			TransportClient client = new PreBuiltTransportClient(settings)
+					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("172.16.20.20"), 9300));
+			
+					
+			QueryBuilder qb = QueryBuilders.termsQuery("mobile", "13817367247");
+			String monthstrs = "201710,201709,201708,201707,201706,201705,201704,201703,201702,201701";
+			String[] monthList = monthstrs.split(",");
+			for(String month: monthList){
+				SearchResponse scrollResp = client.prepareSearch(month).setQuery(qb).setScroll(new TimeValue(60000)).setSize(1000).get();
+				int num = scrollResp.getHits().getHits().length;
+				
+				
+				int i = 0;
+				Map<String, String> map = new HashMap<String, String>();
+				do {
+					for (SearchHit hit : scrollResp.getHits().getHits()) {
+						String json = hit.getSourceAsString();
+
+						System.out.println("i=" + i + ":" + hit.getId() + "," + hit.getSourceAsString());
+						 JSONObject backjson = (JSONObject) JSONObject.parse(json);
+						
+						 String account = backjson.getString("account");
+						 map.put(account, account);
+
+					}
+
+					scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(60000)).execute()
+							.actionGet();
+				} while (scrollResp.getHits().getHits().length != 0); 
+				
+				
+				System.out.println("13817367247" + "号码, 在" + month + "月, 出现的次数为： " + num);
+			}				
+			
+				
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("=====执行查询出现异常：" + e.getMessage());
+		} 
 	}
     
     
