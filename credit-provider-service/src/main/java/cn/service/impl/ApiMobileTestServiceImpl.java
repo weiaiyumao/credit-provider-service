@@ -344,7 +344,8 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						domain.setStatus("2"); // 停机
 					}
 				} else {
-					domain.setStatus("3"); // 库无
+					domain.setStatus("3"); // 库无 不计费
+					domain.setChargesStatus("0"); 
 				}
 
 				// 记录日志入库
