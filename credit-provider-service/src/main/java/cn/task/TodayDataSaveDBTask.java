@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.context.annotation.Configuration;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -44,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -53,15 +53,18 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.entity.CvsFilePath;
 import cn.entity.MobileNumberSection;
+import cn.entity.WaterConsumption;
 import cn.entity.base.BaseMobileDetail;
-import cn.repository.base.BaseMobileDetailRepository;
 import cn.service.MobileNumberSectionService;
 import cn.service.SpaceDetectionService;
+import cn.service.WaterConsumptionService;
 import cn.task.handler.ClDateSaveDBHandler;
 import cn.task.helper.MobileDetailHelper;
 import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
+import cn.utils.FileUtils;
 import cn.utils.UUIDTool;
 
 /**
@@ -95,6 +98,9 @@ public class TodayDataSaveDBTask {
 	@Autowired
 	private MobileNumberSectionService mobileNumberSectionService;
 
+	@Autowired
+	private WaterConsumptionService waterConsumptionService;
+	
 	private final static Logger logger = LoggerFactory.getLogger(TodayDataSaveDBTask.class);
 
 	// 该任务执行一次 时间 秒 分 时 天 月 年
@@ -508,4 +514,44 @@ public class TodayDataSaveDBTask {
 		logger.info("---------------结束执行任务---------------");
 	}
 
+	// 秒 分 时 天 月 年
+	@Scheduled(cron = "0 38 14 13 12 ?")
+	public void createExcel() throws IOException {
+		List<List<Object>> thereDataList = new ArrayList<List<Object>>();
+		List<Object> oblist = null;
+		BufferedReader br = null;
+		int bcount = 0;
+		File file = new File("C:\\Users\\ChuangLan\\Desktop\\userId.txt");
+		if (file.isFile() && file.exists()) {
+
+			InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "utf-8");
+			br = new BufferedReader(isr);
+			String lineTxt = null;
+
+			while ((lineTxt = br.readLine()) != null) {
+				String[] u = lineTxt.split(",");
+				oblist = new ArrayList<Object>();
+				oblist.add(u[0]);
+				oblist.add(u[1]);
+				System.out.println(u[0]+"计算中");
+				List<WaterConsumption> list = waterConsumptionService.findByUserId(u[0]);
+				if (!CommonUtils.isNotEmpty(list)) {
+					int count = 0 ;
+					for (WaterConsumption waterConsumption : list) {
+						count = count + Integer.parseInt(waterConsumption.getCount());
+					}
+					oblist.add(count);
+					bcount = bcount + count;
+				} else {
+					oblist.add(0);
+				}
+				thereDataList.add(oblist);
+			}
+		}
+		Object[] shhead = { "用户id","手机号","总消费条数("+bcount+")" };
+		FileUtils.createCvsFile("111111.csv", "C:\\Users\\ChuangLan\\Desktop\\", thereDataList, shhead);
+		System.out.println("生成文件结束");
+//		
+	}
+	
 }

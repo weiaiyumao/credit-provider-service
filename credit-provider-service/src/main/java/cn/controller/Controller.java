@@ -35,11 +35,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.entity.MobileNumberSection;
+import cn.entity.WaterConsumption;
 import cn.entity.base.BaseMobileDetail;
 import cn.entity.ct.CT133;
 import cn.service.ForeignService;
 import cn.service.MobileNumberSectionService;
 import cn.service.SpaceDetectionService;
+import cn.service.WaterConsumptionService;
 import cn.service.cm.CM136Service;
 import cn.task.TodayDataSaveDBTask;
 import cn.utils.CommonUtils;
@@ -71,6 +73,9 @@ public class Controller {
     
 	@Autowired
 	private MobileNumberSectionService mobileNumberSectionService;
+	
+	@Autowired
+	private WaterConsumptionService waterConsumptionService;
     
     
     private final static Logger logger = LoggerFactory.getLogger(Controller.class);
@@ -167,6 +172,21 @@ public class Controller {
     	MobileNumberSection section = mobileNumberSectionService.findByNumberSection(name.substring(0, 7));
     	
     	return "hi "+section.getNumberSection()+",i am from port:" +port;
+    }
+    
+    @RequestMapping("/today")
+    public String today(){
+    	
+    	
+    	List<WaterConsumption> list = waterConsumptionService.findByTime(DateUtils.setDateToOneDayFirstMilliSecond(new Date()), DateUtils.setDateToOneDayLastMilliSecond(new Date()));
+    	
+    	int count = 0;
+    	
+    	for (WaterConsumption waterConsumption : list) {
+    		count = count + Integer.parseInt(waterConsumption.getCount());
+		}
+    	
+    	return "hi，今天消费总条数" +count;
     }
     
     public static void main1111(String[] args) {
