@@ -1077,11 +1077,15 @@ public class ForeignServiceImpl implements ForeignService {
 							waterConsumption.setCreateTime(new Date());
 							waterConsumption.setCount(String.valueOf(testCount)); // 条数
 							waterConsumption.setUpdateTime(new Date());
-							waterConsumption.setSource(source);
 							mongoTemplate.save(waterConsumption);
 
-							// 发送短信
-							ChuangLanSmsUtil.getInstance().sendSmsByMobileForZZTTest(mobile);
+							if ("pc1.0".equals(source)) {
+								// 发送短信
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTest(mobile);
+							} else {
+								// 发送短信
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForZZTTest(mobile);
+							}
 
 							// 封装返回对象
 							result.setResultMsg("成功");
