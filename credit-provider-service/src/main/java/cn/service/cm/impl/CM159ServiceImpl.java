@@ -9,17 +9,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import cn.entity.base.BaseMobileDetail;
 import cn.entity.cm.CM159;
-import cn.repository.base.BaseMobileDetailRepository;
+import cn.repository.cm.CM159Repository;
 import cn.service.cm.CM159Service;
 
 @Service
 public class CM159ServiceImpl implements CM159Service {
 
 	@Autowired
-	private BaseMobileDetailRepository<CM159, String> repository;
+	private CM159Repository repository;
+	
+	@Autowired
+	private MongoTemplate mongoTemplate;
 	
 	@Override
 	public List<CM159> findByMobileAndReportTime(String mobile, Date startTime, Date endTime) {
@@ -32,5 +38,19 @@ public class CM159ServiceImpl implements CM159Service {
 	@Override
 	public List<CM159> findByMobile(String mobile) {
 		return repository.findByMobile(mobile);
+	}
+
+	@Transactional
+	@Override
+	public void deleteByMobile(BaseMobileDetail mobileDetail,String mobile) {
+		List<CM159> resultList = this.findByMobile(mobile);
+		if(resultList == null || resultList.size()<=0){
+			mongoTemplate.insert(mobileDetail);
+		}else{										
+			if(resultList.get(0).getReportTime().getTime()<mobileDetail.getReportTime().getTime()){
+				repository.delete(resultList.get(0).getId());
+				mongoTemplate.insert(mobileDetail);
+			}										
+		}		
 	}
 }

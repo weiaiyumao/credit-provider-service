@@ -9,17 +9,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import cn.entity.base.BaseMobileDetail;
 import cn.entity.unknown.UnknownMobileDetail;
-import cn.repository.base.BaseMobileDetailRepository;
+import cn.repository.UnknownMobileDetailReository;
 import cn.service.unknown.UnknownMobileDetailService;
 
 @Service
 public class UnknownMobileDetailServiceImpl implements UnknownMobileDetailService {
 	
 	@Autowired
-	private BaseMobileDetailRepository<UnknownMobileDetail, String> repository;
+	private UnknownMobileDetailReository repository;
+	
+	@Autowired
+	private MongoTemplate mongoTemplate;
 	
 	@Override
 	public List<UnknownMobileDetail> findByMobileAndReportTime(String mobile, Date startTime, Date endTime) {
@@ -32,6 +38,20 @@ public class UnknownMobileDetailServiceImpl implements UnknownMobileDetailServic
 	@Override
 	public List<UnknownMobileDetail> findByMobile(String mobile) {
 		return repository.findByMobile(mobile);
+	}
+
+	@Transactional
+	@Override
+	public void deleteByMobile(BaseMobileDetail mobileDetail,String mobile) {
+		List<UnknownMobileDetail> resultList = this.findByMobile(mobile);
+		if(resultList == null || resultList.size()<=0){
+			mongoTemplate.insert(mobileDetail);
+		}else{										
+			if(resultList.get(0).getReportTime().getTime()<mobileDetail.getReportTime().getTime()){
+				repository.delete(resultList.get(0).getId());
+				mongoTemplate.insert(mobileDetail);
+			}										
+		}		
 	}
 
 }

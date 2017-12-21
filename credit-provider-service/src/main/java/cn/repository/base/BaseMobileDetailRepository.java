@@ -35,4 +35,15 @@ public interface BaseMobileDetailRepository<T, ID extends Serializable> {
 	@Query("{ 'mobile' : ?0 , 'reportTime' : { $gte : ?1 , $lte : ?2 }}")
 	Page<T> findByMobileAndReportTime(String mobile, Date startTime, Date endTime,Pageable pageable);
 	
+	/**
+	 * 根据手机号码删除数据 
+	 * 
+	 * @param mobile
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	@Query("{ 'mobile' : ?0 }")
+	void deleteByMobile(String mobile);
+	
 }
