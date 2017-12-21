@@ -245,6 +245,11 @@ public class ForeignServiceImpl implements ForeignService {
 										continue;
 									}
 
+									
+									// 实号库检测
+									
+									// 空号库检测
+									
 									// 检测 3个月内
 									BaseMobileDetail detail = spaceDetectionService.findByMobileAndReportTime(lineTxt,
 											sixStartTime, DateUtils.getCurrentDateTime());

@@ -32,7 +32,9 @@ public class SpringMongoConfig extends AbstractMongoConfiguration {
 	public static String ReplSetName = "mgset-4536355";
 	public static String DEFAULT_DB = "credit";
 
-	public static String uri = "mongodb://172.16.4.191:27017";
+//	public static String uri = "mongodb://172.16.4.191:27017";
+	
+	public static String uri = "mongodb://credit_mongodb:253songyu@101.132.124.69:53719";
 
 	@Value("${mongodbEnvironment}")
 	String mongodbEnvironment;
