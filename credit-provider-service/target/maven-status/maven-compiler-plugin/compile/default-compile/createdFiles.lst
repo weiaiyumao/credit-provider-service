@@ -25,6 +25,7 @@ cn\service\ct\CT153Service.class
 cn\service\cu\CU130Service.class
 cn\utils\Constant.class
 cn\repository\ct\CT133Repository.class
+cn\service\impl\ForeignServiceImpl$1$1.class
 cn\task\TodayDataSaveDBTask$1.class
 cn\service\ApiMobileTestService.class
 cn\repository\base\BaseMobileDetailRepository.class
@@ -120,7 +121,6 @@ cn\repository\cu\CU176Repository.class
 cn\entity\ct\CT153.class
 cn\service\cm\impl\CM187ServiceImpl.class
 cn\entity\cm\CM138.class
-cn\service\impl\ForeignServiceImpl$2.class
 cn\controller\CreditController.class
 cn\entity\cm\KCM178.class
 cn\service\MobileNumberSectionService.class
@@ -137,7 +137,6 @@ cn\service\cm\impl\CM184ServiceImpl.class
 cn\entity\ct\CT177.class
 cn\service\ct\CT189Service.class
 cn\service\cm\CM157Service.class
-cn\service\impl\ForeignServiceImpl$2$1.class
 cn\CreditProviderServiceApp.class
 cn\entity\cm\CM1703.class
 cn\entity\ct\KCT177.class
