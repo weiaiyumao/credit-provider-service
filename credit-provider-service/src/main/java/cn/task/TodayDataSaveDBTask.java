@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.context.annotation.Configuration;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -44,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -55,7 +55,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.entity.MobileNumberSection;
 import cn.entity.base.BaseMobileDetail;
-import cn.repository.base.BaseMobileDetailRepository;
 import cn.service.MobileNumberSectionService;
 import cn.service.SpaceDetectionService;
 import cn.task.handler.ClDateSaveDBHandler;
@@ -460,18 +459,22 @@ public class TodayDataSaveDBTask {
 		   return true; 
 	}
 	
-	@Scheduled(cron = "0 58 13 17 10 ?")
+	@Scheduled(cron = "0 48 17 21 12 ?")
 	public void taskSectionSaveDB(){
 		BufferedReader br = null;
+		
 		try {
 			logger.info("---------------开始执行任务---------------");
 			File file = new File("D:/test/手机号段-20171001-368630-全新版.csv");
+//			List<MobileNumberSection> mobList = new ArrayList<MobileNumberSection>();
 			if (file.isFile() && file.exists()) {
 
 				InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "gbk");
 				br = new BufferedReader(isr);
 				String lineTxt = null;
 
+				int i = 1;
+				
 				while ((lineTxt = br.readLine()) != null) {
 
 					if (CommonUtils.isNotString(lineTxt)) {
@@ -482,7 +485,6 @@ public class TodayDataSaveDBTask {
 					if (mobileNumberSectionService.findByNumberSection(str[1]) == null) {
 
 						MobileNumberSection section = new MobileNumberSection();
-						section.setId(UUIDTool.getInstance().getUUID());
 						section.setPrefix(str[0]);
 						section.setNumberSection(str[1]);
 						section.setProvince(str[2]);
@@ -494,8 +496,17 @@ public class TodayDataSaveDBTask {
 						if (str.length > 8) {
 							section.setMobilePhoneType(str[8]);
 						}
-						
+//						mobList.add(section);
 						mongoTemplate.save(section);
+						logger.info(section + "入库成功，成功入库第" + i + "条");
+//						if (i % 10000 == 0) {
+//							logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
+//							mongoTemplate.insertAll(mobList);
+//							logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====");
+//							mobList.clear();
+//							j++;
+//						}
+						i++;
 					}
 					
 				}

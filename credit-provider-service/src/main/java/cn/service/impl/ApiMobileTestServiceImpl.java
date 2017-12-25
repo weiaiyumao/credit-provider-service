@@ -1,5 +1,9 @@
 package cn.service.impl;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +28,7 @@ import cn.service.SpaceDetectionService;
 import cn.thread.ThreadExecutorService;
 import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
+import cn.utils.FileUtils;
 import cn.utils.UUIDTool;
 import main.java.cn.common.BackResult;
 import main.java.cn.common.RedisKeys;
@@ -405,4 +410,88 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 		return new BackResult<MobileInfoDomain>(ResultCode.RESULT_FAILED, "系统异常");
 	}
 
+	@Override
+	public void createCvs(String fileUrl) {
+		BufferedReader br = null;
+		try {
+			File file = new File(fileUrl);
+			if (file.isFile() && file.exists()) {
+
+				InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "utf-8");
+				br = new BufferedReader(isr);
+				String lineTxt = null;
+				
+				Date startTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -180);
+				Date endTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), 1);
+				
+				List<List<Object>> thereDataList = new ArrayList<List<Object>>();
+				List<Object> thereRowList = null;
+				int i = 0;
+				while ((lineTxt = br.readLine()) != null) {
+
+					i++;
+					if (CommonUtils.isNotString(lineTxt)) {
+						continue;
+					}
+
+					// 去掉字符串中的所有空格
+					lineTxt = lineTxt.replace(" ", "");
+
+					// 验证是否为正常的１１位有效数字
+					if (!CommonUtils.isNumeric(lineTxt)) {
+						continue;
+					}
+					System.out.println("开始第" + i + "条");
+					thereRowList = new ArrayList<Object>();
+					thereRowList.add(lineTxt);
+					
+					
+					// 1 查询号段
+					MobileNumberSection section = mobileNumberSectionService.findByNumberSection(lineTxt.substring(0, 7));
+
+					if (null == section) {
+						 // 空号
+						thereRowList.add("0");
+						thereDataList.add(thereRowList);
+						continue;
+					} 
+
+					// 2 查询库 最近6个月
+					BaseMobileDetail detail = spaceDetectionService.findByMobileAndReportTime(lineTxt, startTime, endTime);
+
+					if (null != detail) {
+						if ("real".equals(this.isSpaceMobile(detail.getDelivrd()))) {
+							 // 实号 1
+							thereRowList.add("1");
+							thereDataList.add(thereRowList);
+						} else if ("kong".equals(this.isSpaceMobile(detail.getDelivrd()))) {
+							 // 空号 0
+							thereRowList.add("0");
+							thereDataList.add(thereRowList);
+						} else if ("pause".equals(this.isSpaceMobile(detail.getDelivrd()))) {
+							thereRowList.add("2");
+							thereDataList.add(thereRowList);
+							 // 停机 2
+						}
+					} else {
+						 // 库无 不计费 3 
+						thereRowList.add("3");
+						thereDataList.add(thereRowList);
+					}
+					
+				}
+				
+				Object[] shhead = { "手机号码,状态" };
+				FileUtils.createCvsFile("惠誉.csv", "D:\\test\\vsc\\", thereDataList, shhead);
+				System.out.println("生成文件成功");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	
+	
+	
 }

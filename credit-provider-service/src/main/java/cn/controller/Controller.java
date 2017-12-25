@@ -37,6 +37,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.entity.MobileNumberSection;
 import cn.entity.base.BaseMobileDetail;
 import cn.entity.ct.CT133;
+import cn.service.ApiMobileTestService;
 import cn.service.ForeignService;
 import cn.service.MobileNumberSectionService;
 import cn.service.SpaceDetectionService;
@@ -71,8 +72,10 @@ public class Controller {
     
 	@Autowired
 	private MobileNumberSectionService mobileNumberSectionService;
-    
-    
+	
+	@Autowired
+	private ApiMobileTestService apiMobileTestService;
+	
     private final static Logger logger = LoggerFactory.getLogger(Controller.class);
     
     @GetMapping("/test")
@@ -164,9 +167,11 @@ public class Controller {
     public String hi(String name){
     	
     	
-    	MobileNumberSection section = mobileNumberSectionService.findByNumberSection(name.substring(0, 7));
+//    	MobileNumberSection section = mobileNumberSectionService.findByNumberSection(name.substring(0, 7));
+//    	
+    	apiMobileTestService.createCvs("D:\\test\\huiyu.txt");
     	
-    	return "hi "+section.getNumberSection()+",i am from port:" +port;
+    	return "hi i am from port:" +port;
     }
     
     public static void main1111(String[] args) {
@@ -311,6 +316,7 @@ public class Controller {
 			logger.error("=====执行查询出现异常：" + e.getMessage());
 		} 
 	}
+    
     
     
 }
