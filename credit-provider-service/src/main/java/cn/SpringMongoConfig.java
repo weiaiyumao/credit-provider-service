@@ -25,11 +25,11 @@ import com.mongodb.ServerAddress;
 @Configuration
 public class SpringMongoConfig extends AbstractMongoConfiguration {
 
-	public static ServerAddress seed1 = new ServerAddress("dds-uf612994c0c73af41.mongodb.rds.aliyuncs.com", 3717);
-	public static ServerAddress seed2 = new ServerAddress("dds-uf612994c0c73af42.mongodb.rds.aliyuncs.com", 3717);
-	public static String username = "root";
-	public static String password = "yumao08076619";
-	public static String ReplSetName = "mgset-4536355";
+	public static ServerAddress seed1 = new ServerAddress("dds-uf6b1eac595ea6941.mongodb.rds.aliyuncs.com", 3717);
+	public static ServerAddress seed2 = new ServerAddress("dds-uf6b1eac595ea6942.mongodb.rds.aliyuncs.com", 3717);
+	public static String username = "credit_mongodb";
+	public static String password = "253songyu";
+	public static String ReplSetName = "mgset-4943387";
 	public static String DEFAULT_DB = "credit";
 
 	public static String uri = "mongodb://172.16.4.191:27017";

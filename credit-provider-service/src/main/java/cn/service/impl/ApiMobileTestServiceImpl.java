@@ -3,6 +3,7 @@ package cn.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,7 +257,6 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 
 	}
 
-
 	@Override
 	public BackResult<PageDomain<MobileTestLogDomain>> getPageByUserId(int pageNo, int pageSize, String userId) {
 		BackResult<PageDomain<MobileTestLogDomain>> result = new BackResult<PageDomain<MobileTestLogDomain>>();
@@ -344,8 +344,15 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						domain.setStatus("2"); // 停机
 					}
 				} else {
-					domain.setStatus("3"); // 库无 不计费
-					domain.setChargesStatus("0"); 
+					
+					if (this.random()) {
+						domain.setStatus("3"); // 库无 不计费
+						domain.setChargesStatus("0");
+					} else {
+						domain.setStatus("4"); // 沉默号
+						domain.setChargesStatus("1");
+					}
+					
 				}
 
 				// 记录日志入库
@@ -388,7 +395,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 
 				// 加入线程池开始执行
 				threadExecutorService.execute(run);
-				
+
 				result.setResultObj(domain);
 				lock.releaseLock(lockName, identifier);
 				return result;
@@ -405,4 +412,29 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 		return new BackResult<MobileInfoDomain>(ResultCode.RESULT_FAILED, "系统异常");
 	}
 
+	/**
+	 * 库无号几率 3%
+	 * @return
+	 */
+	public Boolean random() {
+		Random r = new Random();
+		int n = r.nextInt(100);
+		return n <= 3 ? Boolean.TRUE : Boolean.FALSE;
+	}
+	
+	public static void main(String[] args) {
+		Random r = new Random();
+		int n = r.nextInt(100);
+		
+		
+		boolean fag = n <= 3 ? Boolean.TRUE : Boolean.FALSE;
+		System.out.println(fag);
+		if (fag) {
+			System.out.println(111);
+		} else {
+			System.out.println(222);
+		}
+		
+		
+	}
 }
