@@ -246,7 +246,6 @@ cn\entity\cu\CU185.class
 cn\redis\RedisLock$2.class
 cn\entity\cm\CM178.class
 cn\entity\cm\KCM138.class
-cn\service\impl\ApiMobileTestServiceImpl$2.class
 cn\entity\unknown\UnknownMobileDetail.class
 cn\entity\unknown\KUnknownMobileDetail.class
 cn\repository\cm\CM159Repository.class
@@ -257,7 +256,6 @@ cn\redis\RedisClient.class
 cn\service\cu\impl\CU132ServiceImpl.class
 cn\entity\cu\KCU132.class
 cn\service\cm\impl\CM150ServiceImpl.class
-cn\service\impl\ApiMobileTestServiceImpl$1.class
 cn\service\cm\impl\CM137ServiceImpl.class
 cn\controller\Controller.class
 cn\repository\UnknownMobileDetailReository.class
