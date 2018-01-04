@@ -1,48 +1,48 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.eureka.provider</groupId>
-  <artifactId>credit-provider-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
+	<groupId>com.eureka.provider</groupId>
+	<artifactId>credit-provider-service</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
-  <name>credit-provider-service</name>
-  <url>http://maven.apache.org</url>
-<!-- https://repository.cloudera.com/artifactory/cloudera-repos/   -->
-   
-   <repositories>
-        <repository>
-            <id>cloudera</id>
-            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
-        </repository>
-    </repositories>
-    
-  <properties>
-   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-     <java.version>1.8</java.version>
-  </properties>
+	<name>credit-provider-service</name>
+	<url>http://maven.apache.org</url>
+	<!-- https://repository.cloudera.com/artifactory/cloudera-repos/ -->
+
+	<repositories>
+		<repository>
+			<id>cloudera</id>
+			<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+		</repository>
+	</repositories>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+	</properties>
 
 	<!-- Spring Boot 启动父依赖 -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.4.RELEASE</version>
-    </parent>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.4.RELEASE</version>
+	</parent>
 	<dependencies>
-        <!-- Spring Cloud Netflix Eureka Client 依赖 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka</artifactId>
-        </dependency>
- 	<!-- spring-boot-starter-data-mongodb -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-        
-       <!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch -->
+		<!-- Spring Cloud Netflix Eureka Client 依赖 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<!-- spring-boot-starter-data-mongodb -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch -->
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
@@ -54,145 +54,162 @@
 			<artifactId>transport</artifactId>
 			<version>5.5.0</version>
 		</dependency>
-        
-        <!-- spring-boot-starter-test -->
-        <dependency>
-      		<groupId>org.springframework.boot</groupId>
-      		<artifactId>spring-boot-starter-test</artifactId>
-    	</dependency>
-    	<dependency>
-      		<groupId>org.springframework</groupId>
-      		<artifactId>spring-test</artifactId>
-    	</dependency>
-	    <dependency>
-	      <groupId>junit</groupId>
-	      <artifactId>junit</artifactId>
-	    </dependency>
-		
-		<!-- com.alibaba.fastjson -->		
+
+		<!-- spring-boot-starter-test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<!-- com.alibaba.fastjson -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>1.2.12</version>
 		</dependency>
-		
+
 		<!-- redis -->
-		<dependency>  
-           <groupId>redis.clients</groupId>  
-           <artifactId>jedis</artifactId>  
-        </dependency>  
-        
-        <dependency>  
-		    <groupId>org.springframework.data</groupId>  
-		    <artifactId>spring-data-redis</artifactId>  
-		</dependency> 
-		
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-redis</artifactId>
-		    <version>1.4.7.RELEASE</version>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
 		</dependency>
-		
-		<!-- 引用 子项目credit-interface-->
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-redis</artifactId>
+			<version>1.4.7.RELEASE</version>
+		</dependency>
+
+		<!-- 引用 子项目credit-interface -->
 		<dependency>
 			<groupId>credit-interface</groupId>
 			<artifactId>credit-interface</artifactId>
-			 <version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.boot</groupId> -->
+<!-- 			<artifactId>spring-boot-starter-tomcat</artifactId> -->
+<!-- 			<scope>provided</scope> -->
+<!-- 		</dependency> -->
+		<!-- hbase -->
+		<dependency>
+		  <groupId>org.apache.hbase</groupId>
+		  <artifactId>hbase-client</artifactId>
+		  <version>1.2.0</version>
 		</dependency>
 		
 		<dependency>
-		        <groupId>org.springframework.boot</groupId>
-		        <artifactId>spring-boot-starter-tomcat</artifactId>
-		        <scope>provided</scope>
-		</dependency>
-		<!-- hbase -->
-		<dependency>
-		    <groupId>org.apache.hbase</groupId>
-		    <artifactId>hbase-client</artifactId>
-		    <version>1.2.0-cdh5.11.0</version>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase-common</artifactId>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.hbase</groupId>
-		    <artifactId>hbase-common</artifactId>
-		    <version>1.2.0-cdh5.11.0</version>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase-protocol</artifactId>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.hbase</groupId>
-		    <artifactId>hbase-protocol</artifactId>
-		    <version>1.2.0-cdh5.11.0</version>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-client</artifactId>
+			<version>2.6.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.hadoop</groupId>
-		    <artifactId>hadoop-client</artifactId>
-		    <version>2.6.0-cdh5.11.0</version>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>2.6.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.hadoop</groupId>
-		    <artifactId>hadoop-common</artifactId>
-		    <version>2.6.0-cdh5.11.0</version>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-auth</artifactId>
+			<version>2.6.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.hadoop</groupId>
-		    <artifactId>hadoop-auth</artifactId>
-		    <version>2.6.0-cdh5.11.0</version>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.2</version>
 		</dependency>
-		<dependency>  
-		    <groupId>commons-collections</groupId>  
-		    <artifactId>commons-collections</artifactId>  
-		    <version>3.2.2</version>  
-		</dependency> 
 		<!-- zookeeper -->
 		<dependency>
-		    <groupId>org.apache.zookeeper</groupId>
-		    <artifactId>zookeeper</artifactId>
-		    <version>3.4.5-cdh5.11.1</version>
+		  <groupId>org.apache.zookeeper</groupId>
+		  <artifactId>zookeeper</artifactId>
+		  <version>3.4.5</version>
 		</dependency>
+
 		<dependency>
-		    <groupId>com.google.protobuf</groupId>
-		    <artifactId>protobuf-java</artifactId>
-		    <version>2.5.0</version>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>2.5.0</version>
 		</dependency>
 		<!-- hadoop -->
 		<dependency>
-            <groupId>org.cloudera.htrace</groupId>
+			<groupId>org.cloudera.htrace</groupId>
 			<artifactId>htrace-core</artifactId>
 			<version>2.04</version>
-         </dependency>
-		 <dependency>
-		    <groupId>org.apache.htrace</groupId>
-		    <artifactId>htrace-core</artifactId>
-		    <version>3.1.0-incubating</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.htrace</groupId>
-		    <artifactId>htrace-core4</artifactId>
-		    <version>4.0.1-incubating</version>
+			<groupId>org.apache.htrace</groupId>
+			<artifactId>htrace-core</artifactId>
+			<version>3.1.0-incubating</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.yammer.metrics</groupId>
-		    <artifactId>metrics-core</artifactId>
-		    <version>2.2.0</version>
+			<groupId>org.apache.htrace</groupId>
+			<artifactId>htrace-core4</artifactId>
+			<version>4.0.1-incubating</version>
 		</dependency>
-    </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <!-- Spring Cloud Netflix 依赖 -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-netflix</artifactId>
-                <version>1.3.1.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    <build>
+		<dependency>
+			<groupId>com.yammer.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<!-- Spring Cloud Netflix 依赖 -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-netflix</artifactId>
+				<version>1.3.1.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+<!-- 	<build> -->
+<!-- 		<plugins> -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-war-plugin</artifactId> -->
+<!-- 				<configuration> -->
+<!-- 					<warSourceExcludes>src/main/resources/**</warSourceExcludes> -->
+<!-- 					<warName>creditService</warName> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+<!-- 		</plugins> -->
+<!-- 	</build> -->
+	
+	<build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <warSourceExcludes>src/main/resources/**</warSourceExcludes>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <warSourceExcludes>src/main/resources/**</warSourceExcludes>  
 			    	<warName>creditService</warName> 
                 </configuration>
             </plugin>
