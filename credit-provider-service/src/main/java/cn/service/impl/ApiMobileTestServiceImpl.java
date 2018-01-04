@@ -3,6 +3,7 @@ package cn.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import cn.service.ApiMobileTestService;
 import cn.service.MobileNumberSectionService;
 import cn.service.MobileTestLogService;
 import cn.service.SpaceDetectionService;
-import cn.thread.ThreadExecutorService;
+//import cn.thread.ThreadExecutorService;
 import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
 import cn.utils.UUIDTool;
@@ -54,8 +55,8 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 	@Autowired
 	private JedisPool jedisPool;
 
-	@Autowired
-	private ThreadExecutorService threadExecutorService;
+//	@Autowired
+//	private ThreadExecutorService threadExecutorService;
 
 	@Override
 	public BackResult<List<MobileInfoDomain>> findByMobileNumbers(String mobileNumbers, String userId) {
@@ -153,62 +154,65 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 
 				}
 
-				Runnable run = new Runnable() {
-					@Override
-					public void run() {
-						try {
-							if (!CommonUtils.isNotEmpty(list)) {
+//				Runnable run = new Runnable() {
+//					@Override
+//					public void run() {
+//						try {
+//							
+//						} catch (Exception e) {
+//							logger.error("账号二次清洗日志信息入库系统异常：" + e.getMessage());
+//						}
+//					}
+//				};
+//
+//				// 加入线程池开始执行
+//				threadExecutorService.execute(run);
+				
+				if (!CommonUtils.isNotEmpty(list)) {
 
-								int changeCount = 0;
+					int changeCount = 0;
 
-								List<MobileTestLog> listMobile = new ArrayList<MobileTestLog>();
+					List<MobileTestLog> listMobile = new ArrayList<MobileTestLog>();
 
-								for (MobileInfoDomain mobileInfoDomain : list) {
-									MobileTestLog mobileTestLog = new MobileTestLog();
-									mobileTestLog.setOrderNo(DateUtils.getCurrentTimeMillis().substring(0, 4)
-											+ System.currentTimeMillis());
-									mobileTestLog.setArea(mobileInfoDomain.getArea());
-									mobileTestLog.setChargesStatus(mobileInfoDomain.getChargesStatus());
-									mobileTestLog.setCreateTime(new Date());
-									mobileTestLog.setLastTime(mobileInfoDomain.getLastTime());
-									mobileTestLog.setMobile(mobileInfoDomain.getMobile());
-									mobileTestLog.setNumberType(mobileInfoDomain.getNumberType());
-									mobileTestLog.setStatus(mobileInfoDomain.getStatus());
-									mobileTestLog.setUserId(userId);
-									listMobile.add(mobileTestLog);
+					for (MobileInfoDomain mobileInfoDomain : list) {
+						MobileTestLog mobileTestLog = new MobileTestLog();
+						mobileTestLog.setOrderNo(DateUtils.getCurrentTimeMillis().substring(0, 4)
+								+ System.currentTimeMillis());
+						mobileTestLog.setArea(mobileInfoDomain.getArea());
+						mobileTestLog.setChargesStatus(mobileInfoDomain.getChargesStatus());
+						mobileTestLog.setCreateTime(new Date());
+						mobileTestLog.setLastTime(mobileInfoDomain.getLastTime());
+						mobileTestLog.setMobile(mobileInfoDomain.getMobile());
+						mobileTestLog.setNumberType(mobileInfoDomain.getNumberType());
+						mobileTestLog.setStatus(mobileInfoDomain.getStatus());
+						mobileTestLog.setUserId(userId);
+						listMobile.add(mobileTestLog);
 
-									if (mobileInfoDomain.getChargesStatus().equals("1")) {
-										changeCount = changeCount + 1;
-									}
-
-								}
-
-								// 检测结果日志入库
-								mongoTemplate.insertAll(listMobile);
-
-								if (changeCount > 0) {
-									// 记录流水记录
-									WaterConsumption waterConsumption = new WaterConsumption();
-									waterConsumption.setUserId(userId);
-									waterConsumption.setId(UUIDTool.getInstance().getUUID());
-									waterConsumption.setConsumptionNum("ECJC_" + System.currentTimeMillis());
-									waterConsumption.setMenu("客户API接口账户二次清洗");
-									waterConsumption.setStatus("1");
-									waterConsumption.setType("2"); // 账户二次检测
-									waterConsumption.setCreateTime(new Date());
-									waterConsumption.setCount(String.valueOf(listMobile.size())); // 条数
-									waterConsumption.setUpdateTime(new Date());
-									mongoTemplate.save(waterConsumption);
-								}
-							}
-						} catch (Exception e) {
-							logger.error("账号二次清洗日志信息入库系统异常：" + e.getMessage());
+						if (mobileInfoDomain.getChargesStatus().equals("1")) {
+							changeCount = changeCount + 1;
 						}
-					}
-				};
 
-				// 加入线程池开始执行
-				threadExecutorService.execute(run);
+					}
+
+					// 检测结果日志入库
+					mongoTemplate.insertAll(listMobile);
+
+					if (changeCount > 0) {
+						// 记录流水记录
+						WaterConsumption waterConsumption = new WaterConsumption();
+						waterConsumption.setUserId(userId);
+						waterConsumption.setId(UUIDTool.getInstance().getUUID());
+						waterConsumption.setConsumptionNum("ECJC_" + System.currentTimeMillis());
+						waterConsumption.setMenu("客户API接口账户二次清洗");
+						waterConsumption.setStatus("1");
+						waterConsumption.setType("2"); // 账户二次检测
+						waterConsumption.setCreateTime(new Date());
+						waterConsumption.setCount(String.valueOf(listMobile.size())); // 条数
+						waterConsumption.setUpdateTime(new Date());
+						mongoTemplate.save(waterConsumption);
+					}
+				}
+				
 				result.setResultObj(list);
 				lock.releaseLock(lockName, identifier);
 				return result;
@@ -255,7 +259,6 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 		return "kong";
 
 	}
-
 
 	@Override
 	public BackResult<PageDomain<MobileTestLogDomain>> getPageByUserId(int pageNo, int pageSize, String userId) {
@@ -344,51 +347,61 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						domain.setStatus("2"); // 停机
 					}
 				} else {
-					domain.setStatus("3"); // 库无 不计费
-					domain.setChargesStatus("0"); 
+					
+					if (this.random()) {
+						domain.setStatus("3"); // 库无 不计费
+						domain.setChargesStatus("0");
+					} else {
+						domain.setStatus("4"); // 沉默号
+						domain.setChargesStatus("1");
+					}
+					
 				}
 
 				// 记录日志入库
-				Runnable run = new Runnable() {
-					@Override
-					public void run() {
-						try {
-							MobileTestLog mobileTestLog = new MobileTestLog();
-							mobileTestLog.setOrderNo(
-									DateUtils.getCurrentTimeMillis().substring(0, 4) + System.currentTimeMillis());
-							mobileTestLog.setArea(domain.getArea());
-							mobileTestLog.setChargesStatus(domain.getChargesStatus());
-							mobileTestLog.setCreateTime(new Date());
-							mobileTestLog.setLastTime(domain.getLastTime());
-							mobileTestLog.setMobile(domain.getMobile());
-							mobileTestLog.setNumberType(domain.getNumberType());
-							mobileTestLog.setStatus(domain.getStatus());
-							mobileTestLog.setUserId(userId);
+//				Runnable run = new Runnable() {
+//					@Override
+//					public void run() {
+//						try {
+//							
+//						} catch (Exception e) {
+//							logger.error("账号二次清洗日志信息入库系统异常：" + e.getMessage());
+//						}
+//					}
+//				};
+//
+//				// 加入线程池开始执行
+//				threadExecutorService.execute(run);
+				MobileTestLog mobileTestLog = new MobileTestLog();
+				mobileTestLog.setOrderNo(
+						DateUtils.getCurrentTimeMillis().substring(0, 4) + System.currentTimeMillis());
+				mobileTestLog.setArea(domain.getArea());
+				mobileTestLog.setChargesStatus(domain.getChargesStatus());
+				mobileTestLog.setCreateTime(new Date());
+				mobileTestLog.setLastTime(domain.getLastTime());
+				mobileTestLog.setMobile(domain.getMobile());
+				mobileTestLog.setNumberType(domain.getNumberType());
+				mobileTestLog.setStatus(domain.getStatus());
+				mobileTestLog.setUserId(userId);
 
-							// 检测结果日志入库
-							mongoTemplate.insert(mobileTestLog);
+				// 检测结果日志入库
+				mongoTemplate.insert(mobileTestLog);
 
-							// 记录流水记录
-							WaterConsumption waterConsumption = new WaterConsumption();
-							waterConsumption.setUserId(userId);
-							waterConsumption.setId(UUIDTool.getInstance().getUUID());
-							waterConsumption.setConsumptionNum("ECJC_" + System.currentTimeMillis());
-							waterConsumption.setMenu("客户API接口账户二次清洗");
-							waterConsumption.setStatus("1");
-							waterConsumption.setType("2"); // 账户二次检测
-							waterConsumption.setCreateTime(new Date());
-							waterConsumption.setCount(String.valueOf(1)); // 条数
-							waterConsumption.setUpdateTime(new Date());
-							mongoTemplate.save(waterConsumption);
-						} catch (Exception e) {
-							logger.error("账号二次清洗日志信息入库系统异常：" + e.getMessage());
-						}
-					}
-				};
-
-				// 加入线程池开始执行
-				threadExecutorService.execute(run);
+				// 记录流水记录
+				WaterConsumption waterConsumption = new WaterConsumption();
+				waterConsumption.setUserId(userId);
+				waterConsumption.setId(UUIDTool.getInstance().getUUID());
+				waterConsumption.setConsumptionNum("ECJC_" + System.currentTimeMillis());
+				waterConsumption.setMenu("客户API接口账户二次清洗");
+				waterConsumption.setStatus("1");
+				waterConsumption.setType("2"); // 账户二次检测
+				waterConsumption.setCreateTime(new Date());
+				waterConsumption.setCount(String.valueOf(1)); // 条数
+				waterConsumption.setUpdateTime(new Date());
+				mongoTemplate.save(waterConsumption);
 				
+				
+
 				result.setResultObj(domain);
 				lock.releaseLock(lockName, identifier);
 				return result;
@@ -405,4 +418,29 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 		return new BackResult<MobileInfoDomain>(ResultCode.RESULT_FAILED, "系统异常");
 	}
 
+	/**
+	 * 库无号几率 3%
+	 * @return
+	 */
+	public Boolean random() {
+		Random r = new Random();
+		int n = r.nextInt(100);
+		return n <= 3 ? Boolean.TRUE : Boolean.FALSE;
+	}
+	
+	public static void main(String[] args) {
+		Random r = new Random();
+		int n = r.nextInt(100);
+		
+		
+		boolean fag = n <= 3 ? Boolean.TRUE : Boolean.FALSE;
+		System.out.println(fag);
+		if (fag) {
+			System.out.println(111);
+		} else {
+			System.out.println(222);
+		}
+		
+		
+	}
 }

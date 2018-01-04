@@ -192,9 +192,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <warSourceExcludes>src/main/resources/**</warSourceExcludes>  
+                    <warSourceExcludes>src/main/resources/**</warSourceExcludes>
 			    	<warName>creditService</warName> 
                 </configuration>
             </plugin>
