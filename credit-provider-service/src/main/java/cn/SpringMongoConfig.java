@@ -61,7 +61,7 @@ public class SpringMongoConfig extends AbstractMongoConfiguration {
 		credentials.add(MongoCredential.createScramSha1Credential(username, DEFAULT_DB, password.toCharArray()));
 		// 构建操作选项，requiredReplicaSetName属性外的选项根据自己的实际需求配置，默认参数满足大多数场景
 		MongoClientOptions options = MongoClientOptions.builder().requiredReplicaSetName(ReplSetName)
-				.socketTimeout(5000).connectionsPerHost(1500) // 最大连接数
+				.socketTimeout(10000).connectionsPerHost(1500) // 最大连接数
 				.minConnectionsPerHost(0) // 最小连接数
 				.maxWaitTime(120000) // 最大等待可用连接的时间
 				.connectTimeout(10000) // 连接超时时间
