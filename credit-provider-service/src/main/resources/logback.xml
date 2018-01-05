@@ -57,4 +57,5 @@
             <!--</dataSource>-->
         <!--</connectionSource>-->
     <!--</appender>-->
+     <include resource="org/springframework/boot/logging/logback/base.xml"/> <jmxConfigurator/>
 </configuration>
