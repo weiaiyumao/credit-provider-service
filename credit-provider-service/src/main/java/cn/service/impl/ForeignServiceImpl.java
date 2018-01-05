@@ -861,17 +861,32 @@ public class ForeignServiceImpl implements ForeignService {
 		realdelivrd += "YY:0206,-181,023,036,043,044,706,712,718,721,730,763,779,879,CB:0013,CL:104,GATEBLA,IB:0011,ID:0199,JL:0028,LT:0022,MI:0021,MK:0068,RP:16,RP:65,RP:88,SGIP:-13,SGIP:63,SGIP:70,622,660,MI:0006,MK:0051,RP:121";
 		String pausedelivrd = "000,001,005,008,084,617,702,716,801,809,802,817,869,731,EXPIRED,IC:0151,LT:0010,LT:0011,LT:0024,LT:0059,LT:0093,LT:0-37,MC:0001,MI:0000,MI:0001,MI:0002,MI:0004,MI:0005,MI:0010,MI:0011,MI:0012,MI:0013,MI:0023,MI:0029,MI:0030,MI:0036,MI:0038,MI:0050,MI:0055,MI:0056,MI:0063,MI:0068,MI:0083,MI:0084,MI:0089,MK:0011,MK:0013,MK:0029,MK:0036,MN:0013,MN:0017,MN:0036,MN:0051,MN:0054,MN:0059,RP:10,RP:104,RP:105,RP:118,RP:124,RP:13,RP:14,RP:182,RP:219,RP:231,RP:24,RP:253,RP:31,RP:4,RP:5,RP:51,RP:53,RP:54,RP:64,RP:75,RP:9,RP:93,SGIP:13,SGIP:-17,SGIP:18,SGIP:-2,SGIP:24,SGIP:29,SGIP:-37,SGIP:4,SGIP:-43,SGIP:5,SGIP:50,SGIP:51,SGIP:52,SGIP:53,SGIP:55,SGIP:58,SGIP:59,SGIP:-74,SGIP:77,SGIP:8,041,059,642,680,813,IB:0072,ID:0013,JL:0028,MI:0078,MK:0050,MK:0115,MK:0150,RP:175,RP:32,SGIP:6,SGIP:63,051,081,112,605,RP:121,SGIP:84,608,705";
 		String nulldelivrd = "006,012,013,024,601,640,701,717,765,771,CB:0010,Err_Num,ID:0012,LT:0001,LT:0012,MI:0075,MI:0090,MK:0000,MK:0001,MK:0004,MK:0005,MK:0012,MK:0038,MK:0066,MK:0075,MK:0090,MN:0001,MN:0075,PHONERR,RP:1,RP:101,RP:102,RP:12,RP:23,RP:3,RP:56,RP:99,SGIP:1,SGIP:12,SGIP:3,SGIP:36,SGIP:54,SGIP:56,SGIP:75,SGIP:9,SME169,UTE,ERRNUM,IB:0169,LT:0009,LT:0086,LT:0-43,LT:0-74,MI:0210,RP:135,RP:63";
-		if (realdelivrd.contains(delivrd)) {
-			return "real";
-		} else if (pausedelivrd.contains(delivrd)) {
-			return "pause";
-		} else if (nulldelivrd.contains(delivrd)) {
-			return "kong";
-		} else {
-			return "unkown";
+		
+		String[] realdelivrds = realdelivrd.split(",");
+		for (String string : realdelivrds) {
+			if (string.equals(delivrd)) {
+				return "real";
+			}
 		}
+		
+		String[] pausedelivrds = pausedelivrd.split(",");
+		for (String string : pausedelivrds) {
+			if (string.equals(delivrd)) {
+				return "pause";
+			}
+		}
+		
+		String[] nulldelivrds = nulldelivrd.split(",");
+		
+		for (String string : nulldelivrds) {
+			if (string.equals(delivrd)) {
+				return "kong";
+			}
+		}
+		
+		return "unkown";
 	}
-
+	
 	public static void main(String[] args) throws IOException {
 		System.out.println(FileUtils.getFileMenu("D:\\test\\mk000164.txt", 1000, 10000));
 	}
