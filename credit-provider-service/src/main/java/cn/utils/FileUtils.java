@@ -128,6 +128,62 @@ public class FileUtils {
 		}
 
 	}
+	
+	/**
+	 * 生成报表
+	 * 
+	 * @param fileName
+	 * @param filePath
+	 * @param dataList
+	 */
+	public static void createCvsFileByMap2(String fileName, String filePath, List<Map<String, Object>> dataList,
+			Object[] head) {
+
+		BufferedWriter csvWtriter = null;
+		File csvFile = null;
+
+		try {
+			List<Object> headList = Arrays.asList(head);
+
+			csvFile = new File(filePath + fileName);
+			File parent = csvFile.getParentFile();
+			if (parent != null && !parent.exists()) {
+				parent.mkdirs();
+			}
+
+			csvFile.createNewFile();
+			// GB2312使正确读取分隔符","
+			csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "gbk"), 1024);
+			int num = headList.size() / 2;
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < num; i++) {
+				buffer.append(" ,");
+			}
+
+			csvWtriter.write(buffer.toString() + fileName + buffer.toString());
+			csvWtriter.newLine();
+
+			// 写入文件头部
+			writeRow(headList, csvWtriter);
+			// 写入文件内容
+			for (Map<String, Object> row : dataList) {
+				writeRowByMap(row.get("mobile").toString(), csvWtriter);
+				writeRowByMap(row.get("delivd").toString(), csvWtriter);
+				writeRowByMap(row.get("reportTime").toString(), csvWtriter);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("生成报表文件异常：" + e.getMessage());
+		} finally {
+			try {
+				csvWtriter.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 
 	/**
 	 * 写入文件

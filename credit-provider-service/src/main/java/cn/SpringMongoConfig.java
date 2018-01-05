@@ -32,8 +32,9 @@ public class SpringMongoConfig extends AbstractMongoConfiguration {
 	public static String ReplSetName = "mgset-4943387";
 	public static String DEFAULT_DB = "credit";
 
-	public static String uri = "mongodb://172.16.4.191:27017";
-
+	@Value("${mongodburi}")
+	String mongodburi;
+	
 	@Value("${mongodbEnvironment}")
 	String mongodbEnvironment;
 
@@ -47,7 +48,7 @@ public class SpringMongoConfig extends AbstractMongoConfiguration {
 	public Mongo mongo() throws Exception {
 
 		if (!mongodbEnvironment.equals("produced")) {
-			MongoClientURI mongoClientURI = new MongoClientURI(uri);  
+			MongoClientURI mongoClientURI = new MongoClientURI(mongodburi);  
 	        return new MongoClient(mongoClientURI);  
 		}
 		
