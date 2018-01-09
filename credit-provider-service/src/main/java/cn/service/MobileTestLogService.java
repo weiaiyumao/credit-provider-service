@@ -6,5 +6,5 @@ import cn.entity.MobileTestLog;
 
 public interface MobileTestLogService {
 
-	Page<MobileTestLog> getPageByUserId(int pageNo, int pageSize, String userId);
+	Page<MobileTestLog> getPageByUserId(int pageNo, int pageSize, String userId,String type);
 }

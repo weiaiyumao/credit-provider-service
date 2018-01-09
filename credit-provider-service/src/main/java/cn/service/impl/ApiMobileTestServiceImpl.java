@@ -186,6 +186,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						mobileTestLog.setNumberType(mobileInfoDomain.getNumberType());
 						mobileTestLog.setStatus(mobileInfoDomain.getStatus());
 						mobileTestLog.setUserId(userId);
+						mobileTestLog.setType("2"); // 账户二次检测类型
 						listMobile.add(mobileTestLog);
 
 						if (mobileInfoDomain.getChargesStatus().equals("1")) {
@@ -261,14 +262,14 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 	}
 
 	@Override
-	public BackResult<PageDomain<MobileTestLogDomain>> getPageByUserId(int pageNo, int pageSize, String userId) {
+	public BackResult<PageDomain<MobileTestLogDomain>> getPageByUserId(int pageNo, int pageSize, String userId, String type) {
 		BackResult<PageDomain<MobileTestLogDomain>> result = new BackResult<PageDomain<MobileTestLogDomain>>();
 
 		PageDomain<MobileTestLogDomain> pageDomain = new PageDomain<MobileTestLogDomain>();
 
 		try {
 
-			Page<MobileTestLog> page = mobileTestLogService.getPageByUserId(pageNo, pageSize, userId);
+			Page<MobileTestLog> page = mobileTestLogService.getPageByUserId(pageNo, pageSize, userId,type);
 
 			if (null != page) {
 
@@ -383,7 +384,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 				mobileTestLog.setNumberType(domain.getNumberType());
 				mobileTestLog.setStatus(domain.getStatus());
 				mobileTestLog.setUserId(userId);
-
+				mobileTestLog.setType("3"); // 空号API检测类型
 				// 检测结果日志入库
 				mongoTemplate.insert(mobileTestLog);
 
@@ -394,7 +395,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 				waterConsumption.setConsumptionNum("ECJC_" + System.currentTimeMillis());
 				waterConsumption.setMenu("客户API接口账户二次清洗");
 				waterConsumption.setStatus("1");
-				waterConsumption.setType("2"); // 账户二次检测
+				waterConsumption.setType("3"); // 空号API检测类型
 				waterConsumption.setCreateTime(new Date());
 				waterConsumption.setCount(String.valueOf(1)); // 条数
 				waterConsumption.setUpdateTime(new Date());

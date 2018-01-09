@@ -9,6 +9,6 @@ import cn.entity.MobileTestLog;
 
 public interface MobileTestLogReository extends MongoRepository<MobileTestLog, String>{
 
-	@Query("{ 'userId' : ?0 }")
-	Page<MobileTestLog> getPageByUserId(String userId,Pageable pageable);
+	@Query("{ 'userId' : ?0 ,'type' : ?1 }")
+	Page<MobileTestLog> getPageByUserId(String userId,String type,Pageable pageable);
 }

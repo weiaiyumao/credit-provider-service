@@ -19,10 +19,10 @@ public class MobileTestLogServiceImpl implements MobileTestLogService {
 	private MobileTestLogReository repository;
 	
 	@Override
-	public Page<MobileTestLog> getPageByUserId(int pageNo, int pageSize, String userId) {
+	public Page<MobileTestLog> getPageByUserId(int pageNo, int pageSize, String userId,String type) {
 		Sort sort = new Sort(Direction.DESC,"createTime");
 		Pageable pageable = new PageRequest(pageNo - 1, pageSize, sort);
-		Page<MobileTestLog> page = repository.getPageByUserId(userId, pageable);
+		Page<MobileTestLog> page = repository.getPageByUserId(userId,type, pageable);
 		return page;
 	}
 

@@ -22,6 +22,8 @@ public class MobileTestLog implements Serializable{
 	private String userId; // 用户ID
 	
 	private String mobile; // 手机号码
+
+	private String type; //检测类型
 	
 	private String area; // 地区
 	
@@ -120,7 +122,12 @@ public class MobileTestLog implements Serializable{
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	
-	
-	
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }

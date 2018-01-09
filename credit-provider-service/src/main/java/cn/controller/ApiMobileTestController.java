@@ -26,8 +26,8 @@ public class ApiMobileTestController {
 	}
 	
 	@RequestMapping(value = "/getPageByUserId", method = RequestMethod.POST)
-	public BackResult<PageDomain<MobileTestLogDomain>> getPageByUserId(int pageNo, int pageSize, String userId){
-		return apiMobileTestService.getPageByUserId(pageNo, pageSize, userId);
+	public BackResult<PageDomain<MobileTestLogDomain>> getPageByUserId(int pageNo, int pageSize, String userId,String type){
+		return apiMobileTestService.getPageByUserId(pageNo, pageSize, userId,type);
 	}
 	
 	@RequestMapping(value = "/findByMobile", method = RequestMethod.POST)
