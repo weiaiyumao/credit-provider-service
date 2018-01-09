@@ -393,7 +393,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 				waterConsumption.setUserId(userId);
 				waterConsumption.setId(UUIDTool.getInstance().getUUID());
 				waterConsumption.setConsumptionNum("ECJC_" + System.currentTimeMillis());
-				waterConsumption.setMenu("客户API接口账户二次清洗");
+				waterConsumption.setMenu("空号API接口检测");
 				waterConsumption.setStatus("1");
 				waterConsumption.setType("3"); // 空号API检测类型
 				waterConsumption.setCreateTime(new Date());
