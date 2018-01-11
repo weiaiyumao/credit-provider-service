@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -167,9 +168,7 @@ public class FileUtils {
 			writeRow(headList, csvWtriter);
 			// 写入文件内容
 			for (Map<String, Object> row : dataList) {
-				writeRowByMap(row.get("mobile").toString(), csvWtriter);
-				writeRowByMap(row.get("delivd").toString(), csvWtriter);
-				writeRowByMap(row.get("reportTime").toString(), csvWtriter);
+				writeRowByMap(row.get("mobile").toString(),row.get("delivd").toString(),row.get("reportTime").toString(), csvWtriter);
 			}
 
 		} catch (Exception e) {
@@ -211,6 +210,22 @@ public class FileUtils {
 	private static void writeRowByMap(String row, BufferedWriter csvWriter) throws IOException {
 		StringBuffer sb = new StringBuffer();
 		String rowStr = sb.append("\"").append(row).append("\",").toString();
+		csvWriter.write(rowStr);
+		csvWriter.newLine();
+	}
+	
+	/**
+	 * 写入文件
+	 * 
+	 * @param row
+	 * @param csvWriter
+	 * @throws IOException
+	 */
+	private static void writeRowByMap(String row1,String row2,String row3, BufferedWriter csvWriter) throws IOException {
+		StringBuffer sb = new StringBuffer();
+		String rowStr = sb.append("\"").append(row1).append("\",").toString();
+		rowStr = sb.append("\"").append(row2).append("\",").toString();
+		rowStr = sb.append("\"").append(row3).append("\",").toString();
 		csvWriter.write(rowStr);
 		csvWriter.newLine();
 	}

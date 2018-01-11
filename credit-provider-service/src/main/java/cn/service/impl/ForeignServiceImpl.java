@@ -584,22 +584,22 @@ public class ForeignServiceImpl implements ForeignService {
 											// 停机
 											Map<String, Object> sixRowList = new HashMap<>();
 											sixRowList.put("mobile", detail.getMobile());
-											sixRowList.put("delivd", 2);// 停机状态
-											sixRowList.put("reportTime", detail.getReportTime().getTime());
+											sixRowList.put("delivd", detail.getDelivrd());// 停机状态
+											sixRowList.put("reportTime",DateUtils.formatDate(detail.getReportTime(), "yyyy-MM-dd HH:mm:ss"));
 											sixDataList.add(sixRowList);
 										} else if ("kong".equals(isSpaceMobile(detail.getDelivrd()))) {
 											// 空号
 											Map<String, Object> sixRowList = new HashMap<>();
 											sixRowList.put("mobile", detail.getMobile());
-											sixRowList.put("delivd", 1);// 空号状态
-											sixRowList.put("reportTime", detail.getReportTime().getTime());
+											sixRowList.put("delivd", detail.getDelivrd());// 空号状态
+											sixRowList.put("reportTime", DateUtils.formatDate(detail.getReportTime(), "yyyy-MM-dd HH:mm:ss"));
 											sixDataList.add(sixRowList);
 										} else {
 											// 未知
 											unKonwRowList = new ArrayList<Object>();
 											unKonwRowList.add(lineTxt);
 											unKonwRowList.add(detail.getDelivrd());
-											thereRowList.add(DateUtils.formatDate(detail.getReportTime(), "yyyy-MM-dd HH:mm:ss"));
+											unKonwRowList.add(DateUtils.formatDate(detail.getReportTime(), "yyyy-MM-dd HH:mm:ss"));
 											unKonwDataList.add(unKonwRowList);
 										}
 
