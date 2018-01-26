@@ -752,7 +752,7 @@ public class ForeignServiceImpl implements ForeignService {
 							logger.error("----------客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
 //							this.clearLockAndCountForRun(lock, userId, mobile);
 //							// 异常发送短信
-//							ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestZZtEx(mobile);
+							ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestZZtEx("13817367247");
 						} finally {
 							if (null != br) {
 								try {

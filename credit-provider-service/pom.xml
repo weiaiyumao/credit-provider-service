@@ -102,7 +102,13 @@
 			<artifactId>spring-boot-starter-redis</artifactId>
 			<version>1.4.7.RELEASE</version>
 		</dependency>
-
+		
+		<!-- https://mvnrepository.com/artifact/com.alibaba.rocketmq/rocketmq-client -->
+		<dependency>
+		    <groupId>com.alibaba.rocketmq</groupId>
+		    <artifactId>rocketmq-client</artifactId>
+		    <version>3.5.9</version>
+		</dependency>
 		<!-- 引用 子项目credit-interface -->
 		<dependency>
 			<groupId>credit-interface</groupId>
@@ -110,11 +116,6 @@
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework.boot</groupId> -->
-<!-- 			<artifactId>spring-boot-starter-tomcat</artifactId> -->
-<!-- 			<scope>provided</scope> -->
-<!-- 		</dependency> -->
 		<!-- hbase -->
 		<dependency>
 		  <groupId>org.apache.hbase</groupId>
@@ -198,30 +199,12 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-<!-- 	<build> -->
-<!-- 		<plugins> -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-war-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<warSourceExcludes>src/main/resources/**</warSourceExcludes> -->
-<!-- 					<warName>creditService</warName> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
-<!-- 		</plugins> -->
-<!-- 	</build> -->
-	
 	<build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <!--<source>1.8</source>-->
-                    <!--<target>1.8</target>-->
-                    <!--<warSourceExcludes>src/main/resources/**</warSourceExcludes>  -->
-			    	<!--<warName>creditService</warName> -->
-                </configuration>
+                <configuration></configuration>
             </plugin>
         </plugins>
     </build>
