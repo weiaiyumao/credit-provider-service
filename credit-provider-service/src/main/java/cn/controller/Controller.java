@@ -152,7 +152,7 @@ public class Controller {
     public BackResult<RunTestDomian> runTheTest(String type) {
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
 //    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/6f072674b763400b89f00b412445fabb_18717717701.txt", "17671",String.valueOf(System.currentTimeMillis()),"13817367247");
-    	BackResult<RunTestDomian> result = foreignService.theTest2("C:/Users/ChuangLan/Documents/QQEIM Files/2881526637/FileRecv/20180118174741--海口-实号0000_600000条.txt", "1111454574", "13864115645123123127", "bendi", "0", type);
+    	BackResult<RunTestDomian> result = foreignService.theTest2("C:/Users/ChuangLan/Documents/QQEIM Files/2881526637/FileRecv/2(1).txt", "1111454574", "13864115645123123127", "bendi", "0", type);
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
     	return result;
     }
