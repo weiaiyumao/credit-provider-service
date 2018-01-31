@@ -1,9 +1,9 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://192.168.1.245:8080/eureka/
+      defaultZone: http://127.0.0.1:8080/eureka/
 server:
-  port: 8764
+  port: 8763
 spring:
   application:
     name: credit-provider-service
@@ -11,7 +11,7 @@ spring:
 
 jedis :  
   pool :  
-    host : 192.168.1.245
+    host : 172.16.4.218
     port : 6379  
     config :  
       maxTotal: 100  
