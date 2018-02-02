@@ -1,5 +1,7 @@
 package cn.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,12 @@ public class MobileTestLogServiceImpl implements MobileTestLogService {
 		Pageable pageable = new PageRequest(pageNo - 1, pageSize, sort);
 		Page<MobileTestLog> page = repository.getPageByUserId(userId,type, pageable);
 		return page;
+	}
+
+	@Override
+	public List<MobileTestLog> getListByUserId(String userId, String type) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
