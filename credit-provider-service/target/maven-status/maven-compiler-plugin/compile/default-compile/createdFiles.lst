@@ -140,6 +140,7 @@ cn\service\ct\CT189Service.class
 cn\service\cm\CM157Service.class
 cn\service\impl\ForeignServiceImpl$2$1.class
 cn\CreditProviderServiceApp.class
+cn\service\impl\ForeignServiceImpl$3.class
 cn\entity\cm\CM1703.class
 cn\entity\ct\KCT177.class
 cn\entity\cm\CM137.class
@@ -229,6 +230,7 @@ cn\entity\cm\CM183.class
 cn\service\cm\impl\CM159ServiceImpl.class
 cn\service\cu\CU1709Service.class
 cn\entity\cu\CU1704.class
+cn\service\impl\ForeignServiceImpl$3$1.class
 cn\entity\cu\KCU185.class
 cn\repository\SpaceMobileReository.class
 cn\redis\RedisLock$3.class
