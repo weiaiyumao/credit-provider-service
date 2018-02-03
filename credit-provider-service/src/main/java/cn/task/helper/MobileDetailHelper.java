@@ -281,12 +281,33 @@ public class MobileDetailHelper {
 	}
 
 	/**
+	 *  根据手机号码段和状态 判断该手机号码属于（实号：real，空号：kong，沉默号：silence）
+	 * @param mobile
+	 * @param delivrd
+	 * @return
+	 */
+	public String getMobileStatus(String mobile, String delivrd){
+
+		if (CommonUtils.isNotString(mobile)) {
+			return null;
+		}
+
+		String realnum = "DELIVRD,BwList,DB:0144,IA:0073,IB:0008,ID:0004,MB:1042,MB:1077,MC:0055,MC:0151,MI:0000,MI:0002,MI:0005,MI:0008,MI:0010,MI:0011,MI:0013,MI:0017,MI:0020,MI:0022,MI:0024,MI:0029,MI:0036,MI:0041,MI:0043,MI:0045,MI:0050,MI:0051,MI:0054,MI:0055,MI:0059,MI:0080,MI:0081,MI:0083,MI:0084,MI:0660,MK:0002,MK:0005,MK:0008,MK:0009,MK:0011,MK:0013,MK:0015,MK:0017,MK:0019,MK:0020,MK:0022,MK:0024,MK:0029,MK:0036,MK:0040,MK:0044,MK:0045,MK:0053,MK:0055,MK:0057,MK:0075,MN:0000,MN:0009,MN:0011,MN:0012,MN:0013,MN:0017,MN:0019,MN:0020,MN:0022,MN:0036,MN:0041,MN:0045,MN:0050,MN:0051,MN:0054,MN:0055,MN:0059,MN:0098,MN:0174,MN:0660,REJECTD,SGIP:-1,SGIP:10,SGIP:11,SGIP:117,SGIP:121,SGIP:13,SGIP:14,SGIP:15,SGIP:16,SGIP:17,SGIP:18,SGIP:19,SGIP:2,SGIP:-2,SGIP:20,SGIP:22,SGIP:24,SGIP:-25,SGIP:27,SGIP:29,SGIP:-3,SGIP:31,SGIP:35,SGIP:36,SGIP:-37,SGIP:44,SGIP:45,SGIP:48,SGIP:5,SGIP:50,SGIP:51,SGIP:52,SGIP:53,SGIP:57,SGIP:61,SGIP:65,SGIP:70,SGIP:-74,SGIP:-75,SGIP:77,SGIP:8,SGIP:86,SGIP:88,SGIP:9,SGIP:90,SGIP:92,SGIP:98,SME17";
+
+		String monum = "EXPIRED,MI:0004,MK:0004,MN:0029,MN:0043,MN:0044,NOROUTE,SGIP:4,SGIP:54,SGIP:55,SGIP:56,SGIP:58,SGIP:59,SGIP:64,SGIP:67,SGIP:75,SGIP:79,SGIP:99,SGIP:3";
+
+		String nullnum = "Err_Num,MA:0051,MK:0000,MK:0001,MK:0010,MK:0012,MN:0001,SGIP:1,SGIP:100,SGIP:12,SGIP:23,SGIP:69,SGIP:72,SGIP:73,SGIP:82,SME169,UNDELIV";
+
+		return this.getstatus(delivrd, realnum, monum, nullnum);
+	}
+
+	/**
 	 * 根据手机号码段和状态 判断该手机号码属于（实号：real，空号：kong，沉默号：silence）
 	 * @param mobile
 	 * @param delivrd
 	 * @return
 	 */
-	public String getMobileStatus(String mobile, String delivrd) {
+	public String getMobileStatus2(String mobile, String delivrd) {
 
 		if (CommonUtils.isNotString(mobile)) {
 			return null;
