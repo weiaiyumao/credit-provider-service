@@ -928,6 +928,7 @@ public class ForeignServiceImpl implements ForeignService {
 
 									if (null != detail) {
 
+
 										// 存在数据
 										if ("real".equals(isSpaceMobile(detail.getDelivrd()))) {
 											// 实号

@@ -41,7 +41,7 @@ import cn.service.ForeignService;
 import cn.service.MobileNumberSectionService;
 import cn.service.SpaceDetectionService;
 import cn.service.cm.CM136Service;
-import cn.task.TodayDataSaveDBTask;
+//import cn.task.TodayDataSaveDBTask;
 import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
 import cn.utils.UUIDTool;
@@ -60,8 +60,8 @@ public class Controller {
     @Autowired
     private SpaceDetectionService spaceDetectionService;
     
-    @Autowired
-    private TodayDataSaveDBTask todayDataSaveDBTask;
+//    @Autowired
+//    private TodayDataSaveDBTask todayDataSaveDBTask;
     
     @Autowired
     private ForeignService foreignService;
@@ -145,14 +145,14 @@ public class Controller {
     
     @GetMapping("/task")
     public void task() throws IOException {
-    	todayDataSaveDBTask.ClDateSaveDbTask();
+//    	todayDataSaveDBTask.ClDateSaveDbTask();
     }
     
     @GetMapping("/runTheTest")
     public BackResult<RunTestDomian> runTheTest(String type) {
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
 //    	BackResult<RunTestDomian> result = foreignService.runTheTest("D:/test/6f072674b763400b89f00b412445fabb_18717717701.txt", "17671",String.valueOf(System.currentTimeMillis()),"13817367247");
-    	BackResult<RunTestDomian> result = foreignService.theTest2("C:/Users/ChuangLan/Documents/QQEIM Files/2881526637/FileRecv/2(1).txt", "176721", "138173672147", "bendi", "0", type);
+    	BackResult<RunTestDomian> result = foreignService.theTest2("D:/测空_382675.txt", "1767212", "13817367214117", "bendi", "0", type);
 //    	System.out.println(new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date() ));
     	return result;
     }
