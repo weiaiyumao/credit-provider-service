@@ -347,6 +347,13 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						domain.setStatus("2");
 					}
 
+					// 给回执时间定制 返回值
+					if (DateUtils.getIntervalDaysByDate(DateUtils.getCurrentDateTime(), detail.getReportTime()) >= 28) {
+						domain.setLastTime(DateUtils.addDay(DateUtils.getCurrentDateTime(), -15)); // 系统当前时间减掉15天 当做回执时间
+					} else {
+						domain.setLastTime(detail.getReportTime());
+					}
+
 				} else {
 					
 					if (this.random()) {
@@ -357,13 +364,6 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						domain.setChargesStatus("1");
 					}
 					
-				}
-
-				// 给回执时间定制 返回值
-				if (DateUtils.getIntervalDaysByDate(DateUtils.getCurrentDateTime(), detail.getReportTime()) >= 28) {
-					domain.setLastTime(DateUtils.addDay(DateUtils.getCurrentDateTime(), -15)); // 系统当前时间减掉15天 当做回执时间
-				} else {
-					domain.setLastTime(detail.getReportTime());
 				}
 
 				MobileTestLog mobileTestLog = new MobileTestLog();
