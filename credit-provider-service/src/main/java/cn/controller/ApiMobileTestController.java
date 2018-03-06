@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.service.ApiMobileTestService;
 import main.java.cn.common.BackResult;
+import main.java.cn.domain.ApiLogPageDomain;
 import main.java.cn.domain.MobileInfoDomain;
 import main.java.cn.domain.MobileTestLogDomain;
 import main.java.cn.domain.page.PageDomain;
@@ -30,8 +31,18 @@ public class ApiMobileTestController {
 		return apiMobileTestService.getPageByUserId(pageNo, pageSize, userId,type);
 	}
 	
+	@RequestMapping(value = "/getPageByCustomerId", method = RequestMethod.POST)
+	public BackResult<PageDomain<ApiLogPageDomain>> getPageByCustomerId(int pageNo, int pageSize, String customerId, String method){
+		return apiMobileTestService.getPageByCustomerId(pageNo, pageSize, customerId,method);
+	}
+	
 	@RequestMapping(value = "/findByMobile", method = RequestMethod.POST)
 	public BackResult<MobileInfoDomain> findByMobile(String mobile,String userId){
 		return apiMobileTestService.findByMobile(mobile,userId);
+	}
+	
+	@RequestMapping(value = "/findByMobileToAmi", method = RequestMethod.POST)
+	public BackResult<MobileInfoDomain> findByMobileToAmi(String mobile,String userId,String method){
+		return apiMobileTestService.findByMobileToAmi(mobile,userId,method);
 	}
 }

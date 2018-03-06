@@ -13,15 +13,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import cn.entity.ApiLog;
 import cn.entity.MobileNumberSection;
 import cn.entity.MobileTestLog;
 import cn.entity.WaterConsumption;
 import cn.entity.base.BaseMobileDetail;
+import cn.enums.JjrtIdTypeEnum;
+import cn.enums.JjrtResultCodeEnum;
 import cn.redis.DistributedLock;
 import cn.redis.RedisClient;
 import cn.service.ApiMobileTestService;
 import cn.service.MobileNumberSectionService;
 import cn.service.MobileTestLogService;
+import cn.service.OpenApiService;
 import cn.service.SpaceDetectionService;
 import cn.task.helper.MobileDetailHelper;
 //import cn.thread.ThreadExecutorService;
@@ -31,10 +38,13 @@ import cn.utils.UUIDTool;
 import main.java.cn.common.BackResult;
 import main.java.cn.common.RedisKeys;
 import main.java.cn.common.ResultCode;
+import main.java.cn.domain.ApiLogPageDomain;
 import main.java.cn.domain.MobileInfoDomain;
 import main.java.cn.domain.MobileTestLogDomain;
 import main.java.cn.domain.page.PageDomain;
+import main.java.cn.hhtp.util.HttpUtil;
 import main.java.cn.sms.util.ChuangLanSmsUtil;
+import main.java.cn.untils.KeyUtil;
 import redis.clients.jedis.JedisPool;
 
 @Service
@@ -44,7 +54,10 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 
 	@Autowired
 	private SpaceDetectionService spaceDetectionService;
-
+	
+	@Autowired
+	private OpenApiService openApiService;
+	
 	@Autowired
 	private MobileNumberSectionService mobileNumberSectionService;
 
@@ -377,6 +390,64 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 		}
 		return result;
 	}
+	
+	@Override
+	public BackResult<PageDomain<ApiLogPageDomain>> getPageByCustomerId(int pageNo, int pageSize, String customerId, String method) {
+		BackResult<PageDomain<ApiLogPageDomain>> result = new BackResult<PageDomain<ApiLogPageDomain>>();
+
+		PageDomain<ApiLogPageDomain> pageDomain = new PageDomain<ApiLogPageDomain>();
+
+		try {
+
+			Page<ApiLog> page = mobileTestLogService.getPageByCustomerId(pageNo, pageSize, customerId,method);
+
+			if (null != page) {
+
+				pageDomain.setTotalPages(page.getTotalPages());
+				pageDomain.setNumPerPage(pageSize);
+				pageDomain.setCurrentPage(pageNo);
+
+				if (!CommonUtils.isNotEmpty(page.getContent())) {
+
+					List<ApiLogPageDomain> listDomian = new ArrayList<ApiLogPageDomain>();
+					for (ApiLog apiLog : page.getContent()) {
+						ApiLogPageDomain domain = new ApiLogPageDomain();
+						domain.setId(apiLog.getId());
+						domain.setCustomerId(customerId);
+						domain.setMethod(method);
+						domain.setCreateTime(apiLog.getCreatetime());
+						//接口参数串解析成json对象
+						JSONObject paramJson = JSONObject.parseObject(apiLog.getParams());
+						domain.setName(paramJson.getString("name"));
+						domain.setIdtype(JjrtIdTypeEnum.getName(paramJson.getString("idtype")));
+						domain.setIdnum(paramJson.getString("idnum"));
+						if("normal_checkBankInfo".equals(method)){
+							domain.setCardno(paramJson.getString("cardno"));
+							domain.setMobile(paramJson.getString("mobile"));
+						}
+						//接口返回结果串解析成json对象
+						JSONObject resultJson = JSONObject.parseObject(apiLog.getResultJson());
+						domain.setResult("0000000".equals(resultJson.getString("result"))?"成功":"失败");
+						domain.setResultDesc(JjrtResultCodeEnum.getName(resultJson.getString("result")));
+						listDomian.add(domain);
+					}
+
+					pageDomain.setTlist(listDomian);
+				}
+
+			}
+
+			result.setResultObj(pageDomain);
+			result.setResultMsg("操作成功");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取接口检测结果列表出现系统异常：" + e.getMessage());
+			result.setResultMsg("系统异常");
+			result.setResultCode(ResultCode.RESULT_FAILED);
+		}
+		return result;
+	}
 
 	@Override
 	public BackResult<MobileInfoDomain> findByMobile(String mobile, String userId) {
@@ -501,6 +572,200 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 			e.printStackTrace();
 			lock.releaseLock(lockName, identifier);
 			logger.error("账号二次清洗出现系统异常：" + e.getMessage());
+		}
+
+		return new BackResult<MobileInfoDomain>(ResultCode.RESULT_FAILED, "系统异常");
+	}
+	
+	@Override
+	public BackResult<MobileInfoDomain> findByMobileToAmi(String mobile, String userId,String method) {
+
+		DistributedLock lock = new DistributedLock(jedisPool);
+		String lockName = RedisKeys.getInstance().getkhApifunKey(mobile);
+		// 加锁
+		String identifier = lock.lockWithTimeout(lockName, 10L, 3 * 1000);
+		String delivrdStates = "DELIVRD";//实号状态
+		String pauseStates = "PAUSE:AMI,SGIP:13,SGIP:-74,MN:0013,MK:0013,SGIP:5,MI:0013,MK:0005,";//停机状态
+		String onliNoStates = "ONLINE:NO,SGIP:24,SGIP:54,EXPIRED,MI:0024,SGIP:59,SGIP:29,";//在网但不可用状态
+		String nullStates = "NULL:AMI,SME169,MK:0012,MN:0001,MK:0001,SGIP:1,SGIP:23,MK:0000,SGIP:12,MK:0010,";//空号状态
+		String ynullStates = "YNULL:AMI";//预销号状态
+		String unStates = "UNUSUAL:AMI";//异常状态
+		String dev_log = "";
+		
+		try {
+
+			// 处理加锁业务
+			if (null != identifier) {
+
+				BackResult<MobileInfoDomain> result = new BackResult<MobileInfoDomain>();
+
+				Date startTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -30);
+				Date endTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), 1);
+				// 创建对象设置初始手机号码
+				MobileInfoDomain domain = new MobileInfoDomain();
+				domain.setMobile(mobile);
+				domain.setChargesStatus("1");
+				domain.setLastTime(DateUtils.getCurrentDateTime());
+				// 1 查询号段
+				MobileNumberSection section = mobileNumberSectionService.findByNumberSection(mobile.substring(0, 7));
+
+				if (null == section) {
+					domain.setLastTime(DateUtils.getCurrentDateTime());
+					domain.setStatus("4"); // 销号
+				} else {
+					domain.setArea(section.getProvince() + "-" + section.getCity());
+					domain.setNumberType(section.getMobilePhoneType());
+				}
+
+				// 2 查询库 最近1个月
+				BaseMobileDetail detail = spaceDetectionService.findByMobileAndReportTime(mobile, startTime, endTime);
+				if (null != detail) {					
+					String delivrd = detail.getDelivrd();					
+					if (delivrdStates.equals(delivrd)) {
+						domain.setStatus("1"); // 实号
+					} else if (pauseStates.contains(delivrd+",")){
+						domain.setStatus("2"); // 停机
+					} else if (onliNoStates.contains(delivrd+",")){
+						domain.setStatus("3"); // 在网但不可用
+					}else  if (nullStates.contains(delivrd+",")){
+						domain.setStatus("4"); // 销号
+					}else  if (ynullStates.equals(delivrd)){
+						domain.setStatus("5"); // 预销号
+					}else  if (unStates.equals(delivrd)){
+						domain.setStatus("6"); // 异常
+					}else{
+						String paramString = "mobile=" + mobile;
+						//获取参数json串
+						JSONObject paramJson = KeyUtil.getParamJson(userId, method, paramString);
+						String resultJson = openApiService.getCheckMobileStatue(paramJson);
+						JSONObject resultObj = JSONObject.parseObject(resultJson);
+						String amiStr = resultObj.getString("resultObj");
+						JSONObject amiObj = JSONObject.parseObject(amiStr);
+						if(!"0".equals(resultObj.getString("resultCode"))){
+							return new BackResult<MobileInfoDomain>(resultObj.getString("resultCode"), resultObj.getString("resultMsg"));
+						}
+						if(!"0000000".equals(amiObj.getString("value"))){
+							return new BackResult<MobileInfoDomain>(amiObj.getString("value"), amiObj.getString("name"));
+						}
+						String status = amiObj.getString("desc").substring(1, amiObj.getString("desc").length());
+						if("1".equals(status)){
+							dev_log = "DELIVRD";
+							domain.setStatus("1"); // 实号
+						}else if("2".equals(status)){
+							dev_log = "PAUSE:AMI";
+							domain.setStatus("2"); // 停机
+						}else if("3".equals(status)){
+							dev_log = "ONLINE:NO";
+							domain.setStatus("3"); // 在网但不可用
+						}else if("4".equals(status)){
+							dev_log = "NULL:AMI";
+							domain.setStatus("4"); // 销号
+						}else if("5".equals(status)){
+							dev_log = "YNULL:AMI";
+							domain.setStatus("5"); // 预销号
+						}else if("6".equals(status)){
+							dev_log = "UNUSUAL:AMI";
+							domain.setStatus("6"); // 异常
+						}else{
+							domain.setStatus("100"); //查无记录
+						}
+						
+						BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile);
+						mobileDetail.setMobile(mobile);
+						mobileDetail.setMobile(dev_log);
+						mobileDetail.setReportTime(DateUtils.getNowDate());
+						mongoTemplate.insert(mobileDetail);
+					}					
+				} else {
+					String paramString = "mobile=" + mobile;
+					//获取参数json串
+					JSONObject paramJson = KeyUtil.getParamJson(userId, method, paramString);
+					String resultJson = openApiService.getCheckMobileStatue(paramJson);
+					JSONObject resultObj = JSONObject.parseObject(resultJson);
+					String amiStr = resultObj.getString("resultObj");					;
+					JSONObject amiObj = JSONObject.parseObject(JSONArray.parseArray(amiStr).get(0).toString());
+					if(!"0".equals(resultObj.getString("resultCode"))){
+						return new BackResult<MobileInfoDomain>(resultObj.getString("resultCode"), resultObj.getString("resultMsg"));
+					}
+					if(!"0000".equals(amiObj.getString("value"))){
+						return new BackResult<MobileInfoDomain>(amiObj.getString("value"), amiObj.getString("name"));
+					}
+					String status = amiObj.getString("desc").substring(1, amiObj.getString("desc").length());
+					if("1".equals(status)){
+						dev_log = "DELIVRD";
+						domain.setStatus("1"); // 实号
+					}else if("2".equals(status)){
+						dev_log = "PAUSE:AMI";
+						domain.setStatus("2"); // 停机
+					}else if("3".equals(status)){
+						dev_log = "ONLINE:NO";
+						domain.setStatus("3"); // 在网但不可用
+					}else if("4".equals(status)){
+						dev_log = "NULL:AMI";
+						domain.setStatus("4"); // 销号
+					}else if("5".equals(status)){
+						dev_log = "YNULL:AMI";
+						domain.setStatus("5"); // 预销号
+					}else if("6".equals(status)){
+						dev_log = "UNUSUAL:AMI";
+						domain.setStatus("6"); // 异常
+					}else{
+						domain.setStatus("100"); //查无记录
+					}
+					
+					BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile);
+					mobileDetail.setMobile(mobile);
+					mobileDetail.setMobile(dev_log);
+					mobileDetail.setReportTime(DateUtils.getNowDate());
+					mongoTemplate.insert(mobileDetail);
+				}
+
+
+				MobileTestLog mobileTestLog = new MobileTestLog();
+				mobileTestLog.setOrderNo(
+						DateUtils.getCurrentTimeMillis().substring(0, 4) + System.currentTimeMillis());
+				mobileTestLog.setArea(domain.getArea());
+				mobileTestLog.setChargesStatus(domain.getChargesStatus());
+				mobileTestLog.setCreateTime(new Date());
+				mobileTestLog.setLastTime(domain.getLastTime());
+				mobileTestLog.setMobile(domain.getMobile());
+				mobileTestLog.setNumberType(domain.getNumberType());
+				mobileTestLog.setStatus(domain.getStatus());
+				mobileTestLog.setUserId(userId);
+				mobileTestLog.setType("4"); // 空号API检测类型
+				// 检测结果日志入库
+				mongoTemplate.insert(mobileTestLog);
+				
+				// 记录消费条数进入redis
+				String msAPIcountKey = RedisKeys.getInstance().getMsAPIcountKey(userId);
+				Integer msTestCount = Integer.parseInt(redisClient.get(msAPIcountKey).toString());
+				msTestCount = msTestCount - 1;
+				redisClient.set(msAPIcountKey, String.valueOf(msTestCount));
+
+				// 记录流水记录
+				WaterConsumption waterConsumption = new WaterConsumption();
+				waterConsumption.setUserId(userId);
+				waterConsumption.setId(UUIDTool.getInstance().getUUID());
+				waterConsumption.setConsumptionNum("ECJC_" + System.currentTimeMillis());
+				waterConsumption.setMenu("号码实时检测接口");
+				waterConsumption.setStatus("1");
+				waterConsumption.setType("4"); // 号码实时检测类型
+				waterConsumption.setCreateTime(new Date());
+				waterConsumption.setCount(String.valueOf(1)); // 条数
+				waterConsumption.setUpdateTime(new Date());
+				mongoTemplate.save(waterConsumption);				
+
+				result.setResultObj(domain);
+				lock.releaseLock(lockName, identifier);
+				return result;
+			} else {
+				return new BackResult<MobileInfoDomain>(ResultCode.RESULT_API_NOTCONCURRENT, "正在计算中");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			lock.releaseLock(lockName, identifier);
+			logger.error("号码实时检测接口出现系统异常：" + e.getMessage());
 		}
 
 		return new BackResult<MobileInfoDomain>(ResultCode.RESULT_FAILED, "系统异常");
