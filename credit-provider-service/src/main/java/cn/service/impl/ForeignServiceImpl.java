@@ -1003,7 +1003,7 @@ public class ForeignServiceImpl implements ForeignService {
 							if (!CommonUtils.isNotEmpty(thereDataList)) {
 								logger.info("----------实号总条数：" + thereDataList.size());
 								Object[] shhead = { "手机号码","状态","时间" };
-								FileUtils.createCvsFile("实号.csv", filePath, thereDataList, shhead);
+								FileUtils.createCvsFile2("实号.csv", filePath, thereDataList, shhead);
 								cvsFilePath.setThereCount(String.valueOf(thereDataList.size()));
 							}
 
