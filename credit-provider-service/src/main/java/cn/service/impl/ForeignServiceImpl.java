@@ -515,9 +515,355 @@ public class ForeignServiceImpl implements ForeignService {
 		result.setResultObj(runTestDomian);
 		return result;
 	}
-	
+
 	@Override
 	public BackResult<RunTestDomian> theTest(String fileUrl, String userId, String mobile, String source,
+											 String startLine, String type) {
+		RunTestDomian runTestDomian = new RunTestDomian();
+		BackResult<RunTestDomian> result = new BackResult<RunTestDomian>();
+		DistributedLock lock = new DistributedLock(jedisPool);
+		String lockName = RedisKeys.getInstance().getkhTheTestFunKey(mobile);
+		String KhTestCountKey = RedisKeys.getInstance().getKhTestCountKey(userId);
+		String succeedTestCountkey = RedisKeys.getInstance().getkhSucceedTestCountkey(userId);
+		String redisLockIdentifier = RedisKeys.getInstance().getkhRedisLockIdentifier(userId);
+		String succeedClearingCountkey = RedisKeys.getInstance().getkhSucceedClearingCountkey(userId);
+		int expire = 2 * 60 * 60 * 1000;
+		// 执行检测
+		if (type.equals("1")) {
+			// 加锁
+			String identifier = lock.lockWithTimeout(lockName, 800L, expire);
+			// 处理加锁业务
+			if (null != identifier) {
+
+				// 将标识存入redis
+				redisClient.set(redisLockIdentifier, identifier, expire);
+
+				// 创建一个线程
+				Runnable run = new Runnable() {
+					@Override
+					public void run() {
+						BufferedReader br = null;
+						try {
+
+							int testCount = 0; // 需要记账的总条数
+							int count = 0; // 实际检测的总条数
+
+							logger.info("----------用户编号：[" + userId + "]文件地址：[" + fileUrl + "]开始执行空号检索事件 事件开始时间："
+									+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "post:" + port);
+
+							List<List<Object>> thereDataList = new ArrayList<List<Object>>();
+							List<Object> thereRowList = null;
+							List<Map<String, Object>> sixDataList = new ArrayList<Map<String, Object>>();
+							List<List<Object>> unKonwDataList = new ArrayList<List<Object>>();
+							List<Object> unKonwRowList = null;
+
+							String thereListkey = "";
+							String sixListkey = "";
+							String unkownListkey = "";
+
+							Date sixStartTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -180);
+
+							File file = new File(fileUrl);
+							if (file.isFile() && file.exists()) {
+
+								InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "utf-8");
+								br = new BufferedReader(isr);
+								String lineTxt = null;
+
+								while ((lineTxt = br.readLine()) != null) {
+
+									count = count + 1;
+									redisClient.set(succeedTestCountkey, String.valueOf(count), expire);
+									if (CommonUtils.isNotString(lineTxt)) {
+										continue;
+									}
+
+									// 去掉字符串中的所有空格
+									lineTxt = lineTxt.replace(" ", "");
+
+									// 验证是否为正常的１１位有效数字
+									if (!CommonUtils.isNumeric(lineTxt)) {
+										continue;
+									}
+
+									// 检测 3个月内
+									BaseMobileDetail detail = spaceDetectionService.findByMobileAndReportTime(lineTxt,
+											sixStartTime, DateUtils.getCurrentDateTime());
+
+									if (null != detail) {
+
+										// 存在数据 (实号：real，空号：kong，沉默号：silence)
+										String status = MobileDetailHelper.getInstance().getMobileStatus(lineTxt, detail.getDelivrd());
+										if (status.equals("real")) {
+											// 实号
+											thereRowList = new ArrayList<Object>();
+											thereRowList.add(lineTxt);
+											thereDataList.add(thereRowList);
+										} else if (status.equals("kong")){
+											// 空号
+											Map<String, Object> sixRowList = new HashMap<>();
+											sixRowList.put("mobile", lineTxt);
+											sixRowList.put("delivd", 1);// 空号状态
+											sixRowList.put("reportTime", detail.getReportTime().getTime());
+											sixDataList.add(sixRowList);
+										} else if (status.equals("silence")){
+											// 沉默号
+											unKonwRowList = new ArrayList<Object>();
+											unKonwRowList.add(lineTxt);
+											unKonwDataList.add(unKonwRowList);
+										}else {
+											// 沉默号
+											unKonwRowList = new ArrayList<Object>();
+											unKonwRowList.add(lineTxt);
+											unKonwDataList.add(unKonwRowList);
+										}
+
+									} else {
+
+										// 二次清洗根据号段
+										MobileNumberSection section = mobileNumberSectionService
+												.findByNumberSection(lineTxt.substring(0, 7));
+
+										if (null != section) {
+											// 沉默号
+											unKonwRowList = new ArrayList<Object>();
+											unKonwRowList.add(lineTxt);
+											unKonwDataList.add(unKonwRowList);
+										} else {
+											// 空号
+											Map<String, Object> sixRowList = new HashMap<>();
+											sixRowList.put("mobile", lineTxt);
+											sixRowList.put("delivd", 1);// 空号状态
+											sixRowList.put("reportTime", DateUtils.getCurrentDateTime().getTime());
+											sixDataList.add(sixRowList);
+
+										}
+
+									}
+
+									testCount = testCount + 1;
+								}
+
+							} else {
+								// 系统异常
+							}
+
+							// 将需要结账的条数存入redis
+							redisClient.set(succeedClearingCountkey, String.valueOf(testCount), expire * 2);
+
+							// 文件地址入库
+							CvsFilePath cvsFilePath = new CvsFilePath();
+							cvsFilePath.setUserId(userId);
+
+							// 生成报表
+							String timeTemp = String.valueOf(System.currentTimeMillis());
+							String filePath = loadfilePath + userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/";
+							if (!CommonUtils.isNotEmpty(thereDataList)) {
+								logger.info("----------实号总条数：" + thereDataList.size());
+								Object[] shhead = { "手机号码" };
+								FileUtils.createCvsFile("实号.csv", filePath, thereDataList, shhead);
+								cvsFilePath.setThereCount(String.valueOf(thereDataList.size()));
+							}
+
+							if (!CommonUtils.isNotEmpty(sixDataList)) {
+								logger.info("----------空号总条数：" + sixDataList.size());
+								Object[] head = { "手机号码" };
+								try {
+									Collections.sort(sixDataList, new Comparator<Map<String, Object>>() {
+										@Override
+										public int compare(Map<String, Object> arg0, Map<String, Object> arg1) {
+											try {
+												Long reportTime0 = Long.parseLong(arg0.get("delivd").toString()
+														+ arg0.get("reportTime").toString());
+												Long reportTime1 = Long.parseLong(arg1.get("delivd").toString()
+														+ arg1.get("reportTime").toString());
+												return reportTime0.compareTo(reportTime1);
+											} catch (NumberFormatException e) {
+												return 0;
+											}
+										}
+									});
+								} catch (Exception e) {
+								}
+								FileUtils.createCvsFileByMap("空号.csv", filePath, sixDataList, head);
+								cvsFilePath.setSixCount(String.valueOf(sixDataList.size()));
+							}
+
+							if (!CommonUtils.isNotEmpty(unKonwDataList)) {
+								logger.info("----------沉默号总条数：" + unKonwDataList.size());
+								Object[] wzhead = { "手机号码" };
+								FileUtils.createCvsFile("沉默号.csv", filePath, unKonwDataList, wzhead);
+								cvsFilePath.setUnknownSize(String.valueOf(unKonwDataList.size()));
+							}
+
+							List<File> list = new ArrayList<File>();
+
+							if (!CommonUtils.isNotEmpty(thereDataList)) {
+								list.add(new File(filePath + "实号.csv"));
+								cvsFilePath.setThereFilePath(
+										userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/实号.csv");
+								cvsFilePath.setThereFileSize(FileUtils.getFileSize(filePath + "实号.csv"));
+							}
+
+							if (!CommonUtils.isNotEmpty(sixDataList)) {
+								list.add(new File(filePath + "空号.csv"));
+								cvsFilePath.setSixFilePath(
+										userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/空号.csv");
+								cvsFilePath.setSixFileSize(FileUtils.getFileSize(filePath + "空号.csv"));
+							}
+
+							if (!CommonUtils.isNotEmpty(unKonwDataList)) {
+								list.add(new File(filePath + "沉默号.csv"));
+								cvsFilePath.setUnknownFilePath(
+										userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/沉默号.csv");
+								cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "沉默号.csv"));
+							}
+
+							String zipName = "测试结果包.zip";
+							// 报表文件打包
+							if (null != list && list.size() > 0) {
+								zipName = "测试结果包.zip";
+								FileUtils.createZip(list, filePath + zipName);
+								cvsFilePath.setZipName(zipName);
+								cvsFilePath.setZipPath(
+										(userId + "/" + DateUtils.getDate() + "/" + timeTemp + "/测试结果包.zip"));
+								cvsFilePath.setZipSize(FileUtils.getFileSize(filePath + zipName));
+							}
+
+							cvsFilePath.setCreateTime(new Date());
+
+							if (CommonUtils.isNotString(cvsFilePath.getThereFilePath()) && CommonUtils.isNotString(cvsFilePath.getSixFilePath()) && CommonUtils.isNotString(cvsFilePath.getUnknownFilePath())){
+								if ("pc1.0".equals(source)) {
+									// 发送短信
+									ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestEx(mobile);
+								} else {
+									// 异常发送短信
+									ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestZZtEx(mobile);
+								}
+								this.clearLockAndCountForRun(lock, userId, mobile);
+								// 封装返回对象
+								result.setResultMsg("执行异常");
+								runTestDomian.setRunCount(0);
+								runTestDomian.setStatus("3"); // 1执行中 2执行结束 // 3执行异常
+							} else {
+								mongoTemplate.save(cvsFilePath);
+							}
+
+							// 记录流水记录
+							WaterConsumption waterConsumption = new WaterConsumption();
+							waterConsumption.setUserId(userId);
+							waterConsumption.setId(UUIDTool.getInstance().getUUID());
+							waterConsumption.setConsumptionNum("SHJC_" + System.currentTimeMillis());
+							waterConsumption.setMenu("客户上传文件实号检测");
+							waterConsumption.setStatus("1");
+							waterConsumption.setType("1"); // 实号检测
+							waterConsumption.setSource(source);
+							waterConsumption.setCreateTime(new Date());
+							waterConsumption.setCount(String.valueOf(testCount)); // 条数
+							waterConsumption.setUpdateTime(new Date());
+							mongoTemplate.save(waterConsumption);
+
+							if ("pc1.0".equals(source)) {
+								// 发送短信
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTest(mobile);
+							} else {
+								// 发送短信
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForZZTTest(mobile);
+							}
+
+							// 封装返回对象
+							result.setResultMsg("成功");
+							runTestDomian.setRunCount(count);
+							runTestDomian.setStatus("2"); // 1执行中 2执行结束 // 3执行异常
+							logger.info("----------用户编号：[" + userId + "]文件地址：[" + fileUrl + "]结束空号检索事件 事件结束时间："
+									+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+						} catch (Exception e) {
+							e.printStackTrace();
+							logger.error("----------客户ID：[" + userId + "]执行号码检测出现系统异常：" + e.getMessage());
+							this.clearLockAndCountForRun(lock, userId, mobile);
+							if ("pc1.0".equals(source)) {
+								// 发送短信
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestEx(mobile);
+							} else {
+								// 异常发送短信
+								ChuangLanSmsUtil.getInstance().sendSmsByMobileForTestZZtEx(mobile);
+							}
+						} finally {
+							if (null != br) {
+								try {
+									br.close();
+								} catch (IOException e) {
+									e.printStackTrace();
+									this.clearLockAndCountForRun(lock, userId, mobile);
+									logger.error("文件流关闭异常：" + e.getMessage());
+								}
+							}
+						}
+
+					}
+
+					/**
+					 * 清空条数注销锁
+					 *
+					 * @param lock
+					 * @param userId
+					 * @param mobile
+					 */
+					private void clearLockAndCountForRun(DistributedLock lock, String userId, String mobile) {
+						String lockName = RedisKeys.getInstance().getkhTheTestFunKey(mobile);
+						String KhTestCountKey = RedisKeys.getInstance().getKhTestCountKey(userId);
+						String succeedTestCountkey = RedisKeys.getInstance().getkhSucceedTestCountkey(userId);
+						String redisLockIdentifier = RedisKeys.getInstance().getkhRedisLockIdentifier(userId);
+						String identifier = redisClient.get(redisLockIdentifier);
+						// 清空 记录到redis的条数
+						redisClient.remove(KhTestCountKey);
+						redisClient.remove(succeedTestCountkey);
+						lock.releaseLock(lockName, identifier); // 注销锁
+
+					}
+				};
+
+				// 加入线程池开始执行
+				threadExecutorService.execute(run);
+				result.setResultMsg("任务执行中");
+				runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
+				runTestDomian.setRunCount(0); // 设置运行的总条数
+			} else {
+				runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
+				runTestDomian.setRunCount(0); // 设置运行的总条数
+				result.setResultMsg("请修改API请求参数type=2查询实时的检测结果！");
+			}
+		} else if (type.equals("2")) {
+
+			String KhTestCount = redisClient.get(KhTestCountKey);
+
+			if (!CommonUtils.isNotString(KhTestCount)) {
+				String succeedTestCount = redisClient.get(succeedTestCountkey);
+				succeedTestCount = !CommonUtils.isNotString(succeedTestCount) ? succeedTestCount : "0";
+				runTestDomian.setRunCount(Integer.valueOf(succeedTestCount.toString())); // 设置运行的总条数
+				runTestDomian.setMobiles(FileUtils.getFileMenu(fileUrl, Integer.parseInt(startLine), 100)); // 设置已经检测了的手机号码
+				logger.info("----------需要检测的总条数: 【" + KhTestCount + "】，已经检测完成的条数:" + succeedTestCount);
+				if (Integer.parseInt(KhTestCount) <= Integer.valueOf(succeedTestCount)) {
+					result.setResultMsg("任务执行结束");
+					runTestDomian.setStatus("2"); // 1执行中 2执行结束 3执行异常
+					this.clearLockAndCountForRun(lock, userId, mobile);
+				} else {
+					result.setResultMsg("任务执行中");
+					runTestDomian.setStatus("1"); // 1执行中 2执行结束 3执行异常
+				}
+			} else {
+				result.setResultMsg("该账户没有正在检测的程序进程");
+				runTestDomian.setRunCount(0);
+				runTestDomian.setStatus("6"); // 没有在执行的检测
+			}
+		}
+
+		result.setResultObj(runTestDomian);
+		return result;
+	}
+
+	@Deprecated
+	public BackResult<RunTestDomian> theTest1(String fileUrl, String userId, String mobile, String source,
 			String startLine, String type) {
 		RunTestDomian runTestDomian = new RunTestDomian();
 		BackResult<RunTestDomian> result = new BackResult<RunTestDomian>();
