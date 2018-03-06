@@ -41,6 +41,7 @@ cn\service\WaterConsumptionService.class
 cn\entity\cm\KCM135.class
 cn\repository\cu\CU186Repository.class
 cn\entity\cm\CM184.class
+cn\enums\JjrtIdTypeEnum.class
 cn\service\SpaceDetectionService.class
 cn\entity\cu\KCU186.class
 cn\service\cm\CM136Service.class
@@ -109,6 +110,7 @@ cn\service\cu\CU131Service.class
 cn\entity\cm\KCM134.class
 cn\service\impl\ForeignServiceImpl$1.class
 cn\service\cu\CU132Service.class
+cn\utils\HttpClient.class
 cn\repository\cu\CU155Repository.class
 cn\entity\cu\CU145.class
 cn\repository\ct\CT181Repository.class
@@ -143,6 +145,7 @@ cn\CreditProviderServiceApp.class
 cn\service\impl\ForeignServiceImpl$3.class
 cn\entity\cm\CM1703.class
 cn\entity\ct\KCT177.class
+cn\service\OpenApiService.class
 cn\entity\cm\CM137.class
 cn\repository\cu\CU1709Repository.class
 cn\service\impl\CvsFilePathServiceImpl.class
@@ -165,6 +168,7 @@ cn\service\MobileTestLogService.class
 cn\entity\cu\KCU1707.class
 cn\service\base\BaseMobileDetailService.class
 cn\entity\ct\KCT173.class
+cn\repository\ApiLogReository.class
 cn\repository\cm\CM134Repository.class
 cn\entity\SpaceMobile.class
 cn\repository\cm\CM137Repository.class
@@ -185,6 +189,7 @@ cn\service\cu\impl\CU130ServiceImpl.class
 cn\task\TodayDataSaveDBTask.class
 cn\entity\cu\KCU176.class
 cn\redis\RedisConfiguration.class
+cn\service\impl\OpenApiServiceImpl.class
 cn\service\impl\WaterConsumptionServiceImpl.class
 cn\service\cm\CM138Service.class
 cn\service\cu\impl\CU156ServiceImpl.class
@@ -212,6 +217,7 @@ cn\service\ct\impl\CT181ServiceImpl.class
 cn\service\cm\CM1705Service.class
 cn\service\cm\impl\CM147ServiceImpl.class
 cn\entity\ct\CT1700.class
+cn\entity\ApiLog.class
 cn\repository\cu\CU156Repository.class
 cn\entity\cm\KCM159.class
 cn\repository\MobileTestLogReository.class
@@ -259,6 +265,7 @@ cn\thread\TasksRunnable.class
 cn\redis\RedisClient.class
 cn\service\cu\impl\CU132ServiceImpl.class
 cn\entity\cu\KCU132.class
+cn\enums\JjrtResultCodeEnum.class
 cn\service\cm\impl\CM150ServiceImpl.class
 cn\service\cm\impl\CM137ServiceImpl.class
 cn\controller\Controller.class
