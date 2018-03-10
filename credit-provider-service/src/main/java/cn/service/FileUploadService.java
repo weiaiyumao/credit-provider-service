@@ -1,10 +1,11 @@
 package cn.service;
 
 import cn.entity.FileUpload;
+import main.java.cn.service.FileUploadBusService;
 
-public interface FileUploadService {
+public interface FileUploadService  extends FileUploadBusService{
 
-    FileUpload findById(String id);
+    FileUpload findByOne(String id);
 
     FileUpload save(FileUpload fileUpload);
 }

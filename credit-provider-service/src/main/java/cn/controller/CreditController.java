@@ -6,13 +6,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.service.FileUploadService;
 import cn.service.ForeignService;
 import main.java.cn.common.BackResult;
 import main.java.cn.domain.CvsFilePathDomain;
+import main.java.cn.domain.FileUploadDomain;
 import main.java.cn.domain.RunTestDomian;
 import main.java.cn.domain.page.PageDomain;
 
@@ -22,6 +25,9 @@ public class CreditController {
 
 	@Autowired
 	private ForeignService foreignService;
+	
+	@Autowired
+	private FileUploadService fileUploadService;
 	
 	@RequestMapping(value = "/runTheTest", method = RequestMethod.GET)
 	public BackResult<RunTestDomian> runTheTest(HttpServletRequest request, HttpServletResponse response,String fileUrl,String userId, String timestamp,String mobile) {
@@ -48,6 +54,16 @@ public class CreditController {
 	@RequestMapping(value = "/getCVSPageByUserId", method = RequestMethod.POST)
 	public BackResult<PageDomain<CvsFilePathDomain>> getPageByUserId(int pageNo, int pageSize, String userId){
 		return foreignService.getPageByUserId(pageNo, pageSize, userId);
+	}
+	
+	@RequestMapping(value = "/saveFileUpload", method = RequestMethod.POST)
+	public BackResult<FileUploadDomain> saveFileUpload(@RequestBody FileUploadDomain domain){
+		return fileUploadService.save(domain);
+	}
+	
+	@RequestMapping(value = "/findFileUploadById", method = RequestMethod.POST)
+	public BackResult<FileUploadDomain> findFileUploadById(String id){
+		return fileUploadService.findById(id);
 	}
 	
 }
