@@ -42,7 +42,7 @@ public class ApiMobileTestController {
 	}
 	
 	@RequestMapping(value = "/findByMobileToAmi", method = RequestMethod.POST)
-	public BackResult<MobileInfoDomain> findByMobileToAmi(String mobile,String userId,String method){
-		return apiMobileTestService.findByMobileToAmi(mobile,userId,method);
+	public BackResult<MobileInfoDomain> findByMobileToAmi(String mobile,String userId,String method,String orderNo){
+		return apiMobileTestService.findByMobileToAmi(mobile,userId,method,orderNo);
 	}
 }

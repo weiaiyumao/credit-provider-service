@@ -207,101 +207,101 @@ public class TodayDataSaveDBTask {
 		}
 	
 	public void hbaseTest(String time) throws IOException {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// Table table = null;
-				Table vacant = null;
-				HBaseConfiguration hbaseConfig = null;
-
-				try {
-					System.setProperty("hadoop.home.dir", "/usr/local/hadoop-2.6.0/");
-					org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
-					conf.set("hbase.zookeeper.quorum",
-							"172.16.20.30,172.16.20.31,172.16.20.32,172.16.20.33,172.16.20.34");
-					conf.set("hbase.zookeeper.property.clientPort", "2181");
-					conf.set("mapreduce.task.timeout", "1200000");
-					conf.set("hbase.client.scanner.timeout.period", "600000");
-					conf.set("hbase.rpc.timeout", "600000");
-					Connection connection = ConnectionFactory.createConnection(conf);
-					vacant = connection.getTable(TableName.valueOf("VACANT_NUMBER"));
-				} catch (Exception e) {
-					logger.error("请检查tomcat服务器或端口是否开启!{}", e);
-					e.printStackTrace();
-				}
-
-				Scan scan = new Scan();
-				FilterList filterList = new FilterList();
-				String stime = time + " 00:00:00";
-				String etime = DateUtils.formatDate(DateUtils.addDay(DateUtils.parseDate(time), 4)) + " 23:59:59";
-				Filter stimeFilter = new SingleColumnValueFilter(Bytes.toBytes("cf1"), Bytes.toBytes("REPOR_TIME"),
-						CompareOp.GREATER_OR_EQUAL, Bytes.toBytes(stime));
-				filterList.addFilter(stimeFilter);
-				Filter etimeFilter = new SingleColumnValueFilter(Bytes.toBytes("cf1"), Bytes.toBytes("REPOR_TIME"),
-						CompareOp.LESS_OR_EQUAL, Bytes.toBytes(etime));
-				filterList.addFilter(etimeFilter);
-				scan.setFilter(filterList);
-				scan.setCaching(1000);
-
-				int i = 50001;
-				int j = 1;
-				List<BaseMobileDetail> resultList = new ArrayList<BaseMobileDetail>();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				try {
-					ResultScanner ResultScannerFilterList = vacant.getScanner(scan);
-					for (Result rr = ResultScannerFilterList.next(); rr != null; rr = ResultScannerFilterList.next()) {
-						String mobile = "";
-						String delivrd = "";
-						Boolean status = false;
-						// for(KeyValue kv:rr.list()){
-						// mobile = new String(kv.getRow());
-						// System.out.println("moblie : "+new StringBuffer(new
-						// String( kv.getRow())).reverse());
-						// System.out.println("column : "+new String(
-						// kv.getValue()));
-						// delivrd = new String( kv.getValue());
-						//
-						// }
-						Map<String, Object> results = new HashMap<>();
-						for (Cell cell : rr.listCells()) {
-							results.put(Bytes.toString(CellUtil.cloneQualifier(cell)),
-									Bytes.toString(CellUtil.cloneValue(cell)));
-						}
-
-						String realdelivrd = "-1012,-99,004,010,011,015,017,020,022,029,054,055,151,174,188,602,612,613,614,615,618,619,620,625,627,634,636,650,706,711,713,714,726,760,762,812,814,815,827,870,899,901,999,BLACK,BLKFAIL,BwList,CB:0255,CJ:0005,CJ:0006,CJ:0007,CJ:0008,CL:105,CL:106,CL:116,CL:125,DB:0008,DB:0119,DB:0140,DB:0141,DB:0142,DB:0144,DB:0160,DB:0309,DB:0318,DB00141,DELIVRD,DISTURB,E:401,E:BLACK,E:ODDL,E:ODSL,E:RPTSS,EM:101,GG:0024,HD:0001,HD:19,HD:31,HD:32,IA:0051,IA:0054,IA:0059,IA:0073,IB:0008,IB:0194,IC:0001,IC:0015,IC:0055,ID:0004,ID:0070,JL:0025,JL:0026,JL:0031,JT:105,KEYWORD,LIMIT,LT:0005,MA:0022,MA:0051,MA:0054,MB:0008,MB:1026,MB:1042,MB:1077,MB:1279,MBBLACK,MC:0055,MC:0151,MH:17,MI:0008,MI:0009,MI:0015,MI:0017,MI:0020,MI:0022,MI:0024,MI:0041,MI:0043,MI:0044,MI:0045,MI:0048,MI:0051,MI:0053,MI:0054,MI:0057,MI:0059,MI:0064,MI:0080,MI:0081,MI:0098,MI:0099,MI:0999,MK:0002,MK:0003,MK:0006,MK:0008,MK:0009,MK:0010,MK:0015,MK:0017,MK:0019,MK:0020,MK:0022,MK:0023,MK:0024,MK:0041,MK:0043,MK:0044,MK:0045,MK:0053,MK:0055";
-						realdelivrd += "MK:0057,MK:0098,MK:0099,MN:0000,MN:0009,MN:0011,MN:0012,MN:0019,MN:0020,MN:0022,MN:0029,MN:0041,MN:0043,MN:0044,MN:0045,MN:0050,MN:0053,MN:0055,MN:0098,MN:0174,MT:101,NOPASS,NOROUTE,REFUSED,REJECT,REJECTD,REJECTE,RP:103,RP:106,RP:108,RP:11,RP:115,RP:117,RP:15,RP:17,RP:18,RP:19,RP:2,RP:20,RP:213,RP:22,RP:239,RP:254,RP:255,RP:27,RP:29,RP:36,RP:44,RP:45,RP:48,RP:50,RP:52,RP:55,RP:57,RP:59,RP:61,RP:67,RP:70,RP:77,RP:79,RP:8,RP:86,RP:90,RP:92,RP:98,SGIP:-1,SGIP:10,SGIP:106,SGIP:11,SGIP:117,SGIP:118,SGIP:121,SGIP:14,SGIP:15,SGIP:16,SGIP:17,SGIP:19,SGIP:2,SGIP:20,SGIP:22,SGIP:23,SGIP:-25,SGIP:27,SGIP:-3,SGIP:31,SGIP:43,SGIP:44,SGIP:45,SGIP:48,SGIP:57,SGIP:61,SGIP:64,SGIP:67,SGIP:79,SGIP:86,SGIP:89,SGIP:90,SGIP:92,SGIP:93,SGIP:98,SGIP:99,SME1,SME-1,SME19,SME20,SME210,SME-22,SME-26,SME28,SME3,SME6,SME-70,SME-74,SME8,SME92,SME-93,SYS:005,SYS:008,TIMEOUT,UNDELIV,UNKNOWN,VALVE:M,W-BLACK,YX:1006,YX:7000,YX:8019,YX:9006";
-						realdelivrd += "YY:0206,-181,023,036,043,044,706,712,718,721,730,763,779,879,CB:0013,CL:104,GATEBLA,IB:0011,ID:0199,JL:0028,LT:0022,MI:0021,MK:0068,RP:16,RP:65,RP:88,SGIP:-13,SGIP:63,SGIP:70,622,660,MI:0006,MK:0051,RP:121";
-						mobile = new StringBuffer(Bytes.toString(rr.getRow())).reverse().toString();
-						delivrd = (String) results.get("DELIVRD");
-						if (realdelivrd.contains(delivrd)) {
-							status = true;
-						}
-						BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile,
-								status);
-						mobileDetail.setMobile(mobile);
-						mobileDetail.setDelivrd(delivrd);
-						mobileDetail.setReportTime(sdf.parse((String) results.get("REPOR_TIME")));
-						resultList.add(mobileDetail);
-						if (i % 50000 == 0) {
-							logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
-							mongoTemplate.insertAll(resultList);
-							logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====");
-							resultList.clear();
-							j++;
-						}
-						System.out.println(i-50000);
-						i++;
-					}
-
-					mongoTemplate.insertAll(resultList);
-					logger.info("=====数据导入完成=====");
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}, time + "线程开始执行定时任务入库").start();
+//		new Thread(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				// Table table = null;
+//				Table vacant = null;
+//				HBaseConfiguration hbaseConfig = null;
+//
+//				try {
+//					System.setProperty("hadoop.home.dir", "/usr/local/hadoop-2.6.0/");
+//					org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
+//					conf.set("hbase.zookeeper.quorum",
+//							"172.16.20.30,172.16.20.31,172.16.20.32,172.16.20.33,172.16.20.34");
+//					conf.set("hbase.zookeeper.property.clientPort", "2181");
+//					conf.set("mapreduce.task.timeout", "1200000");
+//					conf.set("hbase.client.scanner.timeout.period", "600000");
+//					conf.set("hbase.rpc.timeout", "600000");
+//					Connection connection = ConnectionFactory.createConnection(conf);
+//					vacant = connection.getTable(TableName.valueOf("VACANT_NUMBER"));
+//				} catch (Exception e) {
+//					logger.error("请检查tomcat服务器或端口是否开启!{}", e);
+//					e.printStackTrace();
+//				}
+//
+//				Scan scan = new Scan();
+//				FilterList filterList = new FilterList();
+//				String stime = time + " 00:00:00";
+//				String etime = DateUtils.formatDate(DateUtils.addDay(DateUtils.parseDate(time), 4)) + " 23:59:59";
+//				Filter stimeFilter = new SingleColumnValueFilter(Bytes.toBytes("cf1"), Bytes.toBytes("REPOR_TIME"),
+//						CompareOp.GREATER_OR_EQUAL, Bytes.toBytes(stime));
+//				filterList.addFilter(stimeFilter);
+//				Filter etimeFilter = new SingleColumnValueFilter(Bytes.toBytes("cf1"), Bytes.toBytes("REPOR_TIME"),
+//						CompareOp.LESS_OR_EQUAL, Bytes.toBytes(etime));
+//				filterList.addFilter(etimeFilter);
+//				scan.setFilter(filterList);
+//				scan.setCaching(1000);
+//
+//				int i = 50001;
+//				int j = 1;
+//				List<BaseMobileDetail> resultList = new ArrayList<BaseMobileDetail>();
+//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//				try {
+//					ResultScanner ResultScannerFilterList = vacant.getScanner(scan);
+//					for (Result rr = ResultScannerFilterList.next(); rr != null; rr = ResultScannerFilterList.next()) {
+//						String mobile = "";
+//						String delivrd = "";
+//						Boolean status = false;
+//						// for(KeyValue kv:rr.list()){
+//						// mobile = new String(kv.getRow());
+//						// System.out.println("moblie : "+new StringBuffer(new
+//						// String( kv.getRow())).reverse());
+//						// System.out.println("column : "+new String(
+//						// kv.getValue()));
+//						// delivrd = new String( kv.getValue());
+//						//
+//						// }
+//						Map<String, Object> results = new HashMap<>();
+//						for (Cell cell : rr.listCells()) {
+//							results.put(Bytes.toString(CellUtil.cloneQualifier(cell)),
+//									Bytes.toString(CellUtil.cloneValue(cell)));
+//						}
+//
+//						String realdelivrd = "-1012,-99,004,010,011,015,017,020,022,029,054,055,151,174,188,602,612,613,614,615,618,619,620,625,627,634,636,650,706,711,713,714,726,760,762,812,814,815,827,870,899,901,999,BLACK,BLKFAIL,BwList,CB:0255,CJ:0005,CJ:0006,CJ:0007,CJ:0008,CL:105,CL:106,CL:116,CL:125,DB:0008,DB:0119,DB:0140,DB:0141,DB:0142,DB:0144,DB:0160,DB:0309,DB:0318,DB00141,DELIVRD,DISTURB,E:401,E:BLACK,E:ODDL,E:ODSL,E:RPTSS,EM:101,GG:0024,HD:0001,HD:19,HD:31,HD:32,IA:0051,IA:0054,IA:0059,IA:0073,IB:0008,IB:0194,IC:0001,IC:0015,IC:0055,ID:0004,ID:0070,JL:0025,JL:0026,JL:0031,JT:105,KEYWORD,LIMIT,LT:0005,MA:0022,MA:0051,MA:0054,MB:0008,MB:1026,MB:1042,MB:1077,MB:1279,MBBLACK,MC:0055,MC:0151,MH:17,MI:0008,MI:0009,MI:0015,MI:0017,MI:0020,MI:0022,MI:0024,MI:0041,MI:0043,MI:0044,MI:0045,MI:0048,MI:0051,MI:0053,MI:0054,MI:0057,MI:0059,MI:0064,MI:0080,MI:0081,MI:0098,MI:0099,MI:0999,MK:0002,MK:0003,MK:0006,MK:0008,MK:0009,MK:0010,MK:0015,MK:0017,MK:0019,MK:0020,MK:0022,MK:0023,MK:0024,MK:0041,MK:0043,MK:0044,MK:0045,MK:0053,MK:0055";
+//						realdelivrd += "MK:0057,MK:0098,MK:0099,MN:0000,MN:0009,MN:0011,MN:0012,MN:0019,MN:0020,MN:0022,MN:0029,MN:0041,MN:0043,MN:0044,MN:0045,MN:0050,MN:0053,MN:0055,MN:0098,MN:0174,MT:101,NOPASS,NOROUTE,REFUSED,REJECT,REJECTD,REJECTE,RP:103,RP:106,RP:108,RP:11,RP:115,RP:117,RP:15,RP:17,RP:18,RP:19,RP:2,RP:20,RP:213,RP:22,RP:239,RP:254,RP:255,RP:27,RP:29,RP:36,RP:44,RP:45,RP:48,RP:50,RP:52,RP:55,RP:57,RP:59,RP:61,RP:67,RP:70,RP:77,RP:79,RP:8,RP:86,RP:90,RP:92,RP:98,SGIP:-1,SGIP:10,SGIP:106,SGIP:11,SGIP:117,SGIP:118,SGIP:121,SGIP:14,SGIP:15,SGIP:16,SGIP:17,SGIP:19,SGIP:2,SGIP:20,SGIP:22,SGIP:23,SGIP:-25,SGIP:27,SGIP:-3,SGIP:31,SGIP:43,SGIP:44,SGIP:45,SGIP:48,SGIP:57,SGIP:61,SGIP:64,SGIP:67,SGIP:79,SGIP:86,SGIP:89,SGIP:90,SGIP:92,SGIP:93,SGIP:98,SGIP:99,SME1,SME-1,SME19,SME20,SME210,SME-22,SME-26,SME28,SME3,SME6,SME-70,SME-74,SME8,SME92,SME-93,SYS:005,SYS:008,TIMEOUT,UNDELIV,UNKNOWN,VALVE:M,W-BLACK,YX:1006,YX:7000,YX:8019,YX:9006";
+//						realdelivrd += "YY:0206,-181,023,036,043,044,706,712,718,721,730,763,779,879,CB:0013,CL:104,GATEBLA,IB:0011,ID:0199,JL:0028,LT:0022,MI:0021,MK:0068,RP:16,RP:65,RP:88,SGIP:-13,SGIP:63,SGIP:70,622,660,MI:0006,MK:0051,RP:121";
+//						mobile = new StringBuffer(Bytes.toString(rr.getRow())).reverse().toString();
+//						delivrd = (String) results.get("DELIVRD");
+//						if (realdelivrd.contains(delivrd)) {
+//							status = true;
+//						}
+//						BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile,
+//								status);
+//						mobileDetail.setMobile(mobile);
+//						mobileDetail.setDelivrd(delivrd);
+//						mobileDetail.setReportTime(sdf.parse((String) results.get("REPOR_TIME")));
+//						resultList.add(mobileDetail);
+//						if (i % 50000 == 0) {
+//							logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
+//							mongoTemplate.insertAll(resultList);
+//							logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====");
+//							resultList.clear();
+//							j++;
+//						}
+//						System.out.println(i-50000);
+//						i++;
+//					}
+//
+//					mongoTemplate.insertAll(resultList);
+//					logger.info("=====数据导入完成=====");
+//
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}, time + "线程开始执行定时任务入库").start();
 		//
 		// try {
 		// Settings settings = Settings.builder().put("cluster.name",
@@ -352,76 +352,76 @@ public class TodayDataSaveDBTask {
 	}
 	
 	public void hbaseTest1() throws IOException {
-				Table vacant = null;
-				HBaseConfiguration hbaseConfig = null;
-
-				try {
-					System.setProperty("hadoop.home.dir", "/usr/local/hadoop-2.6.0/");
-					org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
-					conf.set("hbase.zookeeper.quorum",
-							"172.16.20.30,172.16.20.31,172.16.20.32,172.16.20.33,172.16.20.34");
-					conf.set("hbase.zookeeper.property.clientPort", "2181");
-					conf.set("mapreduce.task.timeout", "1200000");
-					conf.set("hbase.client.scanner.timeout.period", "600000");
-					conf.set("hbase.rpc.timeout", "600000");
-					Connection connection = ConnectionFactory.createConnection(conf);
-					vacant = connection.getTable(TableName.valueOf("VACANT_NUMBER"));
-				} catch (Exception e) {
-					logger.error("请检查tomcat服务器或端口是否开启!{}", e);
-					e.printStackTrace();
-				}
-
-				Scan scan = new Scan();
-				scan.setCaching(10000);
-
-				int i = 50001;
-				int j = 1;
-				List<BaseMobileDetail> resultList = new ArrayList<BaseMobileDetail>();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				try {
-					ResultScanner ResultScannerFilterList = vacant.getScanner(scan);
-					for (Result rr = ResultScannerFilterList.next(); rr != null; rr = ResultScannerFilterList.next()) {
-						String mobile = "";
-						String delivrd = "";
-						Boolean status = false;
-						Map<String, Object> results = new HashMap<>();
-						for (Cell cell : rr.listCells()) {
-							results.put(Bytes.toString(CellUtil.cloneQualifier(cell)),
-									Bytes.toString(CellUtil.cloneValue(cell)));
-						}
-
-						String realdelivrd = "-1012,-99,004,010,011,015,017,020,022,029,054,055,151,174,188,602,612,613,614,615,618,619,620,625,627,634,636,650,706,711,713,714,726,760,762,812,814,815,827,870,899,901,999,BLACK,BLKFAIL,BwList,CB:0255,CJ:0005,CJ:0006,CJ:0007,CJ:0008,CL:105,CL:106,CL:116,CL:125,DB:0008,DB:0119,DB:0140,DB:0141,DB:0142,DB:0144,DB:0160,DB:0309,DB:0318,DB00141,DELIVRD,DISTURB,E:401,E:BLACK,E:ODDL,E:ODSL,E:RPTSS,EM:101,GG:0024,HD:0001,HD:19,HD:31,HD:32,IA:0051,IA:0054,IA:0059,IA:0073,IB:0008,IB:0194,IC:0001,IC:0015,IC:0055,ID:0004,ID:0070,JL:0025,JL:0026,JL:0031,JT:105,KEYWORD,LIMIT,LT:0005,MA:0022,MA:0051,MA:0054,MB:0008,MB:1026,MB:1042,MB:1077,MB:1279,MBBLACK,MC:0055,MC:0151,MH:17,MI:0008,MI:0009,MI:0015,MI:0017,MI:0020,MI:0022,MI:0024,MI:0041,MI:0043,MI:0044,MI:0045,MI:0048,MI:0051,MI:0053,MI:0054,MI:0057,MI:0059,MI:0064,MI:0080,MI:0081,MI:0098,MI:0099,MI:0999,MK:0002,MK:0003,MK:0006,MK:0008,MK:0009,MK:0010,MK:0015,MK:0017,MK:0019,MK:0020,MK:0022,MK:0023,MK:0024,MK:0041,MK:0043,MK:0044,MK:0045,MK:0053,MK:0055";
-						realdelivrd += "MK:0057,MK:0098,MK:0099,MN:0000,MN:0009,MN:0011,MN:0012,MN:0019,MN:0020,MN:0022,MN:0029,MN:0041,MN:0043,MN:0044,MN:0045,MN:0050,MN:0053,MN:0055,MN:0098,MN:0174,MT:101,NOPASS,NOROUTE,REFUSED,REJECT,REJECTD,REJECTE,RP:103,RP:106,RP:108,RP:11,RP:115,RP:117,RP:15,RP:17,RP:18,RP:19,RP:2,RP:20,RP:213,RP:22,RP:239,RP:254,RP:255,RP:27,RP:29,RP:36,RP:44,RP:45,RP:48,RP:50,RP:52,RP:55,RP:57,RP:59,RP:61,RP:67,RP:70,RP:77,RP:79,RP:8,RP:86,RP:90,RP:92,RP:98,SGIP:-1,SGIP:10,SGIP:106,SGIP:11,SGIP:117,SGIP:118,SGIP:121,SGIP:14,SGIP:15,SGIP:16,SGIP:17,SGIP:19,SGIP:2,SGIP:20,SGIP:22,SGIP:23,SGIP:-25,SGIP:27,SGIP:-3,SGIP:31,SGIP:43,SGIP:44,SGIP:45,SGIP:48,SGIP:57,SGIP:61,SGIP:64,SGIP:67,SGIP:79,SGIP:86,SGIP:89,SGIP:90,SGIP:92,SGIP:93,SGIP:98,SGIP:99,SME1,SME-1,SME19,SME20,SME210,SME-22,SME-26,SME28,SME3,SME6,SME-70,SME-74,SME8,SME92,SME-93,SYS:005,SYS:008,TIMEOUT,UNDELIV,UNKNOWN,VALVE:M,W-BLACK,YX:1006,YX:7000,YX:8019,YX:9006";
-						realdelivrd += "YY:0206,-181,023,036,043,044,706,712,718,721,730,763,779,879,CB:0013,CL:104,GATEBLA,IB:0011,ID:0199,JL:0028,LT:0022,MI:0021,MK:0068,RP:16,RP:65,RP:88,SGIP:-13,SGIP:63,SGIP:70,622,660,MI:0006,MK:0051,RP:121";
-						mobile = new StringBuffer(Bytes.toString(rr.getRow())).reverse().toString();
-						if(this.isTelephone(mobile)){
-							delivrd = (String) results.get("DELIVRD");
-							if (realdelivrd.contains(delivrd)) {
-								status = true;
-							}
-							BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile,status);
-							mobileDetail.setMobile(mobile);
-							mobileDetail.setDelivrd(delivrd);
-							mobileDetail.setReportTime(sdf.parse((String) results.get("REPOR_TIME")));
-							resultList.add(mobileDetail);
-							if (i % 50000 == 0) {
-								logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
-								mongoTemplate.insertAll(resultList);
-								logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====");
-								resultList.clear();
-								j++;
-							}
-							i++;
-						}
-						
-					}
-
-					mongoTemplate.insertAll(resultList);
-					logger.info("=====数据导入完成=====");
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+//				Table vacant = null;
+//				HBaseConfiguration hbaseConfig = null;
+//
+//				try {
+//					System.setProperty("hadoop.home.dir", "/usr/local/hadoop-2.6.0/");
+//					org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
+//					conf.set("hbase.zookeeper.quorum",
+//							"172.16.20.30,172.16.20.31,172.16.20.32,172.16.20.33,172.16.20.34");
+//					conf.set("hbase.zookeeper.property.clientPort", "2181");
+//					conf.set("mapreduce.task.timeout", "1200000");
+//					conf.set("hbase.client.scanner.timeout.period", "600000");
+//					conf.set("hbase.rpc.timeout", "600000");
+//					Connection connection = ConnectionFactory.createConnection(conf);
+//					vacant = connection.getTable(TableName.valueOf("VACANT_NUMBER"));
+//				} catch (Exception e) {
+//					logger.error("请检查tomcat服务器或端口是否开启!{}", e);
+//					e.printStackTrace();
+//				}
+//
+//				Scan scan = new Scan();
+//				scan.setCaching(10000);
+//
+//				int i = 50001;
+//				int j = 1;
+//				List<BaseMobileDetail> resultList = new ArrayList<BaseMobileDetail>();
+//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//				try {
+//					ResultScanner ResultScannerFilterList = vacant.getScanner(scan);
+//					for (Result rr = ResultScannerFilterList.next(); rr != null; rr = ResultScannerFilterList.next()) {
+//						String mobile = "";
+//						String delivrd = "";
+//						Boolean status = false;
+//						Map<String, Object> results = new HashMap<>();
+//						for (Cell cell : rr.listCells()) {
+//							results.put(Bytes.toString(CellUtil.cloneQualifier(cell)),
+//									Bytes.toString(CellUtil.cloneValue(cell)));
+//						}
+//
+//						String realdelivrd = "-1012,-99,004,010,011,015,017,020,022,029,054,055,151,174,188,602,612,613,614,615,618,619,620,625,627,634,636,650,706,711,713,714,726,760,762,812,814,815,827,870,899,901,999,BLACK,BLKFAIL,BwList,CB:0255,CJ:0005,CJ:0006,CJ:0007,CJ:0008,CL:105,CL:106,CL:116,CL:125,DB:0008,DB:0119,DB:0140,DB:0141,DB:0142,DB:0144,DB:0160,DB:0309,DB:0318,DB00141,DELIVRD,DISTURB,E:401,E:BLACK,E:ODDL,E:ODSL,E:RPTSS,EM:101,GG:0024,HD:0001,HD:19,HD:31,HD:32,IA:0051,IA:0054,IA:0059,IA:0073,IB:0008,IB:0194,IC:0001,IC:0015,IC:0055,ID:0004,ID:0070,JL:0025,JL:0026,JL:0031,JT:105,KEYWORD,LIMIT,LT:0005,MA:0022,MA:0051,MA:0054,MB:0008,MB:1026,MB:1042,MB:1077,MB:1279,MBBLACK,MC:0055,MC:0151,MH:17,MI:0008,MI:0009,MI:0015,MI:0017,MI:0020,MI:0022,MI:0024,MI:0041,MI:0043,MI:0044,MI:0045,MI:0048,MI:0051,MI:0053,MI:0054,MI:0057,MI:0059,MI:0064,MI:0080,MI:0081,MI:0098,MI:0099,MI:0999,MK:0002,MK:0003,MK:0006,MK:0008,MK:0009,MK:0010,MK:0015,MK:0017,MK:0019,MK:0020,MK:0022,MK:0023,MK:0024,MK:0041,MK:0043,MK:0044,MK:0045,MK:0053,MK:0055";
+//						realdelivrd += "MK:0057,MK:0098,MK:0099,MN:0000,MN:0009,MN:0011,MN:0012,MN:0019,MN:0020,MN:0022,MN:0029,MN:0041,MN:0043,MN:0044,MN:0045,MN:0050,MN:0053,MN:0055,MN:0098,MN:0174,MT:101,NOPASS,NOROUTE,REFUSED,REJECT,REJECTD,REJECTE,RP:103,RP:106,RP:108,RP:11,RP:115,RP:117,RP:15,RP:17,RP:18,RP:19,RP:2,RP:20,RP:213,RP:22,RP:239,RP:254,RP:255,RP:27,RP:29,RP:36,RP:44,RP:45,RP:48,RP:50,RP:52,RP:55,RP:57,RP:59,RP:61,RP:67,RP:70,RP:77,RP:79,RP:8,RP:86,RP:90,RP:92,RP:98,SGIP:-1,SGIP:10,SGIP:106,SGIP:11,SGIP:117,SGIP:118,SGIP:121,SGIP:14,SGIP:15,SGIP:16,SGIP:17,SGIP:19,SGIP:2,SGIP:20,SGIP:22,SGIP:23,SGIP:-25,SGIP:27,SGIP:-3,SGIP:31,SGIP:43,SGIP:44,SGIP:45,SGIP:48,SGIP:57,SGIP:61,SGIP:64,SGIP:67,SGIP:79,SGIP:86,SGIP:89,SGIP:90,SGIP:92,SGIP:93,SGIP:98,SGIP:99,SME1,SME-1,SME19,SME20,SME210,SME-22,SME-26,SME28,SME3,SME6,SME-70,SME-74,SME8,SME92,SME-93,SYS:005,SYS:008,TIMEOUT,UNDELIV,UNKNOWN,VALVE:M,W-BLACK,YX:1006,YX:7000,YX:8019,YX:9006";
+//						realdelivrd += "YY:0206,-181,023,036,043,044,706,712,718,721,730,763,779,879,CB:0013,CL:104,GATEBLA,IB:0011,ID:0199,JL:0028,LT:0022,MI:0021,MK:0068,RP:16,RP:65,RP:88,SGIP:-13,SGIP:63,SGIP:70,622,660,MI:0006,MK:0051,RP:121";
+//						mobile = new StringBuffer(Bytes.toString(rr.getRow())).reverse().toString();
+//						if(this.isTelephone(mobile)){
+//							delivrd = (String) results.get("DELIVRD");
+//							if (realdelivrd.contains(delivrd)) {
+//								status = true;
+//							}
+//							BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile,status);
+//							mobileDetail.setMobile(mobile);
+//							mobileDetail.setDelivrd(delivrd);
+//							mobileDetail.setReportTime(sdf.parse((String) results.get("REPOR_TIME")));
+//							resultList.add(mobileDetail);
+//							if (i % 50000 == 0) {
+//								logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务开始时间:" + DateUtils.getNowTime() + "=====");
+//								mongoTemplate.insertAll(resultList);
+//								logger.info("=====开始执行第" + j + "批创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====");
+//								resultList.clear();
+//								j++;
+//							}
+//							i++;
+//						}
+//						
+//					}
+//
+//					mongoTemplate.insertAll(resultList);
+//					logger.info("=====数据导入完成=====");
+//
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
 	}
 
 	/**

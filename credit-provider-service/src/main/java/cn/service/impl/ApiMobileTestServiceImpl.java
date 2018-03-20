@@ -578,7 +578,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 	}
 	
 	@Override
-	public BackResult<MobileInfoDomain> findByMobileToAmi(String mobile, String userId,String method) {
+	public BackResult<MobileInfoDomain> findByMobileToAmi(String mobile, String userId,String method,String orderNo) {
 
 		DistributedLock lock = new DistributedLock(jedisPool);
 		String lockName = RedisKeys.getInstance().getkhApifunKey(mobile);
@@ -599,7 +599,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 
 				BackResult<MobileInfoDomain> result = new BackResult<MobileInfoDomain>();
 
-				Date startTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -30);
+				Date startTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), -7);
 				Date endTime = DateUtils.addDay(DateUtils.getCurrentDateTime(), 1);
 				// 创建对象设置初始手机号码
 				MobileInfoDomain domain = new MobileInfoDomain();
@@ -636,7 +636,7 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 					}else{
 						String paramString = "mobile=" + mobile;
 						//获取参数json串
-						JSONObject paramJson = KeyUtil.getParamJson(userId, method, paramString);
+						JSONObject paramJson = KeyUtil.getParamJson(userId, method, paramString,orderNo);
 						String resultJson = openApiService.getCheckMobileStatue(paramJson);
 						JSONObject resultObj = JSONObject.parseObject(resultJson);
 						String amiStr = resultObj.getString("resultObj");
@@ -672,14 +672,14 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 						
 						BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile);
 						mobileDetail.setMobile(mobile);
-						mobileDetail.setMobile(dev_log);
+						mobileDetail.setDelivrd(dev_log);;
 						mobileDetail.setReportTime(DateUtils.getNowDate());
 						mongoTemplate.insert(mobileDetail);
 					}					
 				} else {
 					String paramString = "mobile=" + mobile;
 					//获取参数json串
-					JSONObject paramJson = KeyUtil.getParamJson(userId, method, paramString);
+					JSONObject paramJson = KeyUtil.getParamJson(userId, method, paramString,orderNo);
 					String resultJson = openApiService.getCheckMobileStatue(paramJson);
 					JSONObject resultObj = JSONObject.parseObject(resultJson);
 					String amiStr = resultObj.getString("resultObj");					;
@@ -715,15 +715,14 @@ public class ApiMobileTestServiceImpl implements ApiMobileTestService {
 					
 					BaseMobileDetail mobileDetail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile);
 					mobileDetail.setMobile(mobile);
-					mobileDetail.setMobile(dev_log);
+					mobileDetail.setDelivrd(dev_log);
 					mobileDetail.setReportTime(DateUtils.getNowDate());
 					mongoTemplate.insert(mobileDetail);
 				}
 
 
 				MobileTestLog mobileTestLog = new MobileTestLog();
-				mobileTestLog.setOrderNo(
-						DateUtils.getCurrentTimeMillis().substring(0, 4) + System.currentTimeMillis());
+				mobileTestLog.setOrderNo(orderNo);
 				mobileTestLog.setArea(domain.getArea());
 				mobileTestLog.setChargesStatus(domain.getChargesStatus());
 				mobileTestLog.setCreateTime(new Date());
